@@ -62,7 +62,7 @@
                                                 {{ post.body|safe|truncatechars_html:150 }}
                                             </p>
                                             <div class="author align-items-center">
-                                                {% if request.user.profile.avatar %}
+                                                {% if user.profile.avatar %}
                                                     <img src="{{ user.profile.avatar.url }}"
                                                          alt="..." class="avatar shadow">
                                                 {% else %}
