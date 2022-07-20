@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.urls import path, include
 from .views import DashBoardView, MessageDetail, MessageDeleteView, UserEditView, UserAddView, UserDeleteView, \
-    ProfileView, edit, UserUpdateView, ProfileUpdateView
+    ProfileView, edit, UserUpdateView, ProfileUpdateView, PasswordChance
 from accounts.views import UserRegister
 
 urlpatterns = [
@@ -30,4 +30,5 @@ urlpatterns = [
     path('add_user/<int:pk>/', UserDeleteView.as_view(), name="user_del"),
     path('messages/<int:pk>/<slug:name>/', MessageDetail.as_view(), name="messages"),
     path('messages/<int:pk>/', MessageDeleteView.as_view(), name="message_delete"),
+    path('password/<pk>/<username>/', PasswordChance.as_view(), name="password_change"),
 ]

@@ -10,7 +10,8 @@ from .forms import UserRegistrationForm, UserEditForm, UserCreationForm, Profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Profile
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 class DashBoardView(ListView, LoginRequiredMixin):
@@ -110,6 +111,16 @@ class ProfileUpdateView(generic.UpdateView, LoginRequiredMixin):
         return self.request.user.profile
 
     def get_success_url(self):
+        pk = self.kwargs["pk"]
+        return reverse("profile", kwargs={"pk": pk, "username": self.request.user.username})
+
+
+class PasswordChance(PasswordChangeView):
+    template_name = "accounts/password.html"
+    form_class = PasswordChangeForm
+
+    def get_success_url(self):
+        messages.success(self.request, "Şifre değiştirme işlemi başarılı.")
         pk = self.kwargs["pk"]
         return reverse("profile", kwargs={"pk": pk, "username": self.request.user.username})
 
