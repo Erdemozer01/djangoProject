@@ -62,15 +62,15 @@
                                                 {{ post.body|safe|truncatechars_html:150 }}
                                             </p>
                                             <div class="author align-items-center">
-                                                {% for foo in user %}
-                                                    {% if foo.profile.avatar %}
-                                                        <img src="{{ foo.profile.avatar.url }}"
+
+                                                    {% if post.author.profile.avatar %}
+                                                        <img src="{{ post.author.profile.avatar.url }}"
                                                              alt="..." class="avatar shadow">
                                                     {% else %}
                                                         <img src="{% static "assets/img/curved-images/curved1.jpg" %}"
                                                              alt="..." class="avatar shadow">
                                                     {% endif %}
-                                                {% endfor %}
+
 
 
 
