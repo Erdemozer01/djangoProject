@@ -14,8 +14,6 @@ from django.contrib.auth.views import PasswordChangeView, LogoutView
 from django.contrib.auth.forms import PasswordChangeForm
 
 
-
-
 class DashBoardView(ListView, LoginRequiredMixin):
     template_name = 'index.html'
     model = Posts

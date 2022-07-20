@@ -108,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LOGIN_REDIRECT_URL = redirect('blog:home')
+LOGIN_REDIRECT_URL = reverse_lazy('blog:home')
 
-LOGOUT_REDIRECT_URL = redirect('blog:home')
+LOGOUT_REDIRECT_URL = reverse_lazy('blog:home')
 
 LANGUAGE_CODE = 'tr'
 
