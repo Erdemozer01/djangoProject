@@ -107,10 +107,7 @@ class ProfileUpdateView(generic.UpdateView, LoginRequiredMixin):
             return reverse_lazy('login')
 
     def get_object(self, queryset=None):
-        if self.request.user.is_anonymous:
-            pass
-        elif self.request.user.profile:
-            return self.request.user.profile
+        return self.request.user.profile
 
     def get_success_url(self):
         pk = self.kwargs["pk"]
