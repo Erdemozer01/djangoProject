@@ -4,8 +4,8 @@
 
 {% block content %}
 
-        {% if not user.is_anonymous %}
-            <div class="container-fluid">
+    {% if not user.is_anonymous %}
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-9 col-12 mx-auto">
                     <div class="card card-body mt-3">
@@ -30,25 +30,26 @@
                     </div>
                 </div>
             </div>
-        {% else %}
-            <section class="my-10">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6 my-auto">
-                            <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
-                            <a href="{% url "blog:home" %}">
-                                <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
-                            </a>
+        </div>
+    {% else %}
+        <section class="my-10">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 my-auto">
+                        <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
+                        <a href="{% url "blog:home" %}">
+                            <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
+                        </a>
 
-                        </div>
-                        <div class="col-lg-6 my-auto position-relative">
-                            <img class="w-100 position-relative"
-                                 src="https://appsrv1-147a1.kxcdn.com/soft-ui-design-pro/img/illustrations/error-404.png"
-                                 alt="404-page-page-error">
-                        </div>
+                    </div>
+                    <div class="col-lg-6 my-auto position-relative">
+                        <img class="w-100 position-relative"
+                             src="https://appsrv1-147a1.kxcdn.com/soft-ui-design-pro/img/illustrations/error-404.png"
+                             alt="404-page-page-error">
                     </div>
                 </div>
-            </section>
-        {% endif %}
+            </div>
+        </section>
+    {% endif %}
 
 {% endblock %}
