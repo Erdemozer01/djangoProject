@@ -32,9 +32,9 @@
     <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
         <div class="row gx-4">
             <div class="col-auto">
-                {% if user.profile.avatar %}
+                {% if request.user.profile.avatar %}
                     <div class="avatar avatar-xl position-relative">
-                        <img src="{{ user.profile.avatar.url }}"
+                        <img src="{{ request.user.profile.avatar.url }}"
                              alt="profile_image" class="w-100 border-radius-lg shadow-sm">
                     </div>
                 {% else %}
