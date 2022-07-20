@@ -48,10 +48,10 @@
             <div class="col-auto my-auto">
                 <div class="h-100">
                     <h5 class="mb-1">
-                        {{ user.first_name }} {{ user.last_name }}
+                        {{ request.user.first_name }} {{ request.user.last_name }}
                     </h5>
                     <p class="mb-0 font-weight-bold text-sm">
-                        {{ user.profile.job }}
+                        {{ request.user.profile.job }}
                     </p>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                     <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link mb-0 px-0 py-1 active "
-                               href="{% url "profile" user.pk user.username %}" role="tab" aria-selected="true">
+                               href="{% url "profile" request.user.pk request.user.username %}" role="tab" aria-selected="true">
                                 <svg class="text-dark" width="16px" height="16px" viewBox="0 0 42 42"
                                      version="1.1" xmlns="http://www.w3.org/2000/svg"
                                      xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -223,7 +223,7 @@
                                 <h6 class="mb-0">Profil Bilgileri</h6>
                             </div>
                             <div class="col-md-4 text-end">
-                                <a href="{% url "profile_update" user.pk user.username %}">
+                                <a href="{% url "profile_update" request.user.pk request.user.username %}">
                                     <i class="fas fa-user-edit text-secondary text-sm" data-bs-toggle="tooltip"
                                        data-bs-placement="top" title="Edit Profile"></i>
                                 </a>
@@ -232,30 +232,30 @@
                     </div>
                     <div class="card-body p-3">
                         <p class="text-sm">
-                            {{ user.profile.about }}
+                            {{ request.user.profile.about }}
                         </p>
                         <hr class="horizontal gray-light my-4">
                         <ul class="list-group">
                             <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Adı
-                                Soyadı:</strong> &nbsp; {{ user.first_name|title }} {{ user.last_name|title }}</li>
+                                Soyadı:</strong> &nbsp; {{ request.user.first_name|title }} {{ request.user.last_name|title }}</li>
                             <li class="list-group-item border-0 ps-0 text-sm"><strong
-                                    class="text-dark">Telefon:</strong> &nbsp; {{ user.profile.phone }}</li>
+                                    class="text-dark">Telefon:</strong> &nbsp; {{ request.user.profile.phone }}</li>
                             <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong>
-                                &nbsp; {{ user.email }}</li>
+                                &nbsp; {{ request.user.email }}</li>
                             <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Yaşadığı
-                                Şehir:</strong> &nbsp; {{ user.profile.location }}</li>
+                                Şehir:</strong> &nbsp; {{ request.user.profile.location }}</li>
                             <li class="list-group-item border-0 ps-0 pb-0">
                                 <strong class="text-dark text-sm">Sosyal Medya:</strong> &nbsp;
                                 <a class="btn btn-facebook btn-simple mb-0 ps-1 pe-2 py-0"
-                                   href="{{ user.profile.facebook }}">
+                                   href="{{ request.user.profile.facebook }}">
                                     <i class="fab fa-facebook fa-lg"></i>
                                 </a>
                                 <a class="btn btn-twitter btn-simple mb-0 ps-1 pe-2 py-0"
-                                   href="{{ user.profile.twitter }}">
+                                   href="{{ request.user.profile.twitter }}">
                                     <i class="fab fa-twitter fa-lg"></i>
                                 </a>
                                 <a class="btn btn-instagram btn-simple mb-0 ps-1 pe-2 py-0"
-                                   href="{{ user.profile.instagram }}">
+                                   href="{{ request.user.profile.instagram }}">
                                     <i class="fab fa-instagram fa-lg"></i>
                                 </a>
                             </li>
@@ -331,66 +331,55 @@
             </div>
         </div>
 
-        <div class="container-fluid py-4">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <!-- Card header -->
-                        <div class="card-header pb-0">
-                            <div class="d-lg-flex">
-                                <div>
-                                    <h5 class="mb-0">Gönderilerim</h5>
-                                </div>
-                                <div class="ms-auto my-auto mt-lg-0 mt-4">
-                                    <div class="ms-auto my-auto">
-                                        <a href="{% url "post:add_post" %}" class="btn bg-gradient-dark btn-sm mb-0"
-                                           target="_blank">+&nbsp; Gönderi Ekle</a>
-                                    </div>
+        <div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">Gönderilerim</h5>
+                            </div>
+                            <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                <div class="ms-auto my-auto">
+                                    <a href="{% url "post:add_post" %}" class="btn bg-gradient-dark btn-sm mb-0"
+                                       target="_blank">+&nbsp; Gönderi Ekle</a>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body px-0 pb-0">
-                            <div class="table-responsive">
-                                <table class="table table-flush" id="products-list">
-                                    <thead class="thead-light">
-                                    <tr>
-                                        <th>Tarih</th>
-                                        <th>Yazar</th>
-                                        <th>Kategori</th>
-                                        <th>Başlık</th>
-                                        <th>Etiket</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody class="mx-auto">
-                                    {% for object in object %}
-                                        <tr>
-                                            <td class="text-sm">{{ object.created }}</td>
-                                            <td class="text-sm">{{ object.author|title }}</td>
-                                            <td class="text-sm">{{ object.category.title }}</td>
-                                            <td class="text-sm">{{ object.title }}</td>
-                                            <td class="text-sm">{{ object.tags }}</td>
-                                            <td class="text-sm">
-                                                <a href="{% url "post:post_detail" object.category.title.lower object.slug object.pk %}"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Ayrıntılar">
-                                                    <i class="fas fa-eye text-secondary"></i>
-                                                </a>
-                                                <a href="{% url "post:update_post" object.slug %}" class="mx-3"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Düzenle">
-                                                    <i class="fas fa-user-edit text-secondary"></i>
-                                                </a>
-                                                <a href="{% url "post:delete_post" object.pk %}"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Sil">
-                                                    <i class="fas fa-trash text-secondary"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="row">
+                            {% for post in posts %}
+                                <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                                    <div class="card card-blog card-plain">
+                                        <div class="position-relative">
+                                            <a class="d-block shadow-xl border-radius-xl">
+                                                <img src="{{ post.cover.url }}"
+                                                     alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
+                                            </a>
+                                        </div>
+                                        <div class="card-body px-1 pb-0">
+                                            <p class="text-gradient text-dark mb-2 text-sm">{{ post.created|timesince }}</p>
+                                            <p class="text-gradient text-dark mb-2 text-sm">{{ post.category.title }}</p>
+                                            <a href="{% url "post:post_detail" post.category.title.lower|slugify post.title|slugify post.pk %}">
+                                                <h5>
+                                                    {{ post.title }}
+                                                </h5>
+                                            </a>
+                                            <p class="mb-4 text-sm">
+                                                {{ post.text|safe|truncatechars_html:50 }}
+                                            </p>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <button type="button" class="btn btn-outline-dark btn-sm mb-0">
+                                                    <a href="{% url "post:post_detail" post.category.title.lower|slugify post.title|slugify post.pk %}">Ayrıntılar</a>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

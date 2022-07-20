@@ -74,14 +74,14 @@ class UserEditView(generic.UpdateView):
     context_object_name = "user"
 
 
-class ProfileView(generic.DetailView):
+class ProfileView(generic.ListView):
     template_name = "accounts/profile.html"
     model = User
     context_object_name = "user"
 
     def get_context_data(self, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
-        context['object'] = Posts.objects.filter(author_id=self.request.user.id)
+        context['posts'] = Posts.objects.all().filter(author=self.request.user.id)
         return context
 
 
