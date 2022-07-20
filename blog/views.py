@@ -1,4 +1,6 @@
 from django.views.generic import ListView, CreateView
+from pip._internal.locations import user_site
+
 from post.models import Posts
 from django.contrib.auth.models import User
 from django.shortcuts import render
@@ -16,7 +18,7 @@ class HomeView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['user'] = User.objects.all()
+        context['user'] = User.objects.get(username='username')
         return context
 
 
