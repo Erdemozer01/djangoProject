@@ -1,0 +1,162 @@
+{% extends 'blog/index.html' %}
+{% load static %}
+
+{% block title %} Kategoriler {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block body_class %} presentation-page {% endblock %}
+
+{% block content %}
+
+    <!-- -------- START HEADER 4 w/ search book a ticket form ------- -->
+    <header>
+        <div class="page-header min-vh-50"
+             style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/minimal-interior.jpg')">
+            <span class="mask bg-gradient-info"></span>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-white text-center">
+                        <h2 class="text-white">Kategoriler</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="position-relative overflow-hidden" style="height:36px;margin-top:-35px;">
+            <div class="w-full absolute bottom-0 start-0 end-0"
+                 style="transform: scale(2);transform-origin: top center;color: #fff;">
+                <svg viewBox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 48H1437.5H2880V0H2160C1442.5 52 720 0 720 0H0V48Z" fill="currentColor"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row bg-white shadow-lg mt-n6 border-radius-md pb-4 p-3 position-relative w-75 mx-auto">
+                <div class="col-lg-8 mt-lg-n2 mt-2">
+                    <label>Arama</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input class="form-control" placeholder="Kategori Arayın" type="text">
+                    </div>
+                </div>
+                <div class="col-lg-4 d-flex align-items-center mt-lg-auto mt-2">
+                    <button type="button" class="btn bg-gradient-info w-100 mb-0">Ara</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- -------- END HEADER 4 w/ search book a ticket form ------- -->
+
+    <div class="container mt-7">
+        <div class="row">
+            <div class="col-lg-12">
+                {% if category_list %}
+                    {% for foo in category_list %}
+                        <div class="row mt-5">
+                            <div class="col-lg-6 justify-content-center d-flex flex-column">
+                                <div class="card">
+                                    <div class="d-block blur-shadow-image">
+                                        <img src="{{ foo.image.url }}"
+                                             alt="img-blur-shadow-blog-2" class="img-fluid border-radius-lg">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 justify-content-center d-flex flex-column pl-lg-5 pt-lg-0 pt-3">
+                                <h3 class="card-title">
+                                    <a href="{% url 'post:category' foo.slug %}" class="text-dark">{{ foo.title|title }}
+                                        Kategorisi</a>
+                                </h3>
+                                <p class="card-description">
+                                    {{ foo.explain }}
+                                </p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>{{ foo.title }} Kategorisine ait gönderi bulunamadı</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="row mt-5">
+                        <div class="col-lg-6 justify-content-center d-flex flex-column">
+                            <div class="card">
+                                <div class="d-block blur-shadow-image">
+                                    <img src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/jump.jpg"
+                                         alt="img-blur-shadow-blog-2" class="img-fluid border-radius-lg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 justify-content-center d-flex flex-column pl-lg-5 pt-lg-0 pt-3">
+                            <h6 class="category text-warning mt-3">Productivity</h6>
+                            <h3 class="card-title">
+                                <a href="javascript:;" class="text-dark">Interesting factoids I bet you never knew
+                                    about
+                                    Creative Tim</a>
+                            </h3>
+                            <p class="card-description">
+                                Warner Music Group announced today it’s acquiring the selected assets of the music
+                                platform
+                                Songkick, including its app for finding concerts and the company’s trademark.
+                                Songkick has
+                                been involved in a lawsuit against the major… <a href="javascript:;"
+                                                                                 class="text-darker icon-move-right text-sm">Read
+                                More
+                                <i class="fas fa-arrow-right text-xs ms-1"></i>
+                            </a>
+                            </p>
+                            <p class="author">
+                                by <a href="javascript:;" class="ms-1"><span class="font-weight-bold text-warning"> Sarah Perez</span></a>,
+                                2 days ago
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if paginator %}
+                    <ul class="pagination pagination-info my-5 float-start">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item ms-auto">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                   aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-left"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item ms-auto disabled">
+                                <a class="page-link" href="#"
+                                   aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-left"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% for i in page_obj.paginator.page_range %}
+
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                            </li>
+
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-right"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:;" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-right"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+

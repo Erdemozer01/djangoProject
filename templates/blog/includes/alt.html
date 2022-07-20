@@ -1,0 +1,30 @@
+{% load static %}
+{% load cover %}
+{% bottom as bottom %}
+<!-- START Section Content W/ 2 images aside of icon title description -->
+<section class="py-sm-5">
+    <div class="bg-gradient-dark position-relative m-3 border-radius-xl overflow-hidden">
+        <img src="{% static 'blog/assets/img/shapes/pattern-lines.svg' %}" alt="pattern-lines"
+             class="position-absolute start-0 top-md-0 w-100 opacity-6">
+        <div class="container py-7 postion-relative z-index-2 position-relative">
+            <div class="row">
+                <div class="col-md-7 mx-auto text-center">
+                    {% for foo in bottom %}
+                        {% if forloop.last %}
+                            <h3 class="text-white mb-0">{{ foo.title }}</h3>
+                            <p class="text-white mb-5">
+                                {{ foo.text|safe }}
+                            </p>
+                        {% endif %}
+                    {% empty %}
+                        <h3 class="text-white mb-0">Alt Kapak</h3>
+                        <p class="text-white mb-5">
+                            içerik
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END Section Content -->

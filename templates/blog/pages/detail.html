@@ -1,0 +1,100 @@
+{% extends 'blog/index.html' %}
+{% load static %}
+
+{% block title %} {{ post.title }} {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block body_class %} presentation-page {% endblock %}
+
+{% block content %}
+
+    <section class="pt-3 pt-md-5 pb-md-5 pt-lg-9 mt-8 mt-md-7 mt-lg-0">
+        <div class="container">
+            <div class="col-12 mx-auto pb-5">
+                <div class="card shadow-lg">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg p-4">
+                            <h3 class="text-white mb-0">{{ post.title }}</h3>
+                            <p class="text-white opacity-8 mb-0">{{ post.created|date }}</p>
+                        </div>
+                    </div>
+                    <section class="py-4">
+                        <div class="container">
+                            <div class="row justify-space-between py-2">
+                                <div class="col-12 mx-auto">
+                                    <div class="card">
+                                        <img class="card-img-top"
+                                             src="{{ post.cover.url }}">
+                                        <div class="position-relative overflow-hidden"
+                                             style="height:50px;margin-top:-50px;">
+                                            <div class="position-absolute w-100 top-0 z-index-1">
+                                                <svg class="waves waves-sm" xmlns="http://www.w3.org/2000/svg"
+                                                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 40"
+                                                     preserveAspectRatio="none" shape-rendering="auto">
+                                                    <defs>
+                                                        <path id="card-wave"
+                                                              d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
+                                                    </defs>
+                                                    <g class="moving-waves">
+                                                        <use xlink:href="#card-wave" x="48" y="-1"
+                                                             fill="rgba(255,255,255,0.30"></use>
+                                                        <use xlink:href="#card-wave" x="48" y="3"
+                                                             fill="rgba(255,255,255,0.35)"></use>
+                                                        <use xlink:href="#card-wave" x="48" y="5"
+                                                             fill="rgba(255,255,255,0.25)"></use>
+                                                        <use xlink:href="#card-wave" x="48" y="8"
+                                                             fill="rgba(255,255,255,0.20)"></use>
+                                                        <use xlink:href="#card-wave" x="48" y="13"
+                                                             fill="rgba(255,255,255,0.15)"></use>
+                                                        <use xlink:href="#card-wave" x="48" y="16"
+                                                             fill="rgba(255,255,255,0.99)"></use>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="text-gradient text-info text-uppercase text-xs font-weight-bold my-2">{{ post.category.title|title }}</h5>
+                                            <h6 style="font-style: italic">{{ post.tags|lower }}</h6>
+                                            <h4>{{ post.title }}</h4>
+                                            <p>
+                                                {{ post.text|safe }}
+                                            </p>
+                                            <div class="author align-items-center">
+                                               {% if user.profile.avatar %}
+                                                    <img src="{{ user.profile.avatar.url }}"
+                                                         alt="..." class="avatar shadow">
+                                                {% else %}
+                                                    <img src="{% static "assets/img/curved-images/curved1.jpg" %}"
+                                                         alt="..." class="avatar shadow">
+                                                {% endif %}
+                                                <div class="name ps-3">
+                                                    <span>{{ post.author|title }}</span>
+                                                    <div class="stats">
+                                                        <small>{{ post.created|timesince }} önce paylaştı.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if user.is_authenticated %}
+                                {% if user.id == post.author.id %}
+                                    <button type="submit" class="btn btn-danger float-end">
+                                        <a href="{% url "post:delete_post" post.pk %}" class="text-white">Sil</a>
+                                    </button>
+                                    <button type="submit" class="btn btn-dark float-end" style="margin-right: 10px">
+                                        <a href="{% url "post:update_post" post.slug %}" class="text-white">Güncelle</a>
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}

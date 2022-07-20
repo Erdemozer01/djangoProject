@@ -1,0 +1,228 @@
+{% extends "blog/index.html" %}
+{% load static %}
+
+{% block title %}İletişim{% endblock %}
+
+{% block content %}
+    <section class="position-relative">
+
+        <div class="page-header min-vh-75"
+             style="background-image: url({% static "blog/images/tasks.jpg" %});">
+            <span class="mask bg-gradient-info"></span>
+
+            {% if messages %}
+                {% for message in messages %}
+                    {% if forloop.last %}
+                        <span class="mask bg-gradient-{{ message.tags }}"></span>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-6 text-center mx-auto">
+                                    <h2 class="text-white mb-3">{{ message|safe }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6 text-center mx-auto">
+                            <h2 class="text-white mb-3"></h2>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="position-absolute w-100 z-index-1 bottom-0">
+                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                     viewBox="0 24 150 40" preserveAspectRatio="none" shape-rendering="auto">
+                    <defs>
+                        <path id="gentle-wave"
+                              d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
+                    </defs>
+                    <g class="moving-waves">
+                        <use xlink:href="#gentle-wave" x="48" y="-1" fill="rgba(255,255,255,0.40"></use>
+                        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.35)"></use>
+                        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.25)"></use>
+                        <use xlink:href="#gentle-wave" x="48" y="8" fill="rgba(255,255,255,0.20)"></use>
+                        <use xlink:href="#gentle-wave" x="48" y="13" fill="rgba(255,255,255,0.15)"></use>
+                        <use xlink:href="#gentle-wave" x="48" y="16" fill="rgba(255,255,255,0.95"></use>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row mt-sm-0 mt-5">
+
+                <div class="col-lg-3 col-md-4 border-end ms-lg-auto">
+                    <div class="p-3 text-center">
+                        <div class="icon icon-shape mb-2">
+                            <svg class="text-info" width="25px" height="25px" viewBox="0 0 43 36" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title>credit-card</title>
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF"
+                                       fill-rule="nonzero">
+                                        <g transform="translate(1716.000000, 291.000000)">
+                                            <g id="credit-card" transform="translate(453.000000, 454.000000)">
+                                                <path class="color-background"
+                                                      d="M43,10.7482083 L43,3.58333333 C43,1.60354167 41.3964583,0 39.4166667,0 L3.58333333,0 C1.60354167,0 0,1.60354167 0,3.58333333 L0,10.7482083 L43,10.7482083 Z"
+                                                      opacity="0.593633743">
+                                                </path>
+                                                <path class="color-foreground"
+                                                      d="M0,16.125 L0,32.25 C0,34.2297917 1.60354167,35.8333333 3.58333333,35.8333333 L39.4166667,35.8333333 C41.3964583,35.8333333 43,34.2297917 43,32.25 L43,16.125 L0,16.125 Z M19.7083333,26.875 L7.16666667,26.875 L7.16666667,23.2916667 L19.7083333,23.2916667 L19.7083333,26.875 Z M35.8333333,26.875 L28.6666667,26.875 L28.6666667,23.2916667 L35.8333333,23.2916667 L35.8333333,26.875 Z"></path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <h6 class="mb-0">Email</h6>
+                        {% for foo in contact %}
+                            <p class="text-info"><a href="mailto:{{ foo.email }}">{{ foo.email }}</a></p>
+                        {% empty %}
+                            <p class="text-info">Email Bulunamadı</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 border-end">
+                    <div class="p-3 text-center">
+                        <div class="icon icon-shape mb-2">
+                            <svg class="text-info" width="25px" height="25px" viewBox="0 0 44 43" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title>megaphone</title>
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g transform="translate(-2168.000000, -591.000000)" fill="#FFFFFF"
+                                       fill-rule="nonzero">
+                                        <g transform="translate(1716.000000, 291.000000)">
+                                            <g id="megaphone" transform="translate(452.000000, 300.000000)">
+                                                <path class="color-foreground"
+                                                      d="M35.7958333,0.273166667 C35.2558424,-0.0603712374 34.5817509,-0.0908856664 34.0138333,0.1925 L19.734,7.33333333 L9.16666667,7.33333333 C4.10405646,7.33333333 0,11.4373898 0,16.5 C0,21.5626102 4.10405646,25.6666667 9.16666667,25.6666667 L19.734,25.6666667 L34.0138333,32.8166667 C34.5837412,33.1014624 35.2606401,33.0699651 35.8016385,32.7334768 C36.3426368,32.3969885 36.6701539,31.8037627 36.6666942,31.1666667 L36.6666942,1.83333333 C36.6666942,1.19744715 36.3370375,0.607006911 35.7958333,0.273166667 Z"></path>
+                                                <path class="color-foreground"
+                                                      d="M38.5,11 L38.5,22 C41.5375661,22 44,19.5375661 44,16.5 C44,13.4624339 41.5375661,11 38.5,11 Z"
+                                                      opacity="0.601050967"></path>
+                                                <path class="color-background"
+                                                      d="M18.5936667,29.3333333 L10.6571667,29.3333333 L14.9361667,39.864 C15.7423448,41.6604248 17.8234451,42.4993948 19.6501416,41.764381 C21.4768381,41.0293672 22.3968823,38.982817 21.7341667,37.1286667 L18.5936667,29.3333333 Z"
+                                                      opacity="0.601050967"></path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <h6 class="mb-0">Telefon</h6>
+                        {% for foo in contact %}
+                            <p class="text-info"><a href="Tel:{{ foo.phone }}">{{ foo.phone }}</a></p>
+                        {% empty %}
+                            <p class="text-info">Telefon Bulunamadı</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 me-lg-auto">
+
+                    <div class="p-3 text-center">
+                        <div class="icon icon-shape mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                                 class="bi bi-signpost-2-fill text-info" viewBox="0 0 16 16">
+                                <path d="M7.293.707A1 1 0 0 0 7 1.414V2H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h5v1H2.5a1 1 0 0 0-.8.4L.725 8.7a.5.5 0 0 0 0 .6l.975 1.3a1 1 0 0 0 .8.4H7v5h2v-5h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H9V6h4.5a1 1 0 0 0 .8-.4l.975-1.3a.5.5 0 0 0 0-.6L14.3 2.4a1 1 0 0 0-.8-.4H9v-.586A1 1 0 0 0 7.293.707z"/>
+                            </svg>
+                        </div>
+
+                        <h6 class="mb-0">Adres</h6>
+                        {% for foo in contact %}
+                            <p class="text-info text-sm">{{ foo.address }}</p>
+                        {% empty %}
+                            <p class="text-info text-sm">Adres Bulunamadı</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-md-7 py-5">
+        <div class="container">
+
+            <div class="row align-items-center">
+                <div class="col-lg-8 col-10 mx-auto text-center">
+                    <div class="mb-md-5">
+                        <h3>Bize Yazın</h3>
+                        <p>
+                            Her türlü görüş öneri ve talepleriniz için yazın
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card card-plain">
+                        <form id="contact-form" method="post" autocomplete="off">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Ad Soyad</label>
+                                            <div class="input-group mb-4">
+                                                <span class="input-group-text"><i
+                                                        class="ni ni-badge"></i></span>
+                                                {{ form.name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ps-md-2">
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <div class="input-group mb-4">
+                                                <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                                {{ form.email }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ps-md-2">
+                                        <div class="form-group">
+                                            <label>Konu</label>
+                                            <div class="input-group mb-4">
+                                                <span class="input-group-text"><i class="ni ni-books"></i></span>
+                                                {{ form.topic }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ps-md-2">
+                                        <div class="form-group">
+                                            <label>Telefon</label>
+                                            <div class="input-group mb-4">
+                                                    <span class="input-group-text"><i
+                                                            class="ni ni-mobile-button"></i></span>
+                                                {{ form.phone }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4 mt-md-0 mt-4">
+                                    <label>Nasıl Yardımcı Olabiliriz ?</label>
+                                    {{ form.message }}
+                                </div>
+                                <div class="form-check form-switch mb-4 text-center">
+                                    <span>{{ form.terms }}</span>
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                                        <a href="{% url 'blog:terms' %}" class="text-dark">
+                                            <u>Koşul ve Şartları Kabul ediyorum.</u>
+                                        </a>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button type="submit" class="btn bg-gradient-info mt-4">Gönder</button>
+                                    </div>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+

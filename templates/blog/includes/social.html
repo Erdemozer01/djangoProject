@@ -1,0 +1,15 @@
+{% load social %}
+{% social as social %}
+
+<div class="p-4">
+    <h4 class="fst-italic">Sosyal Medya</h4>
+    <ol class="list-unstyled">
+        {% for foo in social %}
+            <li><a href="{{ foo.url }}" target="_blank">{{ foo.name|title }}</a></li>
+        {% empty %}
+            <li><a href="#">GitHub</a></li>
+            <li><a href="#">Twitter</a></li>
+            <li><a href="#">Facebook</a></li>
+        {% endfor %}
+    </ol>
+</div>

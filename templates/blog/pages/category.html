@@ -1,0 +1,146 @@
+{% extends 'blog/index.html' %}
+{% load static %}
+
+{% block title %} Kategori {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block body_class %} presentation-page {% endblock %}
+
+{% block content %}
+
+    <!-- -------- START HEADER 4 w/ search book a ticket form ------- -->
+    <header>
+        <div class="page-header min-vh-50"
+             style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/minimal-interior.jpg')">
+            <span class="mask bg-gradient-info"></span>
+        </div>
+        <div class="position-relative overflow-hidden" style="height:36px;margin-top:-35px;">
+            <div class="w-full absolute bottom-0 start-0 end-0"
+                 style="transform: scale(2);transform-origin: top center;color: #fff;">
+                <svg viewBox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 48H1437.5H2880V0H2160C1442.5 52 720 0 720 0H0V48Z" fill="currentColor"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row bg-white shadow-lg mt-n6 border-radius-md pb-4 p-3 position-relative w-75 mx-auto">
+                <div class="col-lg-8 mt-lg-n2 mt-2">
+                    <label>Arama</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input class="form-control" placeholder="Gönderi Arayın" type="text">
+                    </div>
+                </div>
+                <div class="col-lg-4 d-flex align-items-center mt-lg-auto mt-2">
+                    <button type="button" class="btn bg-gradient-info w-100 mb-0">Ara</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- -------- END HEADER 4 w/ search book a ticket form ------- -->
+
+    <div class="container mt-7">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    {% if object_list %}
+                        {% for foo in object_list %}
+                            {% if forloop.last %}
+                                <div class="col-lg-6 justify-content-center d-flex flex-column">
+                                    <div class="card">
+                                        <div class="d-block blur-shadow-image">
+                                            <img src="{{ foo.category.image.url }}"
+                                                 alt="img-blur-shadow-blog-2" class="img-fluid border-radius-lg">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 justify-content-center d-flex flex-column pl-lg-5 pt-lg-0 pt-3">
+                                    <h3 class="card-title">
+                                        <a href="javascript:;" class="text-dark">
+                                            {{ foo.category.title|title }} Kategorisi
+                                        </a>
+                                    </h3>
+                                    <p class="card-description">
+                                        Açıklama : {{ foo.category.explain }}
+                                    </p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="row mt-5">
+                        {% for post in object_list %}
+                            <div class="col-lg-4 mb-lg-0 mb-4">
+                                <!-- Start Card Blog Fullbackground - text centered -->
+                                <a href="{% url 'post:post_detail' post.category.title.lower post.title|slugify post.pk %}">
+                                    <div class="card card-background move-on-hover">
+                                        <div class="full-background"
+                                             style="background-image: url({{ post.cover.url }})"></div>
+                                        <div class="card-body pt-12">
+                                            <h4 class="text-white">{{ post.title }}</h4>
+                                            <p>{{ post.text|safe|truncatechars_html:50 }}</p>
+                                            <p>Tarih : {{ post.created.date }}</p>
+                                            <p>Yazar : {{ post.author|title }}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <!-- End Card Blog Fullbackground - text centered -->
+                            </div>
+                        {% empty %}
+                            <p class="text-center">Kategoriye Ait Gönderi Bulunamadı.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if paginator %}
+                    <ul class="pagination pagination-info my-5 ">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item ms-auto">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                   aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-left"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item ms-auto disabled">
+                                <a class="page-link" href="#"
+                                   aria-label="Previous">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-left"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% for i in page_obj.paginator.page_range %}
+
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                            </li>
+
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-right"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:;" aria-label="Next">
+                                <span aria-hidden="true"><i class="fa fa-angle-double-right"
+                                                            aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+

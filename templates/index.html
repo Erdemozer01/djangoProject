@@ -1,0 +1,163 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+    {% if request.user.is_superuser %}
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <!-- Card header -->
+                        <div class="card-header pb-0">
+                            <div class="d-lg-flex">
+                                <div>
+                                    <h5 class="mb-0">Kullanıcılar</h5>
+                                </div>
+                                {% if user.is_superuser or user.is_staff %}
+                                    <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                        <div class="ms-auto my-auto">
+                                            <a href="{% url "user_add" %}" class="btn bg-gradient-dark btn-sm mb-0"
+                                               target="_blank">+&nbsp; Kullanıcı Ekle</a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pb-0">
+                            <div class="table-responsive">
+                                <table class="table table-flush" id="products-list">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>İD</th>
+                                        <th>Kullanıcı Adı</th>
+                                        <th>Adı</th>
+                                        <th>Soyadı</th>
+                                        <th>Email</th>
+                                        <th>Son Görülme</th>
+                                        <th>Katılma Tarihi</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td class="text-sm mx-auto">{{ user.id }}</td>
+                                            <td class="text-sm mx-auto">@{{ user.username }}</td>
+                                            <td class="text-sm">{{ user.first_name }}</td>
+                                            <td class="text-sm">{{ user.last_name }}</td>
+                                            <td class="text-sm">{{ user.email }}</td>
+                                            <td class="text-sm">{{ user.last_login }}</td>
+                                            <td class="text-sm">{{ user.date_joined }}</td>
+                                            <td class="text-sm">
+                                                <a href="{% url "useredit" user.pk user.username|slugify %}" class="mx-3"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-original-title="Düzenle">
+                                                    <i class="fas fa-user-edit text-secondary"></i>
+                                                </a>
+                                                <a href="{% url "user_del" user.id %}"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-original-title="Sil">
+                                                    <i class="fas fa-trash text-secondary"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <!-- Card header -->
+                        <div class="card-header pb-0">
+                            <div class="d-lg-flex">
+                                <div>
+                                    <h5 class="mb-0">Gönderiler</h5>
+                                </div>
+                                <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                    <div class="ms-auto my-auto">
+                                        <a href="{% url "post:add_post" %}" class="btn bg-gradient-dark btn-sm mb-0"
+                                           target="_blank">+&nbsp; Gönderi Ekle</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pb-0">
+                            <div class="table-responsive">
+                                <table class="table table-flush" id="products-list">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>Tarih</th>
+                                        <th>Yazar</th>
+                                        <th>Kategori</th>
+                                        <th>Başlık</th>
+                                        <th>Etiket</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mx-auto">
+                                    {% for object in object_list %}
+                                        <tr>
+                                            <td class="text-sm">{{ object.created }}</td>
+                                            <td class="text-sm">{{ object.author|title }}</td>
+                                            <td class="text-sm">{{ object.category.title }}</td>
+                                            <td class="text-sm">{{ object.title }}</td>
+                                            <td class="text-sm">{{ object.tags }}</td>
+                                            <td class="text-sm">
+                                                <a href="{% url "post:post_detail" object.category.title.lower object.slug object.pk %}"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-original-title="Ayrıntılar">
+                                                    <i class="fas fa-eye text-secondary"></i>
+                                                </a>
+                                                <a href="{% url "post:update_post" object.slug %}" class="mx-3"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-original-title="Düzenle">
+                                                    <i class="fas fa-user-edit text-secondary"></i>
+                                                </a>
+                                                <a href="{% url "post:delete_post" object.pk %}"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-original-title="Sil">
+                                                    <i class="fas fa-trash text-secondary"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <section class="my-10">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 my-auto">
+                        <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
+                        <a href="{% url "blog:home" %}">
+                            <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
+                        </a>
+
+                    </div>
+                    <div class="col-lg-6 my-auto position-relative">
+                        <img class="w-100 position-relative"
+                             src="https://appsrv1-147a1.kxcdn.com/soft-ui-design-pro/img/illustrations/error-404.png"
+                             alt="404-page-page-error">
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endblock content %}
