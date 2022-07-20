@@ -19,6 +19,7 @@ from .views import DashBoardView, MessageDetail, MessageDeleteView, UserEditView
 from accounts.views import UserRegister
 
 urlpatterns = [
+    path('', include('django.contrib.auth.urls')),
     path('register/', UserRegister.as_view(), name="register"),
     path('dashboard/', DashBoardView.as_view(), name="dashboard"),
     path('edit/<int:pk>/<slug:username>/', UserEditView.as_view(), name="useredit"),
