@@ -10,8 +10,14 @@ from .forms import UserRegistrationForm, UserEditForm, UserCreationForm, Profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Profile
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.views import PasswordChangeView, LogoutView
 from django.contrib.auth.forms import PasswordChangeForm
+
+
+class MyLogoutView(LogoutView):
+    redirect_field_name = "blog:home"
+
+
 
 
 class DashBoardView(ListView, LoginRequiredMixin):
