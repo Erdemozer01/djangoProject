@@ -82,6 +82,7 @@ class ProfileView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
         context['posts'] = Posts.objects.all().filter(author=self.request.user.id)
+        context['profile'] = Profile.objects.all().filter(author=self.request.user.id)
         return context
 
 
