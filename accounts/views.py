@@ -14,10 +14,6 @@ from django.contrib.auth.views import PasswordChangeView, LogoutView
 from django.contrib.auth.forms import PasswordChangeForm
 
 
-class MyLogoutView(LogoutView):
-    redirect_field_name = "blog:home"
-
-
 
 
 class DashBoardView(ListView, LoginRequiredMixin):
