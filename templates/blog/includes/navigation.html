@@ -23,8 +23,8 @@
                     <li class="dropdown text-end d-lg-none" style="list-style-type: none">
                         <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            {% if user.profile.avatar %}
-                                <img src="{{ user.profile.avatar.url }}" alt="mdo" width="32" height="32"
+                            {% if request.user.profile.avatar %}
+                                <img src="{{ request.user.profile.avatar.url }}" alt="mdo" width="32" height="32"
                                      class="rounded-circle">
                             {% else %}
                                 <img src="{% static "blog/assets/img/curved-images/curved1.jpg" %}" width="32" height="32"
@@ -33,7 +33,7 @@
 
                         </a>
                         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                            {% if user.is_superuser %}
+                            {% if request.user.is_superuser %}
                                 <li><a class="dropdown-item"
                                        href="{% url 'dashboard' %}">{{ request.user|title }}</a>
                                 </li>
@@ -45,13 +45,13 @@
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li><a class="dropdown-item" href="/logout/">Çıkış</a></li>
-                            {% elif user.is_anonymous %}
+                            {% elif request.user.is_anonymous %}
                                 <li><a class="dropdown-item" href="{% url 'login' %}">Giriş Yap</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li><a class="dropdown-item" href="{% url "register" %}">Üye Ol</a></li>
-                            {% elif user.is_staff %}
+                            {% elif request.user.is_staff %}
 
                                 <li><a class="dropdown-item"
                                        href="{% url "profile" user.pk user.username %}">{{ request.user|title }}</a>
@@ -62,7 +62,7 @@
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li><a class="dropdown-item" href="/logout/">Çıkış</a></li>
-                            {% elif user.is_active %}
+                            {% elif request.user.is_active %}
                                 <li><a class="dropdown-item"
                                        href="#">{{ request.user|title }}</a>
                                 </li>
@@ -488,8 +488,8 @@
                             <li class="nav-item dropdown text-end">
                                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
                                    id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {% if user.profile.avatar %}
-                                        <img src="{{ user.profile.avatar.url }}" alt="mdo" width="32" height="32"
+                                    {% if request.user.profile.avatar %}
+                                        <img src="{{ request.user.profile.avatar.url }}" alt="mdo" width="32" height="32"
                                              class="rounded-circle">
                                     {% else %}
                                         <img src="{% static "assets/img/curved-images/curved1.jpg" %}" alt="mdo"
@@ -519,7 +519,7 @@
                                             <hr class="dropdown-divider">
                                         </li>
                                         <li><a class="dropdown-item" href="{% url "register" %}">Üye Ol</a></li>
-                                    {% elif user.is_staff %}
+                                    {% elif request.user.is_staff %}
                                         <li><a class="dropdown-item"
                                                href="{% url "profile" user.pk user.username %}">{{ request.user|title }}</a>
                                         </li>
@@ -532,7 +532,7 @@
                                             <hr class="dropdown-divider">
                                         </li>
                                         <li><a class="dropdown-item" href="{% url 'logout' %}">Çıkış</a></li>
-                                    {% elif user.is_active %}
+                                    {% elif request.user.is_active %}
                                         <li><a class="dropdown-item"
                                                href="#">{{ request.user|title }}</a>
                                         </li>
