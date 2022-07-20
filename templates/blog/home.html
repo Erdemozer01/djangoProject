@@ -63,7 +63,7 @@
                                             </p>
                                             <div class="author align-items-center">
                                                 {% if request.user.profile.avatar %}
-                                                    <img src="{{ request.user.profile.avatar.url }}"
+                                                    <img src="{{ user.profile.avatar.url }}"
                                                          alt="..." class="avatar shadow">
                                                 {% else %}
                                                     <img src="{% static "assets/img/curved-images/curved1.jpg" %}"
