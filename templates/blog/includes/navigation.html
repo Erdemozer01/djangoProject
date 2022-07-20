@@ -521,7 +521,7 @@
                                         <li><a class="dropdown-item" href="{% url "register" %}">Üye Ol</a></li>
                                     {% elif request.user.is_staff %}
                                         <li><a class="dropdown-item"
-                                               href="{% url "profile" user.pk user.username %}">{{ request.user|title }}</a>
+                                               href="{% url "profile" request.user.pk request.user.username %}">{{ request.user|title }}</a>
                                         </li>
                                         </li>
                                         <li><a class="dropdown-item" href="{% url 'post:add_post' %}">Gönderi Ekle</a>
