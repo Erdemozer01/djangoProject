@@ -14,11 +14,11 @@ from django.contrib import messages
 class HomeView(ListView):
     template_name = 'blog/home.html'
     model = Posts
-    queryset = Posts.objects.all()
+    queryset = Posts.objects.all().order_by('-id')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['user'] = User.objects.get(username='username')
+        context['user'] = User.objects.all().filter(username=user_site)
         return context
 
 
