@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from bioinformatic.forms.file import FileReadForm, FastaIdForm, GenbankIdForm
+from bioinformatic.forms.file import FileReadForm, GenbankIdForm
 from bioinformatic.forms.writing import FastaWritingForm
 from bioinformatic.forms.add import AddFastaData
 from Bio import SeqIO
-from bioinformatic.models import Fasta, Genbank
+from bioinformatic.models import Genbank
 from pathlib import Path
 import os
 
