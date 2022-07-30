@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'accounts.apps.AccountsConfig',
     'post.apps.PostConfig',
+    'bioinformatic',
     'django_cleanup',
     'bootstrap5',
     'ckeditor',

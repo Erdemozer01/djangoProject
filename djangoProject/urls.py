@@ -10,5 +10,6 @@ urlpatterns = [
                   path('accounts/', include('accounts.urls')),
                   path('', include('blog.urls')),
                   path('post/', include('post.urls')),
+                  path('bioinformatic/', include('bioinformatic.urls')),
                   path('logout/', LogoutView.as_view(), name="logout"),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

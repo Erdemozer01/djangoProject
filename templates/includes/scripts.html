@@ -1,7 +1,6 @@
 {% load static %}
 <!--   Core JS Files   -->
-<script src="{% static "assets/js/core/popper.min.js" %}"></script>
-<script src="{% static "assets/js/core/bootstrap.min.js" %}"></script>
+<script src="{% static "assets/js/core/bootstrap.bundle.min.js" %}"></script>
 
 <script src="{% static "assets/js/plugins/perfect-scrollbar.min.js" %}"></script>
 <script src="{% static "assets/js/plugins/smooth-scrollbar.min.js" %}"></script>
@@ -11,7 +10,11 @@
 
 <script src="{% static "assets/js/dark-mode-handler.js" %}"></script>
 <script src="{% static "assets/js/plugins/datatables.js" %}"></script>
-<script src="{% static "ckeditor/ckeditor/plugins/exportpdf/plugindefinition.js" %}"></script>
+<script src="{% static "assets/js/plugins/chartjs.min.js" %}"></script>
+<script src="{% static "assets/js/plugins/threejs.js" %}"></script>
+<script src="{% static "assets/js/plugins/orbit-controls.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 
 <script>
     var win = navigator.platform.indexOf('Win') > -1;

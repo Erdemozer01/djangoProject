@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+{% load static bootstrap5 %}
+{% block title %} Fasya dosyası okuması {% endblock %}
+
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-10 col-12 mx-auto">
+                <div class="card card-body mt-3">
+                    <h6 class="mb-0">Fasta Yazma</h6>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-12 mx-auto">
+                            <div class="form-group ">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {% bootstrap_form form %}
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="submit" name="button" class="btn btn-light m-0">
+                                            Yaz
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

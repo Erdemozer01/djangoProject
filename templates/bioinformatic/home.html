@@ -1,0 +1,62 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Biyoinformatik Anasayfa {% endblock %}
+
+{% block content %}
+    <!-- -------- START HEADER 11 w/ carousel ------- -->
+    <header>
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for object in object_list %}
+                    {% if forloop.last %}
+                        <div class="carousel-item active">
+                            <div class="page-header min-vh-75 m-3 border-radius-xl"
+                                 style="background-image: url({{ object.image.url }});">
+                                <span class="mask bg-gradient-dark"></span>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-6 my-auto">
+                                            <h4 class="text-white mb-0 fadeIn1 fadeInBottom">{{ object.title }}</h4>
+                                            <h1 class="text-white fadeIn2 fadeInBottom">{{ object.text }}</h1>
+                                            <p class="lead text-white opacity-8 fadeIn3 fadeInBottom">
+                                                {{ object.content }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="carousel-item">
+                            <div class="page-header min-vh-75 m-3 border-radius-xl"
+                                 style="background-image: url({{ object.image.url }});">
+                                <span class="mask bg-gradient-dark"></span>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-6 my-auto">
+                                            <h4 class="text-white mb-0 fadeIn1 fadeInBottom">{{ object.title }}</h4>
+                                            <h1 class="text-white fadeIn2 fadeInBottom">{{ object.text }}</h1>
+                                            <p class="lead text-white opacity-8 fadeIn3 fadeInBottom">{{ object.content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="min-vh-75 position-absolute w-100 top-0">
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon position-absolute bottom-50" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon position-absolute bottom-50" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+

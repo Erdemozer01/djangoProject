@@ -1,0 +1,44 @@
+{% extends "index.html" %}
+{% load static bootstrap5 %}
+{% block title %} DNA ANALİZ {% endblock %}
+
+
+{% block content %}
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-10 col-12 mx-auto">
+                <div class="card card-body mt-3">
+                    <h6 class="mb-0">Analiz Sonuçları</h6>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-12 mx-auto">
+                            <div class="form-group ">
+                                <form method="post" enctype="multipart/form-data">
+
+
+                                    <p>Sekans : {{ sekans|truncatechars_html:300 }}</p>
+                                    <p>Sekans Uzunluğu : {{ len }}</p>
+                                    <p>Adenin Sayısı : {{ A }}</p>
+                                    <p>Guanin Sayısı : {{ G }}</p>
+                                    <p>Sitozin Sayısı : {{ C }}</p>
+                                    <p>Timin Sayısı : {{ T }}</p>
+                                    <p>Yüzde GC : {{ GC }}</p>
+
+
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="button" name="button" class="btn btn-light m-0">
+                                            <a href="{% url "bioinformatic:sekans_analiz" %}">Tamam</a>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

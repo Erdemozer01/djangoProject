@@ -20,10 +20,10 @@
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"/>
     <!-- Nucleo Icons -->
-    <link href="{% static "assets/css/nucleo-svg.css" %}" rel="stylesheet"/>
+    <link href="{% static "assets/css/nucleo-icons.css" %}" rel="stylesheet"/>
     <link href="{% static "assets/css/nucleo-svg.css" %}" rel="stylesheet"/>
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <script src="{% static "assets/js/42d5adcbca.js" %}" crossorigin="anonymous"></script>
     <link href="{% static "assets/css/nucleo-svg.css" %}" rel="stylesheet"/>
     <!-- CSS Files -->
     <link id="pagestyle" href="{% static "assets/css/soft-ui-dashboard.css" %}" rel="stylesheet"/>
@@ -38,8 +38,6 @@
 
 <body class="g-sidenav-show bg-gray-100">
 
-{% if request.user.is_staff %}
-
     {% include "includes/sidebar.html" %}
 
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
@@ -49,31 +47,6 @@
         {% block content %}{% endblock %}
 
     </main>
-{% else %}
-    <section class="my-10">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 my-auto">
-                    <h1 class="display-1 text-bolder text-gradient text-danger">Yetkili Değilsiniz</h1>
-                    <a href="{% url "blog:home" %}">
-                        <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
-                    </a>
-                    <a href="{% url "login" %}">
-                        <button type="button" class="btn bg-gradient-dark mt-4 text-white">Giriş Yap</button>
-                    </a>
-
-                </div>
-
-                <div class="col-lg-6 my-auto position-relative">
-                    <img class="w-100 position-relative"
-                         src="https://appsrv1-147a1.kxcdn.com/soft-ui-design-pro/img/illustrations/error-404.png"
-                         alt="404-page-page-error">
-                </div>
-            </div>
-        </div>
-    </section>
-{% endif %}
-
 
 {% if request.user.is_superuser %}
     <!-- APP Configurator -->
@@ -89,7 +62,7 @@
 
 
 <!-- Github buttons -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script async defer src="{% static "assets/js/buttons.js" %}"></script>
 
 <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="{% static "assets/js/soft-ui-dashboard.min.js" %}"></script>

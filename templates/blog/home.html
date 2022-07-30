@@ -63,13 +63,13 @@
                                             </p>
                                             <div class="author align-items-center">
 
-                                                    {% if post.author.profile.avatar %}
-                                                        <img src="{{ post.author.profile.avatar.url }}"
-                                                             alt="..." class="avatar shadow">
-                                                    {% else %}
-                                                        <img src="{% static "assets/img/curved-images/curved1.jpg" %}"
-                                                             alt="..." class="avatar shadow">
-                                                    {% endif %}
+                                                {% if post.author.profile.avatar %}
+                                                    <img src="{{ post.author.profile.avatar.url }}"
+                                                         alt="..." class="avatar shadow">
+                                                {% else %}
+                                                    <img src="{% static "assets/img/curved-images/curved1.jpg" %}"
+                                                         alt="..." class="avatar shadow">
+                                                {% endif %}
 
 
 
@@ -87,7 +87,6 @@
                             </div>
                         </div>
                     </section>
-
                 {% empty %}
                     <section class="py-4">
                         <div>
