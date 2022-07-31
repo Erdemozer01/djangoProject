@@ -3,64 +3,64 @@
 {% cover as covers %}
 
 <header class="header-2">
-        {% for cover in covers %}
-            {% if forloop.last %}
-                {% if cover.image %}
-                    <div class="page-header min-vh-75 relative"
-                         style="background-image: url({{ cover.image.url }})">
-                    {% if cover.theme %}
-                        <span class="mask bg-gradient-{{ cover.theme }}"></span>
-                    {% else %}
-                        <span class="mask bg-gradient-dark"></span>
-                    {% endif %}
+    {% for cover in covers %}
+        {% if forloop.last %}
+            {% if cover.image %}
+                <div class="page-header min-vh-75 relative"
+                     style="background-image: url({{ cover.image.url }})">
+                {% if cover.theme %}
+                    <span class="mask bg-gradient-{{ cover.theme }}"></span>
                 {% else %}
-                    <div class="page-header min-vh-75 relative"
-                         style="background-image: url({% static 'blog/assets/img/curved-images/curved.jpg' %})">
+                    <span class="mask bg-gradient-dark"></span>
                 {% endif %}
+            {% else %}
+                <div class="page-header min-vh-75 relative"
+                     style="background-image: url({% static 'blog/assets/img/curved-images/curved.jpg' %})">
             {% endif %}
-        {% empty %}
-            <div class="page-header min-vh-75 relative"
-                 style="background-image: url({% static 'blog/assets/img/curved-images/curved.jpg' %})">
-        {% endfor %}
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center mx-auto">
-                    <h1 class="text-white pt-3 mt-n0">
-                        {% for foo in covers %}
-                            {% if forloop.last %}
-                                <a class="text-white"
-                                   href="#">{{ foo.title }}</a>
-                                <p class="lead text-white mt-3">
-                                    {{ foo.text }}
-                                </p>
-                            {% endif %}
-                        {% empty %}
-                            <a class="text-white" target="_blank"
-                               href="#">Üst Kapak</a>
+        {% endif %}
+    {% empty %}
+        <div class="page-header min-vh-75 relative"
+             style="background-image: url({% static 'blog/assets/img/curved-images/curved.jpg' %})">
+    {% endfor %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center mx-auto">
+                <h1 class="text-white pt-3 mt-n0">
+                    {% for foo in covers %}
+                        {% if forloop.last %}
+                            <a class="text-white"
+                               href="#">{{ foo.title }}</a>
                             <p class="lead text-white mt-3">
-                                Açıklama
+                                {{ foo.text }}
                             </p>
-                        {% endfor %}
-                    </h1>
-                </div>
+                        {% endif %}
+                    {% empty %}
+                        <a class="text-white" target="_blank"
+                           href="#">Üst Kapak</a>
+                        <p class="lead text-white mt-3">
+                            Açıklama
+                        </p>
+                    {% endfor %}
+                </h1>
             </div>
         </div>
-        <div class="position-absolute w-100 z-index-1 bottom-0">
-            <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                 viewBox="0 24 150 40" preserveAspectRatio="none" shape-rendering="auto">
-                <defs>
-                    <path id="gentle-wave"
-                          d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"/>
-                </defs>
-                <g class="moving-waves">
-                    <use xlink:href="#gentle-wave" x="48" y="-1" fill="rgba(255,255,255,0.40"/>
-                    <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.35)"/>
-                    <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.25)"/>
-                    <use xlink:href="#gentle-wave" x="48" y="8" fill="rgba(255,255,255,0.20)"/>
-                    <use xlink:href="#gentle-wave" x="48" y="13" fill="rgba(255,255,255,0.15)"/>
-                    <use xlink:href="#gentle-wave" x="48" y="16" fill="rgba(255,255,255,0.95"/>
-                </g>
-            </svg>
-        </div>
-        </div>
-    </header>
+    </div>
+    <div class="position-absolute w-100 z-index-1 bottom-0">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+             viewBox="0 24 150 40" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave"
+                      d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"/>
+            </defs>
+            <g class="moving-waves">
+                <use xlink:href="#gentle-wave" x="48" y="-1" fill="rgba(255,255,255,0.40"/>
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.35)"/>
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.25)"/>
+                <use xlink:href="#gentle-wave" x="48" y="8" fill="rgba(255,255,255,0.20)"/>
+                <use xlink:href="#gentle-wave" x="48" y="13" fill="rgba(255,255,255,0.15)"/>
+                <use xlink:href="#gentle-wave" x="48" y="16" fill="rgba(255,255,255,0.95"/>
+            </g>
+        </svg>
+    </div>
+    </div>
+</header>

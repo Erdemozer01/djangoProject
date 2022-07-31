@@ -206,7 +206,7 @@
                                                         {% if forloop.counter < 5 %}
                                                             <a href="{% url "post:category" foo.slug %}"
                                                                class="dropdown-item border-radius-md">
-                                                                <span class="ps-3">{{ foo.title }}</span>
+                                                                <span class="ps-3">{{ foo.title|title }}</span>
                                                             </a>
                                                         {% endif %}
                                                     {% empty %}
@@ -289,7 +289,7 @@
                                             {% if forloop.counter < 5 %}
                                                 <a href="{% url "post:category" foo.slug %}"
                                                    class="dropdown-item border-radius-md">
-                                                    <span class="ps-3">{{ foo.title }}</span>
+                                                    <span class="ps-3">{{ foo.title|title }}</span>
                                                 </a>
                                             {% endif %}
                                         {% empty %}
