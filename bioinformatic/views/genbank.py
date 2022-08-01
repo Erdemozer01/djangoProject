@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from bioinformatic.forms.file import FileReadForm, GenbankIdForm
-from bioinformatic.forms.writing import FastaWritingForm
+from bioinformatic.forms.writing import GenbankWritingForm
 from bioinformatic.forms.add import AddFastaData
 from Bio import SeqIO
 from bioinformatic.models import Genbank
@@ -28,6 +28,15 @@ def genbank_read(request):
 
             file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['file']))
             handle_uploaded_file(request.FILES['file'])
+            try:
+
+                with open(file, 'r') as f:
+                    f.read()
+
+            except UnicodeDecodeError:
+                os.remove(file)
+                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Zip Dosyası Seçtiniz'})
+
             records = SeqIO.parse(file, "genbank")
 
             for record in records:
@@ -63,48 +72,66 @@ def genbank_region_find(request):
         if genbank.is_valid():
             sequence = Genbank.objects.get(gene=genbank.cleaned_data['gene'])
 
-            return render(request, 'bioinformatic/fasta/sequence.html', {'seq': sequence, 'len': len(sequence.sekans)})
+            return render(request, 'bioinformatic/genbank/sequence.html', {'seq': sequence, 'len': len(sequence.sekans)})
 
     return render(request, 'bioinformatic/fasta/id.html', {'form': genbank, 'bre': 'Genbank Dosyası Okuması'})
 
 
 def genbank_writing(request):
-    fastaform = FastaWritingForm(request.POST or request.GET)
+    form = GenbankWritingForm(request.POST or request.GET)
     if request.method == "POST":
-        if fastaform.is_valid():
+        if form.is_valid():
 
-            id = fastaform.cleaned_data["id"]
-            descriptions = fastaform.cleaned_data["description"]
-            sequence = fastaform.cleaned_data["sequence"]
-            sequence = Seq(sequence)
-            bad_chars = [';', ':', '!', "*", "\n", '"', "\r"]
+            lokus = form.cleaned_data["lokus"]
+            id = form.cleaned_data["id"]
+            descriptions = form.cleaned_data["description"]
+            sequence = form.cleaned_data["sequence"]
+            molecule_type = form.cleaned_data["molecule_type"]
+            keywords = form.cleaned_data["keywords"]
+            taxonomy = form.cleaned_data["taxonomy"]
+            references = form.cleaned_data["references"]
+            dbxref = form.cleaned_data["dbxref"]
+            source = form.cleaned_data["source"]
+            organism = form.cleaned_data["organism"]
+            features = form.cleaned_data["features"]
+            sequence = Seq(sequence).upper()
+
+            bad_chars = [';', ':', '!', "*", "\n", '"', "\r", " "]
 
             for i in bad_chars:
                 sequence = sequence.replace(i, '')
 
-            rec1 = SeqRecord(
+            rec2 = SeqRecord(
                 sequence,
                 id=id,
-                description=descriptions
+                description=descriptions, name=lokus, dbxrefs=[].append(dbxref), features=[].append(features)
             )
 
-            file = os.path.join(BASE_DIR, 'files\\file.fasta')
+            rec2.annotations["molecule_type"] = molecule_type
+            rec2.annotations["keywords"] = keywords
+            rec2.annotations["taxonomy"] = taxonomy
+            rec2.annotations["lokus"] = lokus
+            rec2.annotations["source"] = source
+            rec2.annotations["organism"] = organism
+            rec2.annotations["references"] = references
 
-            SeqIO.write(rec1, file, "fasta")
+            file = os.path.join(BASE_DIR, 'files\\file.gbk')
 
-            return redirect("bioinformatic:download")
+            SeqIO.write(rec2, file, "genbank")
+
+            return redirect("bioinformatic:genbank_download")
 
         else:
-
             msg = "Bir hata meydana geldi"
 
-            return render(request, 'bioinformatic/fasta/notfound.html', {
-                "msg": msg
-            })
+            return render(request,
+                          "bioinformatic/fasta/notfound.html", {
+                              "msg": msg
+                          })
 
-    return render(request, "bioinformatic/fasta/writing.html", {
-        "form": fastaform,
-        "bre": "Fasta Dosyası Yazma"
+    return render(request, "bioinformatic/genbank/writing.html", {
+        "form": form,
+        "bre": "Genbank Dosyası Yazma"
     })
 
 

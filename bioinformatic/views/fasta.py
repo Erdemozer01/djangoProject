@@ -1,3 +1,6 @@
+import gzip
+import shutil
+import zipfile
 from django.shortcuts import render, redirect
 from bioinformatic.forms.file import FileReadForm, FastaIdForm
 from bioinformatic.forms.writing import FastaWritingForm
@@ -29,13 +32,26 @@ def fasta_read(request):
 
             file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['file']))
             handle_uploaded_file(request.FILES['file'])
-            records = SeqIO.parse(file, "fasta")
+
+            try:
+
+                with open(file, 'r') as f:
+                    f.read()
+
+            except UnicodeDecodeError:
+                os.remove(file)
+                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Zip Dosyası Seçtiniz'})
+
+
+
+            records = SeqIO.parse(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), "fasta")
 
             for record in records:
                 Fasta.objects.create(gene=record.id, sekans=record.seq)
 
-            open(file, 'r').close()
-            os.remove(file)
+            open(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), 'r').close()
+            os.remove(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])))
+
             if Fasta.objects.exists():
                 return redirect('bioinformatic:lokus_find')
             else:

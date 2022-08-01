@@ -16,4 +16,6 @@ urlpatterns = [
     path('genbank_read/', views.genbank_read, name="genbank_read"),
     path('genbank_region/', views.genbank_region_find, name="genbank_region"),
     path('delete_genbank/', views.delete_genbank, name="genbank_delete"),
+    path('download_genbank/', views.genbank_download, name="genbank_download"),
+    path('genbank_writing/', views.genbank_writing, name="genbank_writing"),
 ]

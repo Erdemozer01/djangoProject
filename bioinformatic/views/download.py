@@ -38,13 +38,14 @@ def fasta_download(request):
 
 def genbank_download(request):
     # Define Django project base directory
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
     filename = 'file.gbk'
     # Define the full file path
-    filepath = "media\\genbank.txt"
+    filepath = os.path.join(BASE_DIR, 'files\\file.gbk')
     # Open the file for reading content
     path = open(filepath, 'r')
+    # Set the mime type
     # Set the mime type
     mime_type, _ = mimetypes.guess_type(filepath)
     # Set the return value of the HttpResponse
@@ -52,11 +53,15 @@ def genbank_download(request):
     # Set the HTTP header for sending to browser
     response['Content-Disposition'] = "attachment; filename=%s" % filename
     # Return the response value
+
     try:
         return response
+
     except FileNotFoundError:
+
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        return render(request, 'laboratory/biyoinformatik/dosya işlemleri/Writing Sequence Files/download.html',
+
+        return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg})
     finally:
         os.remove(filepath)
