@@ -1,4 +1,4 @@
-from blog.models import Inbox
+from blog.models import Inbox, Terms, Contact, Bottom, About, Cover, Social, Titles
 from django.views import generic
 from django.urls import reverse_lazy
 from django.shortcuts import render, reverse, redirect
@@ -12,17 +12,67 @@ from .models import Profile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordChangeView, LogoutView
 from django.contrib.auth.forms import PasswordChangeForm
+from django.views.generic import DetailView, CreateView
 
 
-class DashBoardView(ListView, LoginRequiredMixin):
+
+class AddAboutView(CreateView):
+    template_name = 'accounts/about.html'
+    model = About
+    fields = '__all__'
+    success_url = reverse_lazy('blog_dashboard')
+
+
+def delete_about(request):
+    About.objects.all().delete()
+    if About.DoesNotExist:
+        return redirect('blog_dashboard')
+    return redirect('blog_dashboard')
+
+class AddBottomView(CreateView):
+    template_name = 'accounts/bottom.html'
+    model = Bottom
+    fields = '__all__'
+    success_url = reverse_lazy('blog_dashboard')
+
+
+
+def delete_bottom(request):
+    Bottom.objects.all().delete()
+    if Bottom.DoesNotExist:
+        return redirect('blog_dashboard')
+    return redirect('blog_dashboard')
+
+
+class UsersView(ListView, LoginRequiredMixin):
     template_name = 'index.html'
     model = Posts
     queryset = Posts.objects.all().order_by("-id")
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(DashBoardView, self).get_context_data(**kwargs)
+        context = super(UsersView, self).get_context_data(**kwargs)
         context['users'] = User.objects.all()
         context['messages'] = Inbox.objects.all()
+        return context
+
+
+def blog_dashboard(request):
+    return render(request, 'dashboard/blog.html', context={
+        'bre': "Blog Modelleri",
+        'bottom': Bottom.objects.all(),
+        'about':About.objects.all()
+    })
+
+
+class ProfileDetailView(DetailView, LoginRequiredMixin):
+    template_name = 'dashboard/profil.html'
+    model = Profile
+    queryset = Profile.objects.all()
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ProfileDetailView, self).get_context_data(**kwargs)
+        context['posts'] = Posts.objects.filter(author_id=self.request.path.split('/')[4])
+
         return context
 
 

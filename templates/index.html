@@ -17,14 +17,14 @@
                                 <div>
                                     <h5 class="mb-0">Kullanıcılar</h5>
                                 </div>
-                                {% if user.is_superuser or user.is_staff %}
-                                    <div class="ms-auto my-auto mt-lg-0 mt-4">
-                                        <div class="ms-auto my-auto">
-                                            <a href="{% url "user_add" %}" class="btn bg-gradient-dark btn-sm mb-0"
-                                               target="_blank">+&nbsp; Kullanıcı Ekle</a>
-                                        </div>
+
+                                <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                    <div class="ms-auto my-auto">
+                                        <a href="{% url "user_add" %}" class="btn bg-gradient-dark btn-sm mb-0"
+                                           target="_blank">+&nbsp; Kullanıcı Ekle</a>
                                     </div>
-                                {% endif %}
+                                </div>
+
                             </div>
                         </div>
                         <div class="card-body px-0 pb-0">
@@ -53,7 +53,8 @@
                                             <td class="text-sm">{{ user.last_login }}</td>
                                             <td class="text-sm">{{ user.date_joined }}</td>
                                             <td class="text-sm">
-                                                <a href="{% url "useredit" user.pk user.username|slugify %}" class="mx-3"
+                                                <a href="{% url "useredit" user.pk user.username|slugify %}"
+                                                   class="mx-3"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-original-title="Düzenle">
                                                     <i class="fas fa-user-edit text-secondary"></i>
@@ -140,6 +141,8 @@
                 </div>
             </div>
         </div>
+
+
     {% else %}
         <section class="my-10">
             <div class="container">

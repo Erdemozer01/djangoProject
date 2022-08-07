@@ -35,7 +35,7 @@
                         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
                             {% if request.user.is_superuser %}
                                 <li><a class="dropdown-item"
-                                       href="{% url 'dashboard' %}">{{ request.user|title }}</a>
+                                       href="{% url 'users_dashboard' %}">{{ request.user|title }}</a>
                                 </li>
                                 <li><a class="dropdown-item" href="{% url 'admin:index' %}">Yönetici Paneli</a></li>
 
@@ -501,7 +501,7 @@
 
                                     {% if request.user.is_superuser %}
                                         <li><a class="dropdown-item"
-                                               href="{% url "dashboard" %}">{{ request.user|title }}</a></li>
+                                               href="{% url "users_dashboard" %}">{{ request.user|title }}</a></li>
                                         <li><a class="dropdown-item" href="{% url 'admin:index' %}">Yönetici Paneli</a>
                                         <li><a class="dropdown-item" href="{% url 'post:add_post' %}">Gönderi Ekle</a>
                                         </li>

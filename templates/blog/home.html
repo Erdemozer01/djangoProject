@@ -71,11 +71,11 @@
                                                          alt="..." class="avatar shadow">
                                                 {% endif %}
 
-
-
-
                                                 <div class="name ps-3">
-                                                    <span>{{ post.author|title }}</span>
+                                                    <a href="{% url "profile_detay" post.author.pk post.author|slugify %}">
+                                                        <span>{{ post.author|title }}</span>
+                                                    </a>
+
                                                     <div class="stats">
                                                         <small>{{ post.created|timesince }} önce paylaştı.</small>
                                                     </div>

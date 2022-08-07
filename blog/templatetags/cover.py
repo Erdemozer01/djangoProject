@@ -11,4 +11,4 @@ def cover():
 
 @register.simple_tag()
 def bottom():
-    return Cover.objects.all()
+    return Bottom.objects.all()

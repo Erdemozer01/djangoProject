@@ -1,6 +1,3 @@
-import gzip
-import shutil
-import zipfile
 from django.shortcuts import render, redirect
 from bioinformatic.forms.file import FileReadForm, FastaIdForm
 from bioinformatic.forms.writing import FastaWritingForm
@@ -41,8 +38,6 @@ def fasta_read(request):
             except UnicodeDecodeError:
                 os.remove(file)
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Zip Dosyası Seçtiniz'})
-
-
 
             records = SeqIO.parse(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), "fasta")
 
@@ -121,27 +116,18 @@ def fasta_writing(request):
     })
 
 
-def append_multiple_lines(file_name, lines_to_append):
+def append_new_line(file_name, text_to_append):
+    """Append given text as a new line at the end of file"""
     # Open the file in append & read mode ('a+')
     with open(file_name, "a+") as file_object:
-        appendEOL = False
         # Move read cursor to the start of file.
         file_object.seek(0)
-        # Check if file is not empty
+        # If file is not empty then append '\n'
         data = file_object.read(100)
         if len(data) > 0:
-            appendEOL = True
-        # Iterate over each string in the list
-        for line in lines_to_append:
-            # If file is not empty then append '\n' before first line for
-            # other lines always append '\n' before appending line
-            if appendEOL == True:
-                file_object.write("\n")
-            else:
-                appendEOL = True
-            # Append element at the end of file
-            file_object.write(line)
-            file_object.close()
+            file_object.write("\n")
+        # Append text at the end of file
+        file_object.write(text_to_append)
 
 
 def fasta_add(request):
@@ -164,18 +150,16 @@ def fasta_add(request):
 
                 rec1 = SeqRecord(sequence, id=id, description=descriptions)
 
-                print(rec1)
+                path = "media/{}".format(request.FILES['file'])
 
-                file = os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file']))
-                new = os.path.join(BASE_DIR, 'files\\file.fasta')
+                print(path)
 
-                os.rename(file, new)
-
-                append_multiple_lines(new, rec1)
+                append_new_line(path, SeqIO.write(rec1, path, "fasta"))
 
                 return redirect("bioinformatic:download")
 
             except:
+
                 pass
         else:
 
