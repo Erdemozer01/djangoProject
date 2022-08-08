@@ -15,6 +15,48 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.views.generic import DetailView, CreateView
 
 
+def blog_dashboard(request):
+    return render(request, 'dashboard/blog.html', context={
+        'bre': "Blog Modelleri",
+        'bottom': Bottom.objects.all(),
+        'about': About.objects.all(),
+        'terms': Terms.objects.all(),
+        'contact': Contact.objects.all(),
+        'title': Titles.objects.all()
+    })
+
+
+class AddTitlesView(CreateView):
+    template_name = 'accounts/title.html'
+    model = Titles
+    fields = '__all__'
+    success_url = reverse_lazy('blog_dashboard')
+
+    def get_context_data(self, **kwargs):
+        context = super(AddTitlesView, self).get_context_data(**kwargs)
+        context['bre'] = 'Site Başlığı'
+        return context
+
+
+def delete_titles(request):
+    Titles.objects.all().delete()
+    if Titles.DoesNotExist:
+        return redirect('blog_dashboard')
+    return redirect('blog_dashboard')
+
+class AddTermsView(CreateView):
+    template_name = 'accounts/terms.html'
+    model = Terms
+    fields = '__all__'
+    success_url = reverse_lazy('blog_dashboard')
+
+
+def delete_terms(request):
+    Terms.objects.all().delete()
+    if Terms.DoesNotExist:
+        return redirect('blog_dashboard')
+    return redirect('blog_dashboard')
+
 
 class AddAboutView(CreateView):
     template_name = 'accounts/about.html'
@@ -29,6 +71,7 @@ def delete_about(request):
         return redirect('blog_dashboard')
     return redirect('blog_dashboard')
 
+
 class AddBottomView(CreateView):
     template_name = 'accounts/bottom.html'
     model = Bottom
@@ -36,12 +79,22 @@ class AddBottomView(CreateView):
     success_url = reverse_lazy('blog_dashboard')
 
 
-
 def delete_bottom(request):
     Bottom.objects.all().delete()
     if Bottom.DoesNotExist:
         return redirect('blog_dashboard')
     return redirect('blog_dashboard')
+
+
+class PostsDashBoardView(ListView, LoginRequiredMixin):
+    template_name = 'accounts/posts.html'
+    model = Posts
+    queryset = Posts.objects.all().order_by("-id")
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(PostsDashBoardView, self).get_context_data(**kwargs)
+        context['bre'] = "Gönderi Ekle"
+        return context
 
 
 class UsersView(ListView, LoginRequiredMixin):
@@ -54,14 +107,6 @@ class UsersView(ListView, LoginRequiredMixin):
         context['users'] = User.objects.all()
         context['messages'] = Inbox.objects.all()
         return context
-
-
-def blog_dashboard(request):
-    return render(request, 'dashboard/blog.html', context={
-        'bre': "Blog Modelleri",
-        'bottom': Bottom.objects.all(),
-        'about':About.objects.all()
-    })
 
 
 class ProfileDetailView(DetailView, LoginRequiredMixin):

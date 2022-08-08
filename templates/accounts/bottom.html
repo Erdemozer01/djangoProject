@@ -17,7 +17,8 @@
                                         {% csrf_token %}
                                         {% bootstrap_form form %}
                                         <div class="d-flex justify-content-end mt-4">
-                                            <button type="button" name="button" class="btn btn-light m-0">İptal
+                                            <button type="button" name="button" class="btn btn-light m-0">
+                                                <a href="{% url "blog_dashboard" %}">İptal</a>
                                             </button>
                                             <button type="submit" name="button" class="btn bg-gradient-dark m-0 ms-2">
                                                 Güncelle
