@@ -44,6 +44,7 @@ def delete_titles(request):
         return redirect('blog_dashboard')
     return redirect('blog_dashboard')
 
+
 class AddTermsView(CreateView):
     template_name = 'accounts/terms.html'
     model = Terms

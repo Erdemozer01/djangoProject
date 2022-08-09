@@ -18,4 +18,8 @@ urlpatterns = [
     path('delete_genbank/', views.delete_genbank, name="genbank_delete"),
     path('download_genbank/', views.genbank_download, name="genbank_download"),
     path('genbank_writing/', views.genbank_writing, name="genbank_writing"),
+    path('local_alignment/', views.local_alignment, name="local_alignment"),
+    path('local_alignment/download/', views.local_alignments_download, name="local_alignment_download"),
+    path('global_alignment/', views.global_alignment, name="global_alignment"),
+    path('global_alignment/download/', views.global_alignments_download, name="global_alignment_download"),
 ]

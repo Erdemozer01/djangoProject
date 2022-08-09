@@ -46,7 +46,6 @@ def genbank_download(request):
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
-    # Set the mime type
     mime_type, _ = mimetypes.guess_type(filepath)
     # Set the return value of the HttpResponse
     response = HttpResponse(path, content_type=mime_type)
@@ -95,11 +94,11 @@ def stockholm_download(request):
 
 def global_alignments_download(request):
     # Define Django project base directory
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
-    filename = 'global.txt'
+    filename = 'global_alignment.txt'
     # Define the full file path
-    filepath = "media\\global.txt"
+    filepath = os.path.join(BASE_DIR, 'files\\global_alignment.txt')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
@@ -113,7 +112,7 @@ def global_alignments_download(request):
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        return render(request, 'notfound.html',
+        return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg})
     finally:
         os.remove(filepath)
@@ -121,11 +120,11 @@ def global_alignments_download(request):
 
 def local_alignments_download(request):
     # Define Django project base directory
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
-    filename = 'local.txt'
+    filename = 'local_alignment.txt'
     # Define the full file path
-    filepath = "media\\local.txt"
+    filepath = os.path.join(BASE_DIR, 'files\\local_alignment.txt')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
@@ -139,7 +138,7 @@ def local_alignments_download(request):
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        return render(request, 'notfound.html',
+        return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg})
     finally:
         os.remove(filepath)
