@@ -150,16 +150,17 @@ def fasta_add(request):
 
                 rec1 = SeqRecord(sequence, id=id, description=descriptions)
 
-                path = "media/{}".format(request.FILES['file'])
+                file_path = path + "{}".format(request.FILES['file'])
 
-                print(path)
+                print(file_path)
 
-                append_new_line(path, SeqIO.write(rec1, path, "fasta"))
+                app = open(file_path, 'a+')
+                app.write(SeqIO.write(rec1, file_path, 'fasta'))
+                app.close()
 
                 return redirect("bioinformatic:download")
 
             except:
-
                 pass
         else:
 
