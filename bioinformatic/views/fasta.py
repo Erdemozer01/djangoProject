@@ -42,7 +42,7 @@ def fasta_read(request):
             records = SeqIO.parse(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), "fasta")
 
             for record in records:
-                Fasta.objects.create(gene=record.id, sekans=record.seq)
+                Fasta.objects.create(gene=record.id, sequence=record.seq)
 
             open(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), 'r').close()
             os.remove(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])))
@@ -71,7 +71,7 @@ def lokus_find(request):
         if fasta.is_valid():
             sequence = Fasta.objects.get(gene=fasta.cleaned_data['gene'])
 
-            return render(request, 'bioinformatic/fasta/sequence.html', {'seq': sequence, 'len': len(sequence.sekans)})
+            return render(request, 'bioinformatic/fasta/sequence.html', {'seq': sequence, 'len': len(sequence.sequence)})
 
     return render(request, 'bioinformatic/fasta/id.html', {'form': fasta, 'bre': 'Fasta Dosyası Okuması'})
 

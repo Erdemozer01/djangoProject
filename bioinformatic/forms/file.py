@@ -19,15 +19,13 @@ class FileReadForm(forms.Form):
 class FastaIdForm(forms.ModelForm):
     class Meta:
         model = Fasta
-        fields = ['gene']
+        fields = ('gene',)
 
         labels = {
             'gene': 'Gen Bölgesi Seçiniz'
         }
 
-        widgets = {
-            'gene': forms.Select(choices=Fasta.objects.all().values_list('gene', 'gene'))
-        }
+
 
 
 class GenbankIdForm(forms.ModelForm):
@@ -39,9 +37,7 @@ class GenbankIdForm(forms.ModelForm):
             'gene': 'Gen Bölgesi Seçiniz'
         }
 
-        widgets = {
-            'gene': forms.Select(choices=Genbank.objects.all().values_list('gene', 'gene'))
-        }
+
 
 
 class XmlFileForm(forms.Form):

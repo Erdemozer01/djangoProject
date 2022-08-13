@@ -1,6 +1,5 @@
 from django.views import generic
 from bioinformatic.models import Slide
-from django.shortcuts import render
 
 
 class BioinformaticHomeView(generic.ListView):

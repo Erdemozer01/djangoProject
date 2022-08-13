@@ -1,13 +1,7 @@
 from django.contrib import admin
 from .models import Profile
 
-from blog.models.title import Titles
 
-if Titles.objects.exists():
-    for name in Titles.objects.all():
-        admin.AdminSite.site_header = name.name
-else:
-    admin.AdminSite.site_header = "Site Yönetimi"
 
 
 # Register your models here.
