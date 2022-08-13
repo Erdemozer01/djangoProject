@@ -1,7 +1,13 @@
 {% extends "blog/index.html" %}
 {% load static %}
 {% block title %}
-    Kullanıcı
+    {% if request.user.username %}
+        {{ profile.user.username }}
+
+    {% else %}
+        Ziyaretci
+    {% endif %}
+
 {% endblock %}
 
 {% block content %}
