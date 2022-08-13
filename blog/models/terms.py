@@ -16,5 +16,5 @@ class Terms(models.Model):
 
     class Meta:
         ordering = ['created']
-        verbose_name = "Koşul ver Şartlar"
-        verbose_name_plural = "Koşul ver Şartlar"
+        verbose_name = "Koşul ve Şartlar"
+        verbose_name_plural = "Koşul ve Şartlar"
