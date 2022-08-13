@@ -22,4 +22,5 @@ urlpatterns = [
     path('local_alignment/download/', views.local_alignments_download, name="local_alignment_download"),
     path('global_alignment/', views.global_alignment, name="global_alignment"),
     path('global_alignment/download/', views.global_alignments_download, name="global_alignment_download"),
+    path('xml_file_read/', views.xml_file, name="xml_file"),
 ]

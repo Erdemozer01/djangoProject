@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'bootstrap5',
     'ckeditor',
     'ckeditor_uploader',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +57,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_auto_logout.middleware.auto_logout',
 ]
+
+AUTO_LOGOUT = {
+    'IDLE_TIME': timedelta(minutes=10),
+    'SESSION_TIME': timedelta(minutes=30),
+}
 
 ROOT_URLCONF = 'djangoProject.urls'
 

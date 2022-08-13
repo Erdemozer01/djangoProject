@@ -42,3 +42,7 @@ class GenbankIdForm(forms.ModelForm):
         widgets = {
             'gene': forms.Select(choices=Genbank.objects.all().values_list('gene', 'gene'))
         }
+
+
+class XmlFileForm(forms.Form):
+    file_input = forms.FileField(label="XML Dosyası Seçiniz")
