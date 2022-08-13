@@ -26,7 +26,7 @@ class FastaIdForm(forms.ModelForm):
         }
 
         widgets = {
-            'gene': forms.Select(choices=Fasta.objects.values_list('gene'))
+            'gene': forms.Select(choices=Fasta.objects.all().values_list('gene'))
         }
 
 
