@@ -1,5 +1,4 @@
 from django.db import models
-from ckeditor_uploader.fields import RichTextUploadingField
 
 # Create your models here.
 
@@ -8,7 +7,7 @@ class Slide(models.Model):
     image = models.ImageField(upload_to="labratory/")
     title = models.CharField(max_length=100)
     text = models.CharField(max_length=100)
-    content = RichTextUploadingField()
+    content = models.TextField()
 
     def __str__(self):
         return self.title
@@ -21,7 +20,7 @@ class Slide(models.Model):
 
 class Fasta(models.Model):
     gene = models.CharField(max_length=1000)
-    sequence = RichTextUploadingField()
+    sequence = models.TextField()
 
     def __str__(self):
         return self.gene
@@ -34,9 +33,9 @@ class Fasta(models.Model):
 
 class Genbank(models.Model):
     gene = models.CharField(max_length=255)
-    sekans = RichTextUploadingField()
+    sekans = models.TextField()
     description = models.CharField(max_length=1000)
-    features = RichTextUploadingField()
+    features = models.TextField()
     dbxrefs = models.CharField(max_length=1000)
 
     def __str__(self):
