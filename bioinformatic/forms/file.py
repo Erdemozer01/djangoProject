@@ -19,7 +19,7 @@ class FileReadForm(forms.Form):
 class FastaIdForm(forms.ModelForm):
     class Meta:
         model = Fasta
-        fields = ('gene',)
+        fields = ['gene']
 
         labels = {
             'gene': 'Gen Bölgesi Seçiniz'
