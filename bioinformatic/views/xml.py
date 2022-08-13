@@ -4,7 +4,8 @@ from Bio import SearchIO
 from django.shortcuts import render
 from bioinformatic.forms.file import XmlFileForm
 from bioinformatic.views.genbank import handle_uploaded_file
-import subprocess as sp
+from ckeditor.fields import RichTextField
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
 
@@ -17,13 +18,15 @@ def xml_file(request):
             handle_uploaded_file(request.FILES['file_input'])
             try:
                 blast_qresult = SearchIO.read(file, "blast-xml")
+                result = RichTextField(default=blast_qresult)
 
+                return render(request, 'bioinformatic/xml/result.html', {'result': result})
 
-                return render(request, 'bioinformatic/xml/result.html', {'result': blast_qresult})
             except:
                 pass
             finally:
                 os.remove(file)
         else:
             form = XmlFileForm()
-    return render(request, 'bioinformatic/xml/read.html', {'form': form})
+
+    return render(request, 'bioinformatic/xml/read.html', {'form': form, 'bre': 'XML Dosyası Okuma'})

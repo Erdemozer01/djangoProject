@@ -12,10 +12,11 @@
                 <div class="card card-body mt-3">
                     <h6 class="mb-0">Analiz Sonuçları</h6>
                     <div class="row mt-4">
-                        <div class="col-12 col-md-12 mx-auto">
+                        <div class="col-10 col-md-12 mx-auto">
                             <div class="form-group ">
-                                <form method="post" enctype="multipart/form-data">
-                                   {{ result }}
+                                <div>
+                                    {{ result|safe }}
+
 
 
                                     <div class="d-flex justify-content-end mt-4">
@@ -23,7 +24,7 @@
                                             <a href="{% url "bioinformatic:xml_file" %}">Tamam</a>
                                         </button>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>

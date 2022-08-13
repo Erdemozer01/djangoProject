@@ -38,7 +38,7 @@ class Genbank(models.Model):
     gene = models.CharField(max_length=255)
     sekans = models.TextField()
     description = models.CharField(max_length=1000)
-    features = models.TextField(default='')
+    features = models.TextField()
     dbxrefs = models.CharField(max_length=1000)
 
     def __str__(self):
