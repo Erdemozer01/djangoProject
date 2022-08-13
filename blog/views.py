@@ -4,7 +4,7 @@ from pip._internal.locations import user_site
 from post.models import Posts
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from .models import About, Terms, Contact, Bottom
+from .models import About, Terms, Contact
 from django.contrib.messages.views import SuccessMessageMixin
 from .forms import ContactForm
 from django.urls import reverse_lazy
@@ -14,7 +14,7 @@ from django.contrib import messages
 class HomeView(ListView):
     template_name = 'blog/home.html'
     model = Posts
-    queryset = Posts.objects.all().order_by('-id')
+    queryset = Posts.objects.all().order_by('-id')[:5]
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
