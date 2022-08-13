@@ -25,7 +25,9 @@ class FastaIdForm(forms.ModelForm):
             'gene': 'Gen Bölgesi Seçiniz'
         }
 
-
+        widgets = {
+            'gene': forms.Select(choices=Fasta.objects.all().values_list('gene', 'gene'))
+        }
 
 
 class GenbankIdForm(forms.ModelForm):
@@ -37,7 +39,9 @@ class GenbankIdForm(forms.ModelForm):
             'gene': 'Gen Bölgesi Seçiniz'
         }
 
-
+        widgets = {
+            'gene': forms.Select(choices=Genbank.objects.all().values_list('gene', 'gene'))
+        }
 
 
 class XmlFileForm(forms.Form):
