@@ -5,31 +5,34 @@
 
 {% block content %}
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-10 col-12 mx-auto">
-                    <div class="card card-body mt-3">
-                        <h6 class="mb-0">Analiz Sonuçları</h6>
-                        <div class="row mt-4">
-                            <div class="col-12 col-md-12 mx-auto">
-                                <div class="form-group ">
-                                    <form method="post" enctype="multipart/form-data">
-                                        <label class="text-dark text-lg">Sekans:</label>
-                                        {{ seq.sequence|safe }}
-                                        <p class="font-weight-bold mt-3"> Dbxrefs: {{ seq.dbxrefs }}</p>
-                                        <p class="font-weight-bold mt-3"> Description: {{ seq.description }}</p>
-                                        <p class="font-weight-bold mt-3"> Features: {{ seq.features }}</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-10 col-12 mx-auto">
+                <div class="card card-body mt-3">
+                    <h6 class="mb-0">Analiz Sonuçları</h6>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-12 mx-auto">
+                            <div class="form-group ">
+                                <div>
 
-                                        <p class="mt-3"><b>Sekans Uzunluğu:</b> : {{ len }}</p>
-                                        <div class="d-flex justify-content-end mt-4">
-                                            <button type="button" name="button" class="btn btn-danger m-0" style="margin-right: 90px">
-                                                <a href="{% url "bioinformatic:fasta_read" %}" class="text-white">Geri</a>
-                                            </button>
-                                            <button type="button" name="button" class="btn btn-light m-0">
-                                                <a href="{% url "bioinformatic:delete" %}">Tamam</a>
-                                            </button>
-                                        </div>
-                                    </form>
+                                    <label class="text-dark text-lg">Bölge: {{ object.gene }}</label>
+
+                                    <p class="font-weight-bold mt-3 text-dark">Sekans:</p>
+
+                                    <p class="font-weight-bold mt-3">{{ object.sequence }}</p>
+
+
+                                    <p class="mt-3"><b>Sekans Uzunluğu:</b> : {{ object.sequence|length }}</p>
+
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="button" name="button" class="btn btn-danger m-0"
+                                                style="margin-right: 90px">
+                                            <a href="{% url "bioinformatic:lokus_find" %}" class="text-white">Geri</a>
+                                        </button>
+                                        <button type="button" name="button" class="btn btn-light m-0">
+                                            <a href="{% url "bioinformatic:delete" %}">Tamam</a>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -37,6 +40,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
 
 {% endblock %}

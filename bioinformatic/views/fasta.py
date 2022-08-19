@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
+from django import forms
 from bioinformatic.forms.file import FileReadForm, FastaIdForm
 from bioinformatic.forms.writing import FastaWritingForm
 from bioinformatic.forms.add import AddFastaData
-
+from django.views import generic
 from Bio import SeqIO
-from bioinformatic.models import Fasta
+from bioinformatic.models import FastaRead
 from pathlib import Path
 import os
 
@@ -41,13 +42,18 @@ def fasta_read(request):
 
             records = SeqIO.parse(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), "fasta")
 
-            for record in records:
-                Fasta.objects.create(gene=record.id, sequence=record.seq)
+            if FastaRead.objects.exists():
+                FastaRead.objects.all().delete()
+                for record in records:
+                    FastaRead.objects.create(gene=record.id, sequence=record.seq)
+            else:
+                for record in records:
+                    FastaRead.objects.create(gene=record.id, sequence=record.seq)
 
             open(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), 'r').close()
             os.remove(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])))
 
-            if Fasta.objects.exists():
+            if FastaRead.objects.exists():
                 return redirect('bioinformatic:lokus_find')
             else:
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya'})
@@ -60,20 +66,20 @@ def fasta_read(request):
 
 
 def delete_fasta(request):
-    Fasta.objects.all().delete()
+    FastaRead.objects.all().delete()
     return redirect('bioinformatic:fasta_read')
 
 
-def lokus_find(request):
-    fasta = FastaIdForm(request.POST)
+def GeneRegionView(request):
+    form = FastaIdForm(request.POST)
     if request.method == "POST":
+        if form.is_valid():
+            region = form.cleaned_data['gene']
 
-        if fasta.is_valid():
-            sequence = Fasta.objects.get(gene=fasta.cleaned_data['gene'])
+            return render(request, 'bioinformatic/fasta/sequence.html', {'object': region, 'bre': 'Analiz Sonuçları'})
 
-            return render(request, 'bioinformatic/fasta/sequence.html', {'seq': sequence, 'len': len(sequence.sequence)})
-
-    return render(request, 'bioinformatic/fasta/id.html', {'form': fasta, 'bre': 'Fasta Dosyası Okuması'})
+    return render(request, 'bioinformatic/fasta/id.html',
+                  {'form': form, 'len': FastaRead.objects.all().count(), 'bre': 'Gen Bölgeleri'})
 
 
 def fasta_writing(request):

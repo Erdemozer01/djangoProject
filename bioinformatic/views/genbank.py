@@ -3,7 +3,7 @@ from bioinformatic.forms.file import FileReadForm, GenbankIdForm
 from bioinformatic.forms.writing import GenbankWritingForm
 from bioinformatic.forms.add import AddFastaData
 from Bio import SeqIO
-from bioinformatic.models import Genbank
+from bioinformatic.models import GenbankRead
 from pathlib import Path
 import os
 
@@ -38,16 +38,21 @@ def genbank_read(request):
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Zip Dosyası Seçtiniz'})
 
             records = SeqIO.parse(file, "genbank")
-
-            for record in records:
-                Genbank.objects.create(gene=record.id, sekans=record.seq, description=record.description,
-                                       dbxrefs=record.dbxrefs, features=record.features)
+            if GenbankRead.objects.exists():
+                GenbankRead.objects.all().delete()
+                for record in records:
+                    GenbankRead.objects.create(gene=record.id, sequence=record.seq, description=record.description,
+                                               dbxrefs=record.dbxrefs, features=record.features)
+            else:
+                for record in records:
+                    GenbankRead.objects.create(gene=record.id, sequence=record.seq, description=record.description,
+                                               dbxrefs=record.dbxrefs, features=record.features)
 
             open(file, 'r').close()
 
             os.remove(file)
 
-            if Genbank.objects.exists():
+            if GenbankRead.objects.exists():
                 return redirect('bioinformatic:genbank_region')
 
             else:
@@ -61,20 +66,21 @@ def genbank_read(request):
 
 
 def delete_genbank(request):
-    Genbank.objects.all().delete()
+    GenbankRead.objects.all().delete()
     return redirect('bioinformatic:genbank_read')
 
 
 def genbank_region_find(request):
-    genbank = GenbankIdForm(request.POST)
+    form = GenbankIdForm(request.POST)
     if request.method == "POST":
 
-        if genbank.is_valid():
-            sequence = Genbank.objects.get(gene=genbank.cleaned_data['gene'])
+        if form.is_valid():
+            gene = form.cleaned_data['gene']
 
-            return render(request, 'bioinformatic/genbank/sequence.html', {'seq': sequence, 'len': len(sequence.sekans)})
+            return render(request, 'bioinformatic/genbank/sequence.html', {'object': gene, 'bre': 'Analiz Sonuçları'})
 
-    return render(request, 'bioinformatic/fasta/id.html', {'form': genbank, 'bre': 'Genbank Dosyası Okuması'})
+    return render(request, 'bioinformatic/fasta/id.html',
+                  {'form': form, 'bre': 'Genbank Dosyası Okuması', 'len': GenbankRead.objects.all().count()})
 
 
 def genbank_writing(request):

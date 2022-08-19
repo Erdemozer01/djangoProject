@@ -8,7 +8,7 @@ urlpatterns = [
     path('dna_seknas/', views.sekans, name="sekans_analiz"),
     path('translasyon/', views.translation, name="translation"),
     path('fasta_read/', views.fasta_read, name="fasta_read"),
-    path('lokus_find/', views.lokus_find, name="lokus_find"),
+    path('lokus_find/', views.GeneRegionView, name="lokus_find"),
     path('delete/', views.delete_fasta, name="delete"),
     path('download_fasta/', views.fasta_download, name="download"),
     path('fasta_writing/', views.fasta_writing, name="fasta_writing"),
@@ -23,4 +23,6 @@ urlpatterns = [
     path('global_alignment/', views.global_alignment, name="global_alignment"),
     path('global_alignment/download/', views.global_alignments_download, name="global_alignment_download"),
     path('xml_file_read/', views.xml_file, name="xml_file"),
+    path('xml_file_result/', views.blast_result_delete, name="xml_file_delete"),
+    path('xml_hsp/', views.hsp_download, name="xml_hsp"),
 ]

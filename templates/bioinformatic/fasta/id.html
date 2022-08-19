@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 {% load static bootstrap5 %}
-{% block title %} Genbank bölgeleri {% endblock %}
+{% block title %} Gen bölgeleri {% endblock %}
 
 {% block content %}
 
@@ -16,12 +16,17 @@
                                 <form method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     {% bootstrap_form form %}
+                                    <p>{{ len }} Bölge Tespit edilmiştir.</p>
                                     <div class="d-flex justify-content-end mt-4">
-                                        <button type="submit" name="button" class="btn btn-light m-0">
-                                            Git
+                                        <button type="button" name="button" class="btn btn-light m-0">
+                                            <a href="{% url "bioinformatic:delete" %}">Vazgeç</a>
+                                        </button>
+                                        <button type="submit" name="button" class="btn bg-gradient-dark m-0 ms-2">
+                                            ANALİZ
                                         </button>
                                     </div>
                                 </form>
+
                             </div>
                         </div>
                     </div>

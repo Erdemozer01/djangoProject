@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 {% load static bootstrap5 %}
-{% block title %} DNA ANALİZ {% endblock %}
+{% block title %} XML Dosyası {% endblock %}
 
 
 {% block content %}
@@ -14,17 +14,22 @@
                     <div class="row mt-4">
                         <div class="col-10 col-md-12 mx-auto">
                             <div class="form-group ">
-                                <div>
-                                    {{ result|safe }}
-
-
-
+                                <form>
+                                    {% csrf_token %}
+                                    {% bootstrap_form form %}
                                     <div class="d-flex justify-content-end mt-4">
-                                        <button type="button" name="button" class="btn btn-light m-0">
-                                            <a href="{% url "bioinformatic:xml_file" %}">Tamam</a>
-                                        </button>
+                                        <a href="{% url "bioinformatic:xml_hsp" %}">
+                                            <button type="button" name="button" class="btn btn-light m-0">
+                                                HSP Değerleri
+                                            </button>
+                                        </a>
+                                        <a href="{% url "bioinformatic:xml_file_delete" %}" class="text-white">
+                                            <button type="button" name="button" class="btn bg-gradient-dark m-0 ms-2">
+                                                Tamam
+                                            </button>
+                                        </a>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>

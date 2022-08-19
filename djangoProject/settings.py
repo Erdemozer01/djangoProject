@@ -60,8 +60,8 @@ MIDDLEWARE = [
 ]
 
 AUTO_LOGOUT = {
-    'IDLE_TIME': timedelta(minutes=10),
-    'SESSION_TIME': timedelta(minutes=30),
+    'IDLE_TIME': timedelta(minutes=100),
+    'SESSION_TIME': timedelta(minutes=100),
 }
 
 ROOT_URLCONF = 'djangoProject.urls'

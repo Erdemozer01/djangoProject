@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -18,7 +19,7 @@ class Slide(models.Model):
         verbose_name_plural = "Slide"
 
 
-class Fasta(models.Model):
+class FastaRead(models.Model):
     gene = models.CharField(max_length=1000)
     sequence = models.TextField()
 
@@ -26,14 +27,14 @@ class Fasta(models.Model):
         return self.gene
 
     class Meta:
-        db_table = "fasta"
-        verbose_name = "Fasta"
-        verbose_name_plural = "Fasta"
+        db_table = "fasta_read"
+        verbose_name = "Fasta Okuması"
+        verbose_name_plural = "Fasta Okumaları"
 
 
-class Genbank(models.Model):
+class GenbankRead(models.Model):
     gene = models.CharField(max_length=255)
-    sekans = models.TextField()
+    sequence = models.TextField()
     description = models.CharField(max_length=1000)
     features = models.TextField()
     dbxrefs = models.CharField(max_length=1000)
@@ -42,6 +43,23 @@ class Genbank(models.Model):
         return self.gene
 
     class Meta:
-        db_table = "genbank"
-        verbose_name = "Genbank"
-        verbose_name_plural = "Genbank"
+        db_table = "genbank_read"
+        verbose_name = "Genbank Okuması"
+        verbose_name_plural = "Genbank Okumaları"
+
+
+class BlastQuery(models.Model):
+    blast = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    class Meta:
+        ordering = ['-created']
+
+class BlastHSP(models.Model):
+    hit_id = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    class Meta:
+        ordering = ['-id']
