@@ -8,7 +8,6 @@
             <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
 
-
                     {% for object in object_list %}
                         {% if forloop.last %}
                             <div class="carousel-item active">
@@ -66,7 +65,7 @@
 
                     <div class="carousel-item active">
                         <div class="page-header min-vh-75 m-3 border-radius-xl"
-                             style="background-image: url(https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/mark.jpg);">
+                             style="background-image: url({% static "assets/img/Adsız.jpg" %});">
                             <span class="mask bg-gradient-dark"></span>
                             <div class="container">
                                 <div class="row">
