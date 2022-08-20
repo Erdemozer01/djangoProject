@@ -23,7 +23,7 @@ DATABASE = (
     ("grasp", "Grasp"),
     ("grasp", "Grasp"),
     ("dbvar", "dbvar"),
-    ("gds", "GDS"),
+    ("gds", "GDS (GEO datasets)"),
     ("geoprofiles", "Geoprofiles"),
     ("homologene", "Homologene"),
     ("medgen", "Medgen"),
@@ -48,6 +48,7 @@ RETTYPE = (
     ("gb", "Genbank"),
     ("fasta", "Fasta"),
     ("xml", "XML"),
+    ("medline", "Medline"),
 )
 
 
