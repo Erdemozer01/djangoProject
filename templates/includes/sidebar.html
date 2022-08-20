@@ -340,17 +340,33 @@
                                     <li class="nav-item">
                                         <a class="nav-link " href="{% url "bioinformatic:xml_file" %}">
                                             <span class="sidenav-mini-icon text-xs"> XML </span>
-                                            <span class="sidenav-normal"> Xml Dosyası Okuma </span>
+                                            <span class="sidenav-normal"> Blast Xml Dosyası </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#lockExample">
+                                <span class="sidenav-mini-icon"> E </span>
+                                <span class="sidenav-normal"> Entrez <b class="caret"></b></span>
+                            </a>
+                            <div class="collapse " id="lockExample">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="{% url "bioinformatic:entrez_file_search" %}">
+                                            <span class="sidenav-mini-icon text-xs"> E </span>
+                                            <span class="sidenav-normal"> Entrez Dosya Sorgulama </span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-reset-cover.html">
+                                        <a class="nav-link " href="/authentication-lock-cover.html">
                                             <span class="sidenav-mini-icon text-xs"> C </span>
                                             <span class="sidenav-normal"> Cover </span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-reset-illustration.html">
+                                        <a class="nav-link " href="/authentication-lock-illustration.html">
                                             <span class="sidenav-mini-icon text-xs"> I </span>
                                             <span class="sidenav-normal"> Illustration </span>
                                         </a>
@@ -358,7 +374,6 @@
                                 </ul>
                             </div>
                         </li>
-
                     </ul>
                 </div>
             </li>
@@ -388,62 +403,8 @@
                 </a>
                 <div class="collapse " id="authExamples">
                     <ul class="nav ms-4 ps-3">
-                        <li class="nav-item ">
-                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#resetExample">
-                                <span class="sidenav-mini-icon"> R </span>
-                                <span class="sidenav-normal"> Reset Password <b class="caret"></b></span>
-                            </a>
-                            <div class="collapse " id="resetExample">
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-reset-basic.html">
-                                            <span class="sidenav-mini-icon text-xs"> B </span>
-                                            <span class="sidenav-normal"> Basic </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-reset-cover.html">
-                                            <span class="sidenav-mini-icon text-xs"> C </span>
-                                            <span class="sidenav-normal"> Cover </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-reset-illustration.html">
-                                            <span class="sidenav-mini-icon text-xs"> I </span>
-                                            <span class="sidenav-normal"> Illustration </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#lockExample">
-                                <span class="sidenav-mini-icon"> L </span>
-                                <span class="sidenav-normal"> Lock <b class="caret"></b></span>
-                            </a>
-                            <div class="collapse " id="lockExample">
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-lock-basic.html">
-                                            <span class="sidenav-mini-icon text-xs"> B </span>
-                                            <span class="sidenav-normal"> Basic </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-lock-cover.html">
-                                            <span class="sidenav-mini-icon text-xs"> C </span>
-                                            <span class="sidenav-normal"> Cover </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-lock-illustration.html">
-                                            <span class="sidenav-mini-icon text-xs"> I </span>
-                                            <span class="sidenav-normal"> Illustration </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+
+
                         <li class="nav-item ">
                             <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#StepExample">
                                 <span class="sidenav-mini-icon"> 2 </span>

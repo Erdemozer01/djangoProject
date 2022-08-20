@@ -1,9 +1,17 @@
-from Bio import SearchIO
+from Bio import Entrez
 
-blast_qresult = SearchIO.read("C:/Users/virtu/Desktop/my_blast.xml", "blast-xml")
-print(blast_qresult)
+Entrez.email = "ozer2466@gmail.com"
+
+handle = Entrez.efetch(db="nucleotide", id="EU490707", rettype="gb", retmode="text")
+
+print(handle.read())
 
 
-blast_hsp = blast_qresult[0][0]
+info = Entrez.einfo()
 
-print(blast_hsp)
+record = Entrez.read(info)
+
+print(record["DbList"])
+for i in record["DbList"]:
+    print(i)
+

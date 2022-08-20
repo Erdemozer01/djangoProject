@@ -22,7 +22,9 @@ urlpatterns = [
     path('local_alignment/download/', views.local_alignments_download, name="local_alignment_download"),
     path('global_alignment/', views.global_alignment, name="global_alignment"),
     path('global_alignment/download/', views.global_alignments_download, name="global_alignment_download"),
-    path('xml_file_read/', views.xml_file, name="xml_file"),
+    path('blast/xml_file_read/', views.xml_file, name="xml_file"),
     path('xml_file_result/', views.blast_result_delete, name="xml_file_delete"),
     path('xml_hsp/', views.hsp_download, name="xml_hsp"),
+    path('entrez_file_search/', views.entrez, name="entrez_file_search"),
+    path('entrez_file_download/', views.entrez_download, name="entrez_file_download"),
 ]
