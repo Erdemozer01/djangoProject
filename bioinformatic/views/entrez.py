@@ -13,25 +13,35 @@ def entrez(request):
 
     if request.method == "POST":
         if form.is_valid():
+            try:
+                email = form.cleaned_data['email']
+                database = form.cleaned_data['database']
+                accession = form.cleaned_data['accession']
+                rettype = form.cleaned_data['rettype']
 
-            email = form.cleaned_data['email']
-            database = form.cleaned_data['database']
-            accession = form.cleaned_data['accession']
-            rettype = form.cleaned_data['rettype']
+                Entrez.email = f"{email}"
 
-            Entrez.email = f"{email}"
+                handle = Entrez.efetch(db=f"{database}", id=f"{accession}", rettype=f"{rettype}", retmode="text")
 
-            handle = Entrez.efetch(db=f"{database}", id=f"{accession}", rettype=f"{rettype}", retmode="text")
 
-            read = handle.read()
 
-            file_path = os.path.join(BASE_DIR, 'files\\entrez.txt')
+                read = handle.read()
 
-            file_obj = open(file_path, "w")
+                file_path = os.path.join(BASE_DIR, 'files\\entrez.txt')
 
-            file_obj.write(read)
+                file_obj = open(file_path, "w")
 
-            return redirect("bioinformatic:entrez_file_download")
+                file_obj.write(read)
+
+                return redirect("bioinformatic:entrez_file_download")
+
+            except:
+
+                msg = "Dosya Bulunamadı"
+
+                return render(request, "bioinformatic/fasta/notfound.html", {
+                    "msg": msg
+                })
 
         else:
             form = EntrezForm(request.POST)
