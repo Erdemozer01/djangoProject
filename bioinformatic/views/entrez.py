@@ -9,7 +9,7 @@ path = os.path.join(BASE_DIR, 'files\\')
 
 
 def entrez(request):
-    form = EntrezForm(request.POST)
+    form = EntrezForm(request.POST or None)
 
     if request.method == "POST":
         if form.is_valid():

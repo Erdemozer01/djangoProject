@@ -71,7 +71,7 @@ def delete_fasta(request):
 
 
 def GeneRegionView(request):
-    form = FastaIdForm(request.POST)
+    form = FastaIdForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
             region = form.cleaned_data['gene']
@@ -83,7 +83,7 @@ def GeneRegionView(request):
 
 
 def fasta_writing(request):
-    fastaform = FastaWritingForm(request.POST or request.GET)
+    fastaform = FastaWritingForm(request.POST or None)
     if request.method == "POST":
         if fastaform.is_valid():
 
@@ -137,7 +137,7 @@ def append_new_line(file_name, text_to_append):
 
 
 def fasta_add(request):
-    form = AddFastaData(request.POST, request.FILES)
+    form = AddFastaData(request.POST or None, request.FILES)
     if request.method == "POST":
         if form.is_valid():
             try:

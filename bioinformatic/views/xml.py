@@ -31,7 +31,7 @@ def append_new_line(file_name, text_to_append):
 
 def xml_file(request):
     global hit_id_result
-    form = XmlFileForm(request.POST, request.FILES)
+    form = XmlFileForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
             file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['file_input']))

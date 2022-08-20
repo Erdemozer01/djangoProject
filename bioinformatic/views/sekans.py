@@ -5,7 +5,7 @@ from Bio.SeqUtils import GC
 
 
 def sekans(request):
-    form = DNASekansForm(request.POST)
+    form = DNASekansForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
 

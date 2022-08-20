@@ -71,7 +71,7 @@ def delete_genbank(request):
 
 
 def genbank_region_find(request):
-    form = GenbankIdForm(request.POST)
+    form = GenbankIdForm(request.POST or None)
     if request.method == "POST":
 
         if form.is_valid():
@@ -84,7 +84,7 @@ def genbank_region_find(request):
 
 
 def genbank_writing(request):
-    form = GenbankWritingForm(request.POST or request.GET)
+    form = GenbankWritingForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
 

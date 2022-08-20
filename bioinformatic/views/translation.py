@@ -6,7 +6,7 @@ from Bio.SeqUtils import GC
 
 
 def translation(request):
-    form = TranslationForm(request.POST)
+    form = TranslationForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
             table = form.cleaned_data['table']
