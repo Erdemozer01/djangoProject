@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from bioinformatic.forms.entrez import EntrezForm
 from Bio import Entrez
 
@@ -23,8 +23,6 @@ def entrez(request):
 
                 handle = Entrez.efetch(db=f"{database}", id=f"{accession}", rettype=f"{rettype}", retmode="text")
 
-
-
                 read = handle.read()
 
                 file_path = os.path.join(BASE_DIR, 'files\\entrez.txt')
@@ -33,14 +31,18 @@ def entrez(request):
 
                 file_obj.write(read)
 
+                file_obj.close()
+
                 return redirect("bioinformatic:entrez_file_download")
 
             except:
 
                 msg = "Dosya Bulunamadı"
 
+                url = reverse("bioinformatic:entrez_file_search")
+
                 return render(request, "bioinformatic/fasta/notfound.html", {
-                    "msg": msg
+                    "msg": msg, "url": url
                 })
 
         else:
