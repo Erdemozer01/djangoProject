@@ -32,6 +32,7 @@ def pubmed(request):
                                                  article_id=link["Id"])
 
         return render(request, "bioinformatic/pubmed/result.html",
-                      {'link': PubMedArticle.objects.all()})
+                      {'link': PubMedArticle.objects.all(), "bre": "Sonuçlar",
+                       "count": PubMedArticle.objects.all().count()})
 
-    return render(request, "bioinformatic/pubmed/search.html", {"form": form})
+    return render(request, "bioinformatic/pubmed/search.html", {"form": form, "bre": "PubMed Id Makale Arama"})

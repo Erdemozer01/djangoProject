@@ -14,6 +14,7 @@
                         <div class="col-12 col-md-12 mx-auto">
                             <div class="form-group ">
                                 <div class="mx-auto">
+                                <p>Toplam {{ count }} Makale Bulunmuştur</p>
                                     {% for foo in link %}
                                         {% if forloop.first %}
                                             <h4>Aradığınız MakaLe</h4>
@@ -29,7 +30,7 @@
                                         {% endif %}
                                     {% endfor %}
                                     <button type="button" name="button" class="btn btn-light m-0">
-                                        <a href="{% url "bioinformatic:medline_article" %}">Tamam</a>
+                                        <a href="{% url "bioinformatic:pubmed_article" %}">Tamam</a>
                                     </button>
                                 </div>
                             </div>
