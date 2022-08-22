@@ -64,10 +64,12 @@ class PubMedArticle(models.Model):
 
     title = models.CharField(max_length=1000)
 
+    link = models.URLField(default="https://pubmed.ncbi.nlm.nih.gov/")
+
     created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
 
     def __str__(self):
-        return self.article_id
+        return self.link
 
     class Meta:
         verbose_name = "PubMed Makale"

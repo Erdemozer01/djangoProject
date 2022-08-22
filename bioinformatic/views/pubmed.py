@@ -10,7 +10,6 @@ import re
 
 def pubmed(request):
     form = PubMedForm(request.POST or None)
-
     if request.method == "POST":
         if form.is_valid():
 
@@ -25,11 +24,14 @@ def pubmed(request):
             if PubMedArticle.objects.exists():
                 PubMedArticle.objects.all().delete()
                 for link in record[0]["LinkSetDb"][0]["Link"]:
-                    PubMedArticle.objects.create(article_id=link["Id"])
+                    PubMedArticle.objects.create(link="https://pubmed.ncbi.nlm.nih.gov/{}".format(link["Id"]),
+                                                 article_id=link["Id"])
             else:
                 for link in record[0]["LinkSetDb"][0]["Link"]:
-                    PubMedArticle.objects.create(article_id=link["Id"])
+                    PubMedArticle.objects.create(link="https://pubmed.ncbi.nlm.nih.gov/{}".format(link["Id"]),
+                                                 article_id=link["Id"])
 
-        return render(request, "bioinformatic/pubmed/result.html", {'link': PubMedArticle.objects.all()})
+        return render(request, "bioinformatic/pubmed/result.html",
+                      {'link': PubMedArticle.objects.all()})
 
     return render(request, "bioinformatic/pubmed/search.html", {"form": form})

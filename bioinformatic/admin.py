@@ -23,6 +23,6 @@ class GenbankAdmin(admin.ModelAdmin):
 
 @admin.register(PubMedArticle)
 class PubMedArticleAdmin(admin.ModelAdmin):
-    list_display = ['email', 'created']
+    list_display = ['link', 'created']
 
     list_filter = ['email', 'created']

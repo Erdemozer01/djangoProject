@@ -18,19 +18,18 @@
                                         {% if forloop.first %}
                                             <h4>Aradığınız MakaLe</h4>
                                             <p><a href="https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/">
-                                                {{ forloop.counter }}-
-                                                https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/
+                                                {{ forloop.counter }}- {{ foo.link }}
                                             </a></p>
                                             <h4>İlgili Diğer Makaleler</h4>
                                         {% else %}
                                             <p><a href="https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/">
                                                 {{ forloop.counter }}-
-                                                https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/
+                                                {{ foo.link }}
                                             </a></p>
                                         {% endif %}
                                     {% endfor %}
                                     <button type="button" name="button" class="btn btn-light m-0">
-                                        <a href="{% url "bioinformatic:translation" %}">Tamam</a>
+                                        <a href="{% url "bioinformatic:medline_article" %}">Tamam</a>
                                     </button>
                                 </div>
                             </div>
