@@ -18,12 +18,12 @@
                                     {% for foo in link %}
                                         {% if forloop.first %}
                                             <h4>Aradığınız MakaLe</h4>
-                                            <p><a href="https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/">
+                                            <p class="text-sm"><a href="https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/">
                                                 {{ forloop.counter }}- {{ foo.link }}
                                             </a></p>
                                             <h4>İlgili Diğer Makaleler</h4>
                                         {% else %}
-                                            <p><a href="https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/">
+                                            <p class="text-sm"><a href="https://pubmed.ncbi.nlm.nih.gov/{{ foo.article_id }}/">
                                                 {{ forloop.counter }}-
                                                 {{ foo.link }}
                                             </a></p>
