@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 {% load static bootstrap5 %}
-{% block title %}Hata {% endblock %}
+{% block title %} Hata {% endblock %}
 
 {% block content %}
 
@@ -18,7 +18,6 @@
                                 <button type="button" class="btn bg-gradient-dark mt-4 text-white">Geri</button>
                             </a>
                         {% endif %}
-
                     {% else %}
                         <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
                         <a href="{% url "blog:home" %}">

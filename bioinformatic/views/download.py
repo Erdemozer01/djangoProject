@@ -119,8 +119,7 @@ def entrez_download(request):
         # Return the response value
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        url = reverse\
-            ("bioinformatic:xml_file")
+        url = reverse("bioinformatic:entrez_file_search")
         return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg, 'url': url})
     try:
