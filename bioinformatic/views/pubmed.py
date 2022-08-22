@@ -3,7 +3,9 @@ from bioinformatic.forms.pubmed import PubMedForm
 from Bio import Entrez
 from bioinformatic.models import PubMedArticle
 
+import requests
 from bs4 import BeautifulSoup
+import re
 
 
 def pubmed(request):
