@@ -1,4 +1,5 @@
 from django.shortcuts import *
+
 from Bio import Entrez
 from bioinformatic.models import MedlineArticle
 from bioinformatic.forms.medline import MedlineArticleForm
@@ -13,13 +14,17 @@ def medline_article(request):
             term = form.cleaned_data['term']
 
             Entrez.email = f"{email}"
+
             handle = Entrez.esearch(db="pubmed", term=term)
 
             record = Entrez.read(handle)
 
             idlist = record["IdList"]
 
-            print(idlist)
+            if len(idlist) == 0:
+                return render(request, "bioinformatic/fasta/notfound.html",
+                              {"msg": "Aradığınız Terim bulunamadı", "url": reverse("bioinformatic:medline_article"),
+                               "bre": "Bulunamadı"})
 
             handle = Entrez.efetch(db="pubmed", id=idlist, rettype="medline", retmode="xml")
 
