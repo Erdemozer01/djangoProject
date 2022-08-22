@@ -56,10 +56,37 @@ class BlastQuery(models.Model):
     class Meta:
         ordering = ['-created']
 
-class BlastHSP(models.Model):
-    hit_id = models.TextField()
+
+class PubMedArticle(models.Model):
+    email = models.EmailField()
+
+    article_id = models.CharField(max_length=100)
+
+    title = models.CharField(max_length=1000)
 
     created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
 
+    def __str__(self):
+        return self.article_id
+
     class Meta:
-        ordering = ['-id']
+        verbose_name = "PubMed Makale"
+        verbose_name_plural = "PubMed Makale"
+
+
+class MedlineArticle(models.Model):
+
+    email = models.EmailField()
+
+    article_id = models.CharField(max_length=1000)
+
+    doi = models.CharField(max_length=1000, default="")
+
+    title = models.CharField(max_length=1000)
+
+    term = models.CharField(max_length=1000)
+
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    def __str__(self):
+        return self.title

@@ -27,4 +27,6 @@ urlpatterns = [
     path('xml_hsp/', views.hsp_download, name="xml_hsp"),
     path('entrez_file_search/', views.entrez, name="entrez_file_search"),
     path('entrez_file_download/', views.entrez_download, name="entrez_file_download"),
+    path('pubmed/articles/', views.pubmed, name="pubmed_article"),
+    path('medline/articles/', views.medline_article, name="medline_article"),
 ]

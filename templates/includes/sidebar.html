@@ -231,7 +231,7 @@
                     <ul class="nav ms-4 ps-3">
                         <li class="nav-item ">
                             <a class="nav-link " href="{% url "bioinformatic:home" %}">
-                                <span class="sidenav-mini-icon"> H </span>
+                                <span class="sidenav-mini-icon"> A </span>
                                 <span class="sidenav-normal"> Anasayfa </span>
                             </a>
                         </li>
@@ -359,14 +359,30 @@
                                             <span class="sidenav-normal"> Entrez Dosya Sorgulama </span>
                                         </a>
                                     </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#StepExample">
+                                <span class="sidenav-mini-icon"> PM </span>
+                                <span class="sidenav-normal"> PubMed Makale <b class="caret"></b></span>
+                            </a>
+                            <div class="collapse " id="StepExample">
+                                <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-lock-cover.html">
-                                            <span class="sidenav-mini-icon text-xs"> C </span>
-                                            <span class="sidenav-normal"> Cover </span>
+                                        <a class="nav-link " href="{% url "bioinformatic:pubmed_article" %}">
+                                            <span class="sidenav-mini-icon text-xs"> ID </span>
+                                            <span class="sidenav-normal"> ID Numarası </span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-lock-illustration.html">
+                                        <a class="nav-link " href="{% url "bioinformatic:medline_article" %}">
+                                            <span class="sidenav-mini-icon text-xs"> Con </span>
+                                            <span class="sidenav-normal"> İçerik </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="/authentication-verification-illustration.html">
                                             <span class="sidenav-mini-icon text-xs"> I </span>
                                             <span class="sidenav-normal"> Illustration </span>
                                         </a>
@@ -405,34 +421,7 @@
                     <ul class="nav ms-4 ps-3">
 
 
-                        <li class="nav-item ">
-                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#StepExample">
-                                <span class="sidenav-mini-icon"> 2 </span>
-                                <span class="sidenav-normal"> 2-Step Verification <b class="caret"></b></span>
-                            </a>
-                            <div class="collapse " id="StepExample">
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-verification-basic.html">
-                                            <span class="sidenav-mini-icon text-xs"> B </span>
-                                            <span class="sidenav-normal"> Basic </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-verification-cover.html">
-                                            <span class="sidenav-mini-icon text-xs"> C </span>
-                                            <span class="sidenav-normal"> Cover </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-verification-illustration.html">
-                                            <span class="sidenav-mini-icon text-xs"> I </span>
-                                            <span class="sidenav-normal"> Illustration </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+
                         <li class="nav-item ">
                             <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#errorExample">
                                 <span class="sidenav-mini-icon"> E </span>

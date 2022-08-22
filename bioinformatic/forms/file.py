@@ -1,5 +1,5 @@
 from django import forms
-from bioinformatic.models import FastaRead, GenbankRead, BlastHSP
+from bioinformatic.models import FastaRead, GenbankRead
 
 FILE_TYPE = (
     ("fasta", "fasta"),

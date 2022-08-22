@@ -3,9 +3,9 @@ from pathlib import Path
 from Bio import SearchIO
 from django.shortcuts import render, redirect, get_object_or_404
 from bioinformatic.forms.file import XmlFileForm
-from bioinformatic.forms.blast import BlastResultForm, BlastHspForm
+from bioinformatic.forms.blast import BlastResultForm
 from bioinformatic.views.genbank import handle_uploaded_file
-from bioinformatic.models import BlastQuery, BlastHSP
+from bioinformatic.models import BlastQuery
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')

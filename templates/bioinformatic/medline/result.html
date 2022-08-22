@@ -1,0 +1,38 @@
+{% extends "layouts/base.html" %}
+{% load static bootstrap5 %}
+{% block title %} Makaleler {% endblock %}
+
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-10 col-12 mx-auto">
+                <div class="card card-body mt-3">
+                    <h6 class="mb-0">Makaleler</h6>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-12 mx-auto">
+                            <div class="form-group ">
+                                <div class="mx-auto">
+                                    {% for article in articles %}
+
+                                        <p><a href="https://pubmed.ncbi.nlm.nih.gov/{{ article.article_id }}/">
+                                            {{ article.title }}
+                                        </a></p>
+
+                                    {% endfor %}
+                                    <button type="button" name="button" class="btn btn-light m-0">
+                                        <a href="{% url "bioinformatic:translation" %}">Tamam</a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+{% endblock %}

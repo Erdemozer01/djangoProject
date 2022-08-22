@@ -1,5 +1,5 @@
 from django import forms
-from bioinformatic.models import BlastQuery, BlastHSP
+from bioinformatic.models import BlastQuery
 
 
 class BlastResultForm(forms.ModelForm):
@@ -8,10 +8,7 @@ class BlastResultForm(forms.ModelForm):
         fields = ['blast']
 
 
-class BlastHspForm(forms.ModelForm):
-    class Meta:
-        model = BlastHSP
-        fields = ['hit_id']
+
 
 
 

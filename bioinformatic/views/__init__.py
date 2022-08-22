@@ -7,3 +7,5 @@ from .genbank import genbank_read, genbank_region_find, delete_genbank, genbank_
 from .alignments import global_alignment, local_alignment
 from .xml import xml_file, blast_result_delete
 from .entrez import entrez
+from .pubmed import pubmed
+from .medline import medline_article
