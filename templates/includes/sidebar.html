@@ -362,34 +362,7 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="nav-item ">
-                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#StepExample">
-                                <span class="sidenav-mini-icon"> PM </span>
-                                <span class="sidenav-normal"> PubMed Makale <b class="caret"></b></span>
-                            </a>
-                            <div class="collapse " id="StepExample">
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="{% url "bioinformatic:pubmed_article" %}">
-                                            <span class="sidenav-mini-icon text-xs"> ID </span>
-                                            <span class="sidenav-normal"> ID Numarası </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="{% url "bioinformatic:medline_article" %}">
-                                            <span class="sidenav-mini-icon text-xs"> Con </span>
-                                            <span class="sidenav-normal"> Güncel Makale </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="/authentication-verification-illustration.html">
-                                            <span class="sidenav-mini-icon text-xs"> I </span>
-                                            <span class="sidenav-normal"> Illustration </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+
                     </ul>
                 </div>
             </li>
@@ -415,32 +388,31 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Authentication</span>
+                    <span class="nav-link-text ms-1">Makale</span>
                 </a>
                 <div class="collapse " id="authExamples">
                     <ul class="nav ms-4 ps-3">
 
-
-
                         <li class="nav-item ">
-                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#errorExample">
-                                <span class="sidenav-mini-icon"> E </span>
-                                <span class="sidenav-normal"> Error <b class="caret"></b></span>
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#StepExample">
+                                <span class="sidenav-mini-icon"> PM </span>
+                                <span class="sidenav-normal"> PubMed Makale <b class="caret"></b></span>
                             </a>
-                            <div class="collapse " id="errorExample">
+                            <div class="collapse " id="StepExample">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link " href="/page-404.html">
-                                            <span class="sidenav-mini-icon text-xs"> E </span>
-                                            <span class="sidenav-normal"> Error 404 </span>
+                                        <a class="nav-link " href="{% url "bioinformatic:pubmed_article" %}">
+                                            <span class="sidenav-mini-icon text-xs"> ID </span>
+                                            <span class="sidenav-normal"> ID Numarası </span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link " href="/page-500.html">
-                                            <span class="sidenav-mini-icon text-xs"> E </span>
-                                            <span class="sidenav-normal"> Error 500 </span>
+                                        <a class="nav-link " href="{% url "bioinformatic:medline_article" %}">
+                                            <span class="sidenav-mini-icon text-xs"> Con </span>
+                                            <span class="sidenav-normal"> Güncel Makale </span>
                                         </a>
                                     </li>
+
                                 </ul>
                             </div>
                         </li>
