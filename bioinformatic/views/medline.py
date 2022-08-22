@@ -34,15 +34,14 @@ def medline_article(request):
                 MedlineArticle.objects.all().delete()
                 for record in records["PubmedArticle"]:
                     MedlineArticle.objects.create(title=record["MedlineCitation"]["Article"]["ArticleTitle"],
-                                                  doi=record["MedlineCitation"]["Article"][
-                                                      "ELocationID"][0], article_id=record["MedlineCitation"]["PMID"])
+                                                  article_id=record["MedlineCitation"]["PMID"])
             else:
                 for record in records["PubmedArticle"]:
                     MedlineArticle.objects.create(title=record["MedlineCitation"]["Article"]["ArticleTitle"],
-                                                  doi=record["MedlineCitation"]["Article"][
-                                                      "ELocationID"][0], article_id=record["MedlineCitation"]["PMID"])
+                                                  article_id=record["MedlineCitation"]["PMID"])
 
             return render(request, "bioinformatic/medline/result.html",
-                          {"articles": MedlineArticle.objects.all(), "bre": "Makaleler"})
+                          {"articles": MedlineArticle.objects.all(), "bre": "Makaleler",
+                           "count": MedlineArticle.objects.all().count()})
 
     return render(request, "bioinformatic/medline/search.html", {"form": form, "bre": "Makale Arama"})
