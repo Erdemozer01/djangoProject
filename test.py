@@ -1,16 +1,17 @@
-import requests
-from bs4 import BeautifulSoup
-import re
+from Bio.PDB.MMCIFParser import MMCIFParser
+from Bio.PDB.MMCIF2Dict import MMCIF2Dict
+parser = MMCIFParser()
 
-URL = "https://pubmed.ncbi.nlm.nih.gov/19304878"
-page = requests.get(URL)
+import easygui
 
-soup = BeautifulSoup(page.content, "html.parser")
+file = easygui.fileopenbox()
 
+mmcif_dict = MMCIF2Dict(f"{file}")
 
-print(soup)
+print(file)
 
-results = soup.findAll("title")
+structure = parser.get_structure("1fat", f"{file}")
 
-print(results[0].text)
+print(structure.parent)
 
+print(mmcif_dict["_exptl_crystal.density_percent_sol"])
