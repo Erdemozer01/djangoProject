@@ -33,8 +33,6 @@ def trees_draw(request):
 
                 trees = Phylo.read(file, "phyloxml")
 
-                Phylo.draw(trees)
-
                 return render(request, "bioinformatic/trees/result.html",
                               {"tree": Phylo.draw(trees), "bre": "Filogenetik Ağaç"})
 
