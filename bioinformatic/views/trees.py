@@ -3,6 +3,7 @@ from bioinformatic.forms.file import FileReadForm
 from Bio import Phylo
 import os
 from pathlib import Path
+import plotly.graph_objects as go
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
@@ -21,6 +22,7 @@ def trees_draw(request):
         if form.is_valid():
 
             try:
+
                 handle_uploaded_file(request.FILES['file'])
 
                 file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['file']))
@@ -33,8 +35,12 @@ def trees_draw(request):
 
                 trees = Phylo.read(file, "phyloxml")
 
+                plt = Phylo.draw(trees, do_show=True)
+
+                fig = go.Figure(data=plt).write_html(path + "plt.html")
+
                 return render(request, "bioinformatic/trees/result.html",
-                              {"tree": Phylo.draw(trees), "bre": "Filogenetik Ağaç"})
+                              {"bre": "Filogenetik Ağaç", "fig": fig})
 
             except ValueError:
                 msg = "Dosyada Ağaç Bulunamadı"
@@ -44,6 +50,6 @@ def trees_draw(request):
 
             finally:
 
-                os.remove(file)
+                pass
 
     return render(request, "bioinformatic/trees/read.html", {'form': form, "bre": "Filogenetik Ağaç Oluşturma"})
