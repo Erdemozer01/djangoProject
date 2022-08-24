@@ -35,7 +35,7 @@ def trees_draw(request):
 
                 Phylo.draw(trees)
 
-                return render(request, "bioinformatic/trees/result.html")
+                return render(request, "bioinformatic/trees/result.html", {"tree": Phylo.draw(trees)})
 
             except ValueError:
                 msg = "Dosyada Ağaç Bulunamadı"
