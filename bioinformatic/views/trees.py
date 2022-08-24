@@ -37,7 +37,7 @@ def trees_draw(request):
 
                 plt = Phylo.draw(trees, do_show=True)
 
-                fig = go.Figure(data=plt).write_html(path + "plt.html")
+                fig = go.Figure(data=plt)
 
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç", "fig": fig})
@@ -50,6 +50,6 @@ def trees_draw(request):
 
             finally:
 
-                pass
+                os.remove(file)
 
     return render(request, "bioinformatic/trees/read.html", {'form': form, "bre": "Filogenetik Ağaç Oluşturma"})
