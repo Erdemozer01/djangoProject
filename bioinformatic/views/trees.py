@@ -35,7 +35,8 @@ def trees_draw(request):
 
                 Phylo.draw(trees)
 
-                return render(request, "bioinformatic/trees/result.html", {"tree": Phylo.draw(trees)})
+                return render(request, "bioinformatic/trees/result.html",
+                              {"tree": Phylo.draw(trees), "bre": "Filogenetik Ağaç"})
 
             except ValueError:
                 msg = "Dosyada Ağaç Bulunamadı"
@@ -47,4 +48,4 @@ def trees_draw(request):
 
                 os.remove(file)
 
-    return render(request, "bioinformatic/trees/read.html", {'form': form})
+    return render(request, "bioinformatic/trees/read.html", {'form': form, "bre": "Filogenetik Ağaç Oluşturma"})
