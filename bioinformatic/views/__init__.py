@@ -9,3 +9,4 @@ from .xml import xml_file, blast_result_delete
 from .entrez import entrez
 from .pubmed import pubmed
 from .medline import medline_article
+from .trees import trees_draw

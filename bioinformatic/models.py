@@ -77,7 +77,6 @@ class PubMedArticle(models.Model):
 
 
 class MedlineArticle(models.Model):
-
     email = models.EmailField()
 
     article_id = models.CharField(max_length=1000)
@@ -92,3 +91,8 @@ class MedlineArticle(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+
+

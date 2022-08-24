@@ -6,6 +6,7 @@ admin.site.register(BlastQuery)
 admin.site.register(MedlineArticle)
 
 
+
 @admin.register(Slide)
 class Slide(admin.ModelAdmin):
     list_display = ['title']
@@ -24,5 +25,4 @@ class GenbankAdmin(admin.ModelAdmin):
 @admin.register(PubMedArticle)
 class PubMedArticleAdmin(admin.ModelAdmin):
     list_display = ['link', 'created']
-
     list_filter = ['email', 'created']
