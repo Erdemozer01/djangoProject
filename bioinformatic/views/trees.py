@@ -35,6 +35,12 @@ def trees_draw(request):
 
                 return render(request, "bioinformatic/trees/result.html", {'tree': Phylo.draw(trees)})
 
+            except ValueError:
+                msg = "Dosyada Ağaç Bulunamadı"
+                url = reverse("bioinformatic:filogenetik_agac")
+                return render(request, 'bioinformatic/fasta/notfound.html',
+                              {"msg": msg, 'url': url})
+
             finally:
 
                 os.remove(file)
