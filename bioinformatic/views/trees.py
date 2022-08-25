@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import plotly.io as pio
 
+from django.conf import settings
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
 
@@ -42,7 +44,7 @@ def trees_draw(request):
 
                 plotly.graph_objs.Figure()
 
-                plt.savefig("/media/tree.png")
+                plt.savefig(os.path.join(settings.BASE_DIR / "media/tree.png"))
 
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç"})
