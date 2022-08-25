@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import plotly.io as pio
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
 
@@ -43,13 +42,10 @@ def trees_draw(request):
 
                 plotly.graph_objs.Figure()
 
-
-
-                plt.savefig("static/tree.png")
+                plt.savefig("media/tree.png")
 
                 return render(request, "bioinformatic/trees/result.html",
-                              {"bre": "Filogenetik Ağaç",
-                               })
+                              {"bre": "Filogenetik Ağaç"})
 
             except ValueError:
                 msg = "Dosyada Ağaç Bulunamadı"
