@@ -44,7 +44,7 @@ def trees_draw(request):
 
                 plotly.graph_objs.Figure()
 
-                plt.savefig(os.path.join(settings.BASE_DIR / "media/tree.png"))
+                plt.savefig(os.path.join(settings.MEDIA_ROOT, "tree.png"))
 
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç"})
