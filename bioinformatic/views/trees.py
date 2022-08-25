@@ -59,6 +59,6 @@ def trees_draw(request):
 
             finally:
 
-                pass
+                os.remove(file)
 
     return render(request, "bioinformatic/trees/read.html", {'form': form, "bre": "Filogenetik Ağaç Oluşturma"})
