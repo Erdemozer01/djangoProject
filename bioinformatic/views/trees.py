@@ -1,9 +1,13 @@
+import plotly.offline
 from django.shortcuts import *
 from bioinformatic.forms.file import FileReadForm
 from Bio import Phylo
 import os
 from pathlib import Path
-import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+import plotly.graph_objs as go
+import plotly.io as pio
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
@@ -33,14 +37,19 @@ def trees_draw(request):
                     return render(request, 'bioinformatic/fasta/notfound.html',
                                   {"msg": msg, 'url': url})
 
-                trees = Phylo.read(file, "phyloxml")
+                tree = Phylo.read(file, "phyloxml")
 
-                plt = Phylo.draw(trees, do_show=True)
+                Phylo.draw(tree, do_show=False)
 
-                fig = go.Figure(data=plt)
+                plotly.graph_objs.Figure()
+
+
+
+                plt.savefig("static/tree.png")
 
                 return render(request, "bioinformatic/trees/result.html",
-                              {"bre": "Filogenetik Ağaç", "fig": fig})
+                              {"bre": "Filogenetik Ağaç",
+                               })
 
             except ValueError:
                 msg = "Dosyada Ağaç Bulunamadı"
@@ -50,6 +59,6 @@ def trees_draw(request):
 
             finally:
 
-                os.remove(file)
+                pass
 
     return render(request, "bioinformatic/trees/read.html", {'form': form, "bre": "Filogenetik Ağaç Oluşturma"})
