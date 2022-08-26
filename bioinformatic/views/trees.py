@@ -51,10 +51,9 @@ def trees_draw(request):
 
                 plt.figure()
 
-                plt.show()
+                plt.close()
 
                 plt.savefig(os.path.join(settings.MEDIA_ROOT, "tree.jpg"), orientation='landscape')
-
 
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç"})
