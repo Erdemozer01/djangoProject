@@ -1,14 +1,15 @@
 from Bio.PDB.PDBParser import PDBParser
 
-from Bio.ExPASy import Prosite
+from Bio.ExPASy import Prosite, ScanProsite
 
 from Bio import ExPASy
 
+sequence = "MEHKEVVLLLLLFLKSGQGEPLDDYVNTQGASLFSVTKKQLGAGSIEECAAKCEEDEEFT" \
+           "CRAFQYHSKEQQCVIMAENRKSSIIIRMRDVVLFEKKVYLSECKTGNGKNYRGTMSKTKN"
 
-handle = ExPASy.get_prosite_raw("PS00003")
-record = Prosite.read(handle)
+handle = ScanProsite.scan(seq=sequence)
 
+result = ScanProsite.read(handle)
 
-print(record.type)
-print(record.name)
-print(record.created)
+for i in result:
+    print(i)
