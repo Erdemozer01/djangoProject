@@ -15,13 +15,17 @@
                             <div>
                                 <div>
                                     <img src="/media/tree.jpg" alt="tree.png">
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <a href="{% url "bioinformatic:filogenetik_agac" %}" class="float-end">
+                                    <div class="d-flex justify-content-start mt-4">
+                                        <a href="{% url "bioinformatic:filogenetik_agac" %}">
                                             <button type="button" name="button" class="btn btn-light">
                                                 Tamam
                                             </button>
                                         </a>
-
+                                        <a href="{% url "bioinformatic:tree_download" %}">
+                                            <button type="button" name="button" class="btn btn-dark">
+                                                İndir
+                                            </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

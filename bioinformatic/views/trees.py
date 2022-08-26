@@ -39,6 +39,9 @@ def trees_draw(request):
 
                 Phylo.draw(tree, do_show=False)
 
+                plt.xlabel('Dal uzunluğu')
+                plt.ylabel('Taksonomi')
+
                 img_path = os.path.join(settings.MEDIA_ROOT, "tree.jpg")
 
                 plt.savefig(img_path)

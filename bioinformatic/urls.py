@@ -30,4 +30,5 @@ urlpatterns = [
     path('pubmed/articles/id/', views.pubmed, name="pubmed_article"),
     path('pubmed/articles/term/', views.medline_article, name="medline_article"),
     path('filogenetik_agac/', views.trees_draw, name="filogenetik_agac"),
+    path('filogenetik_agac/download/', views.tree_download, name="tree_download"),
 ]
