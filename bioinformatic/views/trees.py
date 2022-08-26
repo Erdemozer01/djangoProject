@@ -42,7 +42,7 @@ def trees_draw(request):
 
                 tree = Phylo.read(file, "phyloxml")
 
-                Phylo.draw(tree, do_show=False)
+                Phylo.draw(tree)
 
                 plt.figure()
 
