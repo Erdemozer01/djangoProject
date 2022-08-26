@@ -1,14 +1,9 @@
-import Bio.Phylo.PhyloXML
-import mpld3
-import plotly.offline
 from django.shortcuts import *
 from bioinformatic.forms.file import FileReadForm
 from Bio import Phylo
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
-import plotly.express as px
-from skimage import io
 
 import matplotlib
 
