@@ -4,6 +4,7 @@ from Bio import Phylo
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
+from django.conf import settings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
@@ -37,6 +38,10 @@ def trees_draw(request):
                 tree = Phylo.read(file, "phyloxml")
 
                 Phylo.draw(tree, do_show=False)
+
+                img_path = os.path.join(settings.MEDIA_ROOT, "tree.jpg")
+
+                plt.savefig(img_path)
 
                 plt.show()
 
