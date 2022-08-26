@@ -5,22 +5,24 @@
 
 {% block content %}
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
-            <div class="col-lg-12 col-12 mx-auto">
-                <div class="card card-body mt-3">
+            <div class="col-lg-10 col-12 mx-auto">
+                <div class="mt-3">
                     <h6 class="mb-0">Filogenetik Ağaç</h6>
                     <div class="row mt-4">
-                        <div class="col-12 col-md-12 mx-auto">
-                            <div class="form-group ">
+                        <div class="col-10 col-md-12 mx-auto">
+                            <div>
                                 <div>
-                                    <img src="/media/tree.png" style="margin-right: auto; margin-left: auto" alt="tree.png">
+                                    <img src="/media/tree.jpg" alt="tree.png">
 
                                     <div class="d-flex justify-content-end mt-4">
+                                        <a href="{% url "bioinformatic:filogenetik_agac" %}" class="float-end">
+                                            <button type="button" name="button" class="btn btn-light">
+                                                Tamam
+                                            </button>
+                                        </a>
 
-                                        <button type="button" name="button" class="btn btn-light m-0">
-                                            <a href="{% url "bioinformatic:filogenetik_agac" %}">Tamam</a>
-                                        </button>
                                     </div>
                                 </div>
                             </div>

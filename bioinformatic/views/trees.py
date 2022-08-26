@@ -1,3 +1,4 @@
+import Bio.Phylo.PhyloXML
 import plotly.offline
 from django.shortcuts import *
 from bioinformatic.forms.file import FileReadForm
@@ -5,8 +6,14 @@ from Bio import Phylo
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
-import plotly.graph_objs as go
-import plotly.io as pio
+import plotly.express as px
+from skimage import io
+
+import matplotlib
+
+
+
+from Bio.Phylo.TreeConstruction import TreeConstructor, DistanceCalculator, DistanceTreeConstructor
 
 from django.conf import settings
 
@@ -40,11 +47,16 @@ def trees_draw(request):
 
                 tree = Phylo.read(file, "phyloxml")
 
+                matplotlib.use("TkAgg")
+
                 Phylo.draw(tree, do_show=False)
 
-                plotly.graph_objs.Figure()
+                plt.figure()
 
-                plt.savefig(os.path.join(settings.MEDIA_ROOT, "tree.png"))
+                plt.show()
+
+                plt.savefig(os.path.join(settings.MEDIA_ROOT, "tree.jpg"), orientation='landscape')
+
 
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç"})

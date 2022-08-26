@@ -1,9 +1,14 @@
-from Bio import Phylo
-import os
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files\\')
+from Bio.PDB.PDBParser import PDBParser
 
-trees = Phylo.read("media/bcl_2.xml", "phyloxml")
+from Bio.ExPASy import Prosite
 
-Phylo.draw_ascii(trees)
+from Bio import ExPASy
+
+
+handle = ExPASy.get_prosite_raw("PS00003")
+record = Prosite.read(handle)
+
+
+print(record.type)
+print(record.name)
+print(record.created)
