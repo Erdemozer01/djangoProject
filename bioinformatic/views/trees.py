@@ -5,12 +5,6 @@ import os
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-import matplotlib
-
-matplotlib.use("Agg")
-
-from django.conf import settings
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
 
@@ -42,13 +36,11 @@ def trees_draw(request):
 
                 tree = Phylo.read(file, "phyloxml")
 
-                Phylo.draw(tree)
+                Phylo.draw(tree, do_show=False)
 
                 plt.figure()
 
-                plt.close()
-
-                plt.savefig(os.path.join(settings.MEDIA_ROOT, "tree.jpg"), orientation='landscape')
+                plt.show()
 
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç"})
