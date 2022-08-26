@@ -47,8 +47,6 @@ def trees_draw(request):
 
                 tree = Phylo.read(file, "phyloxml")
 
-                matplotlib.use("TkAgg")
-
                 Phylo.draw(tree, do_show=False)
 
                 plt.figure()
