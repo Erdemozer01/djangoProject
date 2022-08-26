@@ -38,8 +38,6 @@ def trees_draw(request):
 
                 Phylo.draw(tree, do_show=False)
 
-                plt.figure()
-
                 plt.show()
 
                 return render(request, "bioinformatic/trees/result.html",
