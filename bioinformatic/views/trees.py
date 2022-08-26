@@ -1,4 +1,5 @@
 import Bio.Phylo.PhyloXML
+import mpld3
 import plotly.offline
 from django.shortcuts import *
 from bioinformatic.forms.file import FileReadForm
@@ -11,9 +12,7 @@ from skimage import io
 
 import matplotlib
 
-
-
-from Bio.Phylo.TreeConstruction import TreeConstructor, DistanceCalculator, DistanceTreeConstructor
+matplotlib.use("Agg")
 
 from django.conf import settings
 
@@ -29,6 +28,7 @@ def handle_uploaded_file(f):
 
 def trees_draw(request):
     form = FileReadForm(request.POST or None, request.FILES or None)
+    file = None
     if request.method == "POST":
 
         if form.is_valid():
