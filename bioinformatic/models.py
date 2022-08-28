@@ -93,6 +93,17 @@ class MedlineArticle(models.Model):
         return self.title
 
 
+class SwissProtModel(models.Model):
+    accessions = models.CharField(max_length=1000, verbose_name="Erişim Numarası")
+    taxonomy_id = models.CharField(max_length=1000, verbose_name="İD Numarası", null=True)
+    organism = models.CharField(max_length=1000, verbose_name="Organizma")
+    sequence = models.TextField(verbose_name="Sekans")
+    sequence_length = models.CharField(max_length=1000, verbose_name="Sekans Uzunluğu")
 
+    def __str__(self):
+        return self.accessions
 
-
+    class Meta:
+        db_table = "swiss-prot"
+        verbose_name = "swiss-prot"
+        verbose_name_plural = "swiss-prot"

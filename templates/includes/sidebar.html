@@ -237,6 +237,13 @@
                         </li>
 
                         <li class="nav-item ">
+                            <a class="nav-link " href="{% url "bioinformatic:filogenetik_agac" %}">
+                                <span class="sidenav-mini-icon"> FA </span>
+                                <span class="sidenav-normal"> Filogenetik Ağaç </span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item ">
                             <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false"
                                href="#productsExample">
                                 <span class="sidenav-mini-icon"> P </span>
@@ -365,10 +372,26 @@
                         </li>
 
                         <li class="nav-item ">
-                            <a class="nav-link " href="{% url "bioinformatic:filogenetik_agac" %}">
-                                <span class="sidenav-mini-icon"> FA </span>
-                                <span class="sidenav-normal"> Filogenetik Ağaç </span>
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#SwisExample">
+                                <span class="sidenav-mini-icon"> SP </span>
+                                <span class="sidenav-normal"> Swiss-Prot ve ExPASy <b class="caret"></b></span>
                             </a>
+                            <div class="collapse " id="SwisExample">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="{% url "bioinformatic:swiss_prot_file" %}">
+                                            <span class="sidenav-mini-icon text-xs"> SE </span>
+                                            <span class="sidenav-normal"> Swiss-Prot Dosyası </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="{% url "bioinformatic:swiss_prot_url" %}">
+                                            <span class="sidenav-mini-icon text-xs"> SE </span>
+                                            <span class="sidenav-normal"> Swiss-Prot Url </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
 
                     </ul>

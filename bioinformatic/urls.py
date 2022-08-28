@@ -31,4 +31,7 @@ urlpatterns = [
     path('pubmed/articles/term/', views.medline_article, name="medline_article"),
     path('filogenetik_agac/', views.trees_draw, name="filogenetik_agac"),
     path('filogenetik_agac/download/', views.tree_download, name="tree_download"),
+    path('swiss_prot/', views.swiss_prot_file, name="swiss_prot_file"),
+    path('swiss_prot_url/', views.swiss_prot_url, name="swiss_prot_url"),
+    path('swiss_prot_download/', views.swiss_download, name="swiss_prot_download"),
 ]

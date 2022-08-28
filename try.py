@@ -1,15 +1,22 @@
+import os
+from pathlib import Path
+
 from Bio.PDB.PDBParser import PDBParser
 
 from Bio.ExPASy import Prosite, ScanProsite
 
 from Bio import ExPASy
 
-sequence = "MEHKEVVLLLLLFLKSGQGEPLDDYVNTQGASLFSVTKKQLGAGSIEECAAKCEEDEEFT" \
-           "CRAFQYHSKEQQCVIMAENRKSSIIIRMRDVVLFEKKVYLSECKTGNGKNYRGTMSKTKN"
+from Bio import SwissProt
 
-handle = ScanProsite.scan(seq=sequence)
+BASE_DIR = Path(__file__).resolve().parent.parent
+path = os.path.join(BASE_DIR, 'djangoProject\\bioinformatic\\files\\uniprot_sprot.dat')
 
-result = ScanProsite.read(handle)
+handle = open(path)
 
-for i in result:
-    print(i)
+records = SwissProt.parse(handle)
+
+
+for record in records:
+    print(record.gene_name)
+
