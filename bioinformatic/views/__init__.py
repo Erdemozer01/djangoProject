@@ -11,4 +11,4 @@ from .entrez import entrez
 from .pubmed import pubmed
 from .medline import medline_article
 from .trees import trees_draw
-from .swiss_prot import swiss_prot_file, swiss_prot_url
+from .swiss_prot import swiss_prot_file, swiss_prot_url, SwissProtListView, SwissProtDetailView

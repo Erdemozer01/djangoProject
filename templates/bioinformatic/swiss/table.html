@@ -1,0 +1,55 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %} Swiss-Prot {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">Swiss-Prot</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-0">
+                        <div class="table table-responsive">
+                            <table class="table table-flush" id="products-list">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Erişim Numarası</th>
+                                    <th>İD</th>
+                                    <th class="text-center">Organizma</th>
+                                    <th>Sekans Uzunluğu</th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                {% for object in object_list %}
+                                    <tr>
+                                        <td class="text-sm">
+                                            <a href="{% url "bioinformatic:swiss_prot_detail" object.pk object.accessions|slugify|lower %}">
+                                                {{ object.accessions }}
+                                            </a>
+                                        </td>
+                                        <td class="text-sm">{{ object.taxonomy_id }}</td>
+                                        <td class="text-sm">{{ object.organism }}</td>
+                                        <td class="text-sm">{{ object.sequence_length }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

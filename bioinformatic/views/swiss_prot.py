@@ -3,8 +3,6 @@ from pathlib import Path
 from bioinformatic.models import SwissProtModel
 import Bio.SwissProt
 from django.views import generic
-import tempfile
-import shutil
 
 from bioinformatic.forms.file import FileReadForm
 from bioinformatic.forms.url import UrlForm
@@ -16,68 +14,40 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
 
 
-def handle_uploaded_file(file):
-    with open(path + file, 'wb+') as destination:
-        for chunk in file.chunks():
+def handle_uploaded_file(f):
+    with open(path + f.name, 'wb+') as destination:
+        for chunk in f.chunks():
             destination.write(chunk)
-            destination.close()
 
 
 def swiss_prot_file(request):
+    global records_p, handle
     form = FileReadForm(request.POST or None, request.FILES or None)
+
     if request.method == "POST":
+
         if form.is_valid():
+
             try:
 
-                file = form.cleaned_data["file"]
+                handle_uploaded_file(request.FILES['file'])
 
-                handle_uploaded_file(file=file)
+                file_path = os.path.join(BASE_DIR, "files\\{}".format(form.cleaned_data['file']))
 
-                file_path = os.path.join(path, file)
+                handle = open(file_path)
 
-                if os.path.getsize(file_path) > 300000:
-                    handle = open(file_path)
+                records = SwissProt.read(handle)
 
-                    records = SwissProt.parse(handle)
+                authors = [ref.authors for ref in records.references]
 
-                    if SwissProtModel.objects.exists():
-                        SwissProtModel.objects.all().delete()
-                        for record in records:
-                            SwissProtModel.objects.create(accessions=record.accessions[0],
-                                                          taxonomy_id=record.taxonomy_id[0],
-                                                          created=record.created[0], organism=record.organism,
-                                                          sequence=record.sequence,
-                                                          sequence_length=record.sequence_length,
-                                                          annotation_update=record.annotation_update[0])
+                title = [ref.title for ref in records.references]
 
-                    else:
-                        for record in records:
-                            SwissProtModel.objects.create(accessions=record.accessions[0],
-                                                          taxonomy_id=record.taxonomy_id[0],
-                                                          created=record.created[0], organism=record.organism,
-                                                          sequence=record.sequence,
-                                                          sequence_length=record.sequence_length,
-                                                          annotation_update=record.annotation_update[0])
+                handle.close()
 
-                    return render(request, "bioinformatic/swiss/result.html",
-                                  {"file": records, "bre": "Dosya İçerği"})
+                os.remove(file_path)
 
-                else:
-
-                    handle = open(file_path)
-
-                    records = SwissProt.read(handle)
-
-                    authors = [ref.authors for ref in records.references]
-
-                    title = [ref.title for ref in records.references]
-
-                    handle.close()
-
-                    os.remove(file_path)
-
-                    return render(request, "bioinformatic/swiss/result.html",
-                                  {"file": records, "authors": authors, "title": title, "bre": "Dosya İçerği"})
+                return render(request, "bioinformatic/swiss/result.html",
+                              {"file": records, "authors": authors, "title": title, "bre": "Dosya İçerği"})
 
             except Bio.SwissProt.SwissProtParserError:
                 return render(request, 'bioinformatic/fasta/notfound.html',
@@ -85,10 +55,50 @@ def swiss_prot_file(request):
                                "url": reverse("bioinformatic:swiss_prot_file"),
                                "bre": "Hata"})
 
+            except ValueError:
+                try:
+
+                    file_path = os.path.join(BASE_DIR, "files\\{}".format(form.cleaned_data['file']))
+
+                    handle = open(file_path)
+
+                    records_p = SwissProt.parse(handle)
+
+                    if SwissProtModel.objects.exists():
+                        SwissProtModel.objects.all().delete()
+                        for record in records_p:
+                            SwissProtModel.objects.create(
+                                sequence=record.sequence,
+                                organism=record.organism,
+                                accessions=record.accessions[0],
+                                taxonomy_id=record.taxonomy_id[0],
+                                sequence_length=record.sequence_length
+                            )
+                        records_p.close()
+                        handle.close()
+                        return redirect("bioinformatic:swiss_prot_list")
+
+                    else:
+                        for record in records_p:
+                            SwissProtModel.objects.create(sequence=record.sequence, organism=record.organism,
+                                                          accessions=record.accessions[0],
+                                                          taxonomy_id=record.taxonomy_id[0],
+                                                          sequence_length=record.sequence_length).save()
+
+                except IndexError:
+                    records_p.close()
+                    handle.close()
+                    return redirect("bioinformatic:swiss_prot_list")
             finally:
-                file_path = os.path.join(BASE_DIR, "files\\{}".format(form.cleaned_data["file"]))
-                open(file_path).close()
-                os.remove(file_path)
+                try:
+                    file_path = os.path.join(BASE_DIR, "files\\{}".format(form.cleaned_data["file"]))
+                    cls = open(file_path, 'r')
+                    cls.close()
+                    os.remove(file_path)
+                except:
+                    file_path = os.path.join(BASE_DIR, "files\\{}".format(form.cleaned_data["file"]))
+                    os.remove(file_path)
+
 
         else:
             form = FileReadForm()
@@ -98,8 +108,13 @@ def swiss_prot_file(request):
 
 
 class SwissProtListView(generic.ListView):
-    pass
+    template_name = "bioinformatic/swiss/table.html"
+    model = SwissProtModel
 
+
+class SwissProtDetailView(generic.DetailView):
+    template_name = "bioinformatic/swiss/detail.html"
+    model = SwissProtModel
 
 def swiss_prot_url(request):
     form = UrlForm(request.POST or None)

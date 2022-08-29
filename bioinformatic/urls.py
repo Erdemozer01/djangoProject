@@ -34,4 +34,6 @@ urlpatterns = [
     path('swiss_prot/', views.swiss_prot_file, name="swiss_prot_file"),
     path('swiss_prot_url/', views.swiss_prot_url, name="swiss_prot_url"),
     path('swiss_prot_download/', views.swiss_download, name="swiss_prot_download"),
+    path('swiss_prot/table/', views.SwissProtListView.as_view(), name="swiss_prot_list"),
+    path('swiss_prot/<int:pk><slug:accessions>/', views.SwissProtDetailView.as_view(), name="swiss_prot_detail"),
 ]
