@@ -1,5 +1,8 @@
 import os
 from pathlib import Path
+
+import plotly
+
 from bioinformatic.models import SwissProtModel
 import Bio.SwissProt
 from django.views import generic
@@ -107,14 +110,33 @@ def swiss_prot_file(request):
     return render(request, "bioinformatic/swiss/file.html", {"form": form, "bre": "Swiss-Prot Dosya Okuması"})
 
 
-class SwissProtListView(generic.ListView):
-    template_name = "bioinformatic/swiss/table.html"
-    model = SwissProtModel
+def swiss_list_view(request):
+    accessions = []
+    seq_len = []
+
+    for accession in SwissProtModel.objects.all():
+        accessions.append(accession.accessions)
+
+    for seq in SwissProtModel.objects.all():
+        seq_len.append(int(seq.sequence_length))
+
+    import plotly.graph_objects as go
+
+    fig = go.Figure(
+        data=[go.Bar(y=seq_len, x=accessions)],
+        layout_title_text="Swiss-Prot"
+
+    )
+
+    fig.update_layout( xaxis_title="Erişim Numarası", yaxis_title="Sekans Uzunluğu")
+
+    return render(request, "bioinformatic/swiss/table.html", {'object_list': SwissProtModel.objects.all(), "fig": fig})
 
 
 class SwissProtDetailView(generic.DetailView):
     template_name = "bioinformatic/swiss/detail.html"
     model = SwissProtModel
+
 
 def swiss_prot_url(request):
     form = UrlForm(request.POST or None)
