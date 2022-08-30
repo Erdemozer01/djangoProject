@@ -114,23 +114,32 @@ def swiss_list_view(request):
     accessions = []
     seq_len = []
 
+    organizm = []
+
     for accession in SwissProtModel.objects.all():
         accessions.append(accession.accessions)
 
     for seq in SwissProtModel.objects.all():
         seq_len.append(int(seq.sequence_length))
 
+    for organizma in SwissProtModel.objects.all():
+        organizm.append(organizma.organism)
+
     import plotly.graph_objects as go
+    import plotly.express as px
 
     fig = go.Figure(
-        data=[go.Bar(y=seq_len, x=accessions)],
+        data=[go.Bar(y=seq_len, x=accessions, hovertext=organizm)],
         layout_title_text="Swiss-Prot"
-
     )
 
-    fig.update_layout( xaxis_title="Erişim Numarası", yaxis_title="Sekans Uzunluğu")
+    fig2 = px.bar(x=accessions, y=seq_len,category_orders={'organizm': organizm}, color=organizm, title="Swiss-Prot")
 
-    return render(request, "bioinformatic/swiss/table.html", {'object_list': SwissProtModel.objects.all(), "fig": fig})
+    fig.update_layout(xaxis_title="Erişim Numarası", yaxis_title="Sekans Uzunluğu")
+
+    fig2.update_layout(xaxis_title="Erişim Numarası", yaxis_title="Sekans Uzunluğu")
+
+    return render(request, "bioinformatic/swiss/table.html", {'object_list': SwissProtModel.objects.all(), "fig": fig, 'fig2':fig2})
 
 
 class SwissProtDetailView(generic.DetailView):
