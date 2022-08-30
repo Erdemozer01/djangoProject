@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-15vwvcc0%d^j7vq$mch5jfkp!gw961!ordz2*3s-7sp)0l8k7$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'blog112.pythonanywhere.com', 'erdem.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'erdem.pythonanywhere.com']
 
 # Application definition
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'bootstrap5',
     'ckeditor',
     'ckeditor_uploader',
+    'storages',
 ]
 
 MIDDLEWARE = [
