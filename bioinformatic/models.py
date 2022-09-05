@@ -40,7 +40,7 @@ class GenbankRead(models.Model):
     dna_sequence = models.TextField()
     dna_sequence_len = models.BigIntegerField(verbose_name="DNA Uzunluğu", null=True, blank=True)
     protein_sequence = models.TextField(blank=True, null=True)
-    protein_sequence_len = models.BigIntegerField(verbose_name="Protein Uzunluğu")
+    protein_sequence_len = models.BigIntegerField(verbose_name="Protein Uzunluğu", null=True, blank=True)
 
 
 

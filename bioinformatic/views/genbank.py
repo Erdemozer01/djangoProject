@@ -63,6 +63,15 @@ def genbank_read(request):
                                         description=record.description,
                                     )
 
+                            else:
+                                GenbankRead.objects.create(
+                                    organism=record.annotations['organism'],
+                                    taxonomy=record.annotations['taxonomy'],
+                                    description=record.description,
+                                    dna_sequence=record.seq,
+                                    dna_sequence_len=len(record.seq),
+                                )
+
 
                 else:
                     for record in records:
@@ -79,6 +88,15 @@ def genbank_read(request):
                                         taxonomy=record.annotations['taxonomy'],
                                         description=record.description,
                                     )
+
+                            else:
+                                GenbankRead.objects.create(
+                                    organism=record.annotations['organism'],
+                                    taxonomy=record.annotations['taxonomy'],
+                                    description=record.description,
+                                    dna_sequence=record.seq,
+                                    dna_sequence_len=len(record.seq),
+                                )
 
             except UnicodeDecodeError:
                 os.remove(file)
@@ -149,7 +167,7 @@ class GenBankResultView(generic.ListView):
         for protein_seq in GenbankRead.objects.all():
             protein_seq_len.append(protein_seq.protein_sequence_len)
 
-        fig = px.bar(x=protein_id, y=protein_seq_len, category_orders={'organism': organism}, color=protein_id,
+        fig = px.bar(x=organism, y=dna_sequence_len, category_orders={'organism': organism}, color=organism,
                       title="GenBank Dosyası")
 
         context['count'] = GenbankRead.objects.all().count()
