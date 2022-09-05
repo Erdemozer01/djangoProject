@@ -1,14 +1,20 @@
-from django.shortcuts import render, redirect
-from bioinformatic.forms.file import FileReadForm, GenbankIdForm
+import gzip
+import pandas as pd
+from django.shortcuts import render, redirect, reverse
+from bioinformatic.forms.file import FileReadForm, GenbankIdForm, FileUploadModelForm
 from bioinformatic.forms.writing import GenbankWritingForm
 from bioinformatic.forms.add import AddFastaData
 from Bio import SeqIO
 from bioinformatic.models import GenbankRead
 from pathlib import Path
 import os
-
+from django.views import generic
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+import plotly.graph_objects as go
+import plotly.express as px
+
+from bioinformatic.forms.translation import GenbankTranslationForm
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
@@ -21,48 +27,87 @@ def handle_uploaded_file(f):
 
 
 def genbank_read(request):
-    form = FileReadForm(request.POST or None, request.FILES or None)
+    global file, feature, records
+    form1 = FileReadForm(request.POST or None, request.FILES or None)
+    form2 = GenbankTranslationForm(request.POST or None)
     if request.method == "POST":
 
-        if form.is_valid():
+        if form1.is_valid():
 
-            file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['file']))
             handle_uploaded_file(request.FILES['file'])
+
+            file = os.path.join(BASE_DIR, 'files\\{}'.format(form1.cleaned_data['file']))
+
             try:
 
-                with open(file, 'r') as f:
-                    f.read()
+                file_obj = open(file, 'r')
+
+                records = SeqIO.parse(file, "genbank")
+
+                file_obj.close()
+
+                if GenbankRead.objects.exists():
+                    GenbankRead.objects.all().delete()
+                    for record in records:
+                        for feature in record.features:
+                            if feature.type == "CDS":
+                                if feature.qualifiers.get('translation') is not None:
+                                    GenbankRead.objects.create(
+                                        protein_sequence=feature.qualifiers.get('translation')[0],
+                                        protein_id=feature.qualifiers.get('protein_id')[0],
+                                        protein_sequence_len=len(feature.qualifiers.get('translation')[0]),
+                                        dna_sequence=record.seq,
+                                        dna_sequence_len=len(record.seq),
+                                        organism=record.annotations['organism'],
+                                        taxonomy=record.annotations['taxonomy'],
+                                        description=record.description,
+                                    )
+
+
+                else:
+                    for record in records:
+                        for feature in record.features:
+                            if feature.type == "CDS":
+                                if feature.qualifiers.get('translation') is not None:
+                                    GenbankRead.objects.create(
+                                        protein_sequence=feature.qualifiers.get('translation')[0],
+                                        protein_id=feature.qualifiers.get('protein_id')[0],
+                                        protein_sequence_len=len(feature.qualifiers.get('translation')[0]),
+                                        dna_sequence=record.seq,
+                                        dna_sequence_len=len(record.seq),
+                                        organism=record.annotations['organism'],
+                                        taxonomy=record.annotations['taxonomy'],
+                                        description=record.description,
+                                    )
 
             except UnicodeDecodeError:
                 os.remove(file)
-                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Zip Dosyası Seçtiniz'})
+                return render(request, 'bioinformatic/fasta/notfound.html',
+                              {'msg': 'Hatalı Dosya Seçtiniz!',
+                               'url': reverse('bioinformatic:genbank_read')})
 
-            records = SeqIO.parse(file, "genbank")
-            if GenbankRead.objects.exists():
-                GenbankRead.objects.all().delete()
-                for record in records:
-                    GenbankRead.objects.create(gene=record.id, sequence=record.seq, description=record.description,
-                                               dbxrefs=record.dbxrefs, features=record.features)
-            else:
-                for record in records:
-                    GenbankRead.objects.create(gene=record.id, sequence=record.seq, description=record.description,
-                                               dbxrefs=record.dbxrefs, features=record.features)
-
-            open(file, 'r').close()
-
-            os.remove(file)
+            finally:
+                open(file, 'r').close()
+                os.remove(file)
 
             if GenbankRead.objects.exists():
                 return redirect('bioinformatic:genbank_region')
-
             else:
-                return render(request, 'bioinformatic/genbank/notfound.html', {'msg': 'Hatalı Dosya'})
+                return render(request, 'bioinformatic/genbank/notfound.html',
+                              {'msg': 'Hatalı Dosya. Lütfen Genbank Dosyası Giriniz.',
+                               'url': reverse('bioinformatic:genbank_read')})
 
         else:
 
-            form = FileReadForm(request.POST or None, request.FILES or None)
+            form1 = FileReadForm(request.POST or None, request.FILES or None)
+            form2 = GenbankTranslationForm(request.POST or None)
 
-    return render(request, 'bioinformatic/genbank/read.html', {'form': form, 'bre': 'Genbank Dosyası Okuması'})
+            os.remove(file)
+
+            return redirect('bioinformatic:genbank_read')
+
+    return render(request, 'bioinformatic/genbank/read.html',
+                  {'form1': form1, 'bre': 'Genbank Dosyası Okuması'})
 
 
 def delete_genbank(request):
@@ -70,17 +115,52 @@ def delete_genbank(request):
     return redirect('bioinformatic:genbank_read')
 
 
-def genbank_region_find(request):
-    form = GenbankIdForm(request.POST or None)
-    if request.method == "POST":
+class GenBankResultView(generic.ListView):
+    template_name = "bioinformatic/genbank/list.html"
+    model = GenbankRead
+    paginate_by = 100
 
-        if form.is_valid():
-            gene = form.cleaned_data['gene']
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(GenBankResultView, self).get_context_data(**kwargs)
 
-            return render(request, 'bioinformatic/genbank/sequence.html', {'object': gene, 'bre': 'Analiz Sonuçları'})
+        organism = []
 
-    return render(request, 'bioinformatic/fasta/id.html',
-                  {'form': form, 'bre': 'Genbank Dosyası Okuması', 'len': GenbankRead.objects.all().count()})
+        dna_sequence_len = []
+
+        protein_id = []
+
+        protein_seq_len = []
+
+        data = {
+            "organism": organism,
+            "dna_sequence_len": dna_sequence_len,
+            "protein_id": protein_id
+        }
+
+        for seq in GenbankRead.objects.all():
+            dna_sequence_len.append(seq.dna_sequence_len)
+
+        for organizma in GenbankRead.objects.all():
+            organism.append(organizma.organism)
+
+        for protein in GenbankRead.objects.all():
+            protein_id.append(protein.protein_id)
+
+        for protein_seq in GenbankRead.objects.all():
+            protein_seq_len.append(protein_seq.protein_sequence_len)
+
+        fig = px.bar(x=protein_id, y=protein_seq_len, category_orders={'organism': organism}, color=protein_id,
+                      title="GenBank Dosyası")
+
+        context['count'] = GenbankRead.objects.all().count()
+        context['bre'] = "Genbank Dosya Okuması Sonuçları"
+        context['fig'] = fig
+        return context
+
+
+class GenbankDetailView(generic.DetailView):
+    model = GenbankRead
+    template_name = "bioinformatic/genbank/detail.html"
 
 
 def genbank_writing(request):

@@ -1,14 +1,15 @@
 from django.contrib import admin
-from bioinformatic.models import Slide, FastaRead, GenbankRead, BlastQuery, PubMedArticle, MedlineArticle, \
-    SwissProtModel
+from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, BlastQuery, PubMedArticle, MedlineArticle, \
+    SwissProtModel, BigFileUploadModel
 
 # Register your models here.
 admin.site.register(BlastQuery)
 admin.site.register(MedlineArticle)
 
 
-@admin.register(Slide)
-class Slide(admin.ModelAdmin):
+
+@admin.register(LabSlideModel)
+class LabSlideModelAdmin(admin.ModelAdmin):
     list_display = ['title']
 
 
@@ -19,7 +20,8 @@ class FastaAdmin(admin.ModelAdmin):
 
 @admin.register(GenbankRead)
 class GenbankAdmin(admin.ModelAdmin):
-    list_display = ['gene']
+    list_display = ['organism', 'protein_id']
+    search_fields = ['organism', 'protein_id']
 
 
 @admin.register(PubMedArticle)
@@ -30,6 +32,12 @@ class PubMedArticleAdmin(admin.ModelAdmin):
 
 @admin.register(SwissProtModel)
 class SwissProtModelAdmin(admin.ModelAdmin):
-    list_display = ['accessions', 'taxonomy_id', 'organism', 'sequence_length']
+    list_display = ['accessions', 'organism', 'sequence_length']
     search_fields = ['accessions', 'organism']
     search_help_text = "Erişim Numarası yada organizmaya göre arama yapınız"
+
+
+@admin.register(BigFileUploadModel)
+class BigFileUploadModelAdmin(admin.ModelAdmin):
+    list_display = ['big_file', 'created']
+

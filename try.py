@@ -1,22 +1,23 @@
-import os
+from Bio import SeqIO
 from pathlib import Path
-
-from Bio.PDB.PDBParser import PDBParser
-
-from Bio.ExPASy import Prosite, ScanProsite
-
-from Bio import ExPASy
-
-from Bio import SwissProt
+import os
+import gzip
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'djangoProject\\bioinformatic\\files\\uniprot_sprot.dat')
+path = os.path.join(BASE_DIR, 'djangoProject\\bioinformatic\\files\\gbvrl2.seq')
 
-handle = open(path)
+reading = open(path, 'r')
 
-records = SwissProt.parse(handle)
+records = SeqIO.parse(path, "genbank")
 
+reading.close()
+
+seq = []
 
 for record in records:
-    print(record.gene_name)
+    for feature in record.features:
+        if feature.qualifiers.get('translation') is not None:
+            print(feature.qualifiers.get('protein_id')[0])
+            print(feature.qualifiers.get('translation')[0])
 
+print(seq)

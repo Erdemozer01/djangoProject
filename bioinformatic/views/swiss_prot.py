@@ -92,6 +92,7 @@ def swiss_prot_file(request):
                     records_p.close()
                     handle.close()
                     return redirect("bioinformatic:swiss_prot_list")
+
             finally:
                 try:
                     file_path = os.path.join(BASE_DIR, "files\\{}".format(form.cleaned_data["file"]))

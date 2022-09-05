@@ -1,6 +1,7 @@
 from django import forms
 
 TABLE = (
+    ("", "------------"),
     ("1", "The Standard Code"),
     ("2", "The Vertebrate Mitochondrial Code"),
     ("3", "The Yeast Mitochondrial Code"),
@@ -9,7 +10,7 @@ TABLE = (
     ("6", "The Ciliate, Dasycladacean and Hexamita Nuclear Code"),
     ("9", "The Echinoderm and Flatworm Mitochondrial Code"),
     ("10", "The Euplotid Nuclear Code"),
-    ("11", "The Bacterial, Archaeal and Plant Plastid Code"),
+    ("11", "The Bacterial, Archaeal and Plant Plastid Code, prokaryotic viruses"),
     ("12", "The Alternative Yeast Nuclear Code"),
     ("13", "The Ascidian Mitochondrial Code"),
     ("14", "The Alternative Flatworm Mitochondrial Code"),
@@ -27,6 +28,19 @@ TABLE = (
     ("31", "Blastocrithidia Nuclear Code"),
     ("33", "Cephalodiscidae Mitochondrial UAA-Tyr Code"),
 )
+
+
+class GenbankTranslationForm(forms.Form):
+    table = forms.ChoiceField(
+        label='Dönüşüm Tablosu',
+        choices=TABLE,
+        help_text='<p style="font-size: x-small"><b>Not: </b> Dönüşüm Tablosu verileri<a target="_blank" href="https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi"> NCBI </a> sitesinden alınmıştır. </p> ',
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
 
 
 class TranslationForm(forms.Form):
@@ -53,5 +67,3 @@ class TranslationForm(forms.Form):
             }
         )
     )
-
-

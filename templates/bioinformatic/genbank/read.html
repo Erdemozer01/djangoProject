@@ -14,7 +14,7 @@
                             <div class="form-group ">
                                 <form method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    {% bootstrap_form form %}
+                                    {% bootstrap_form form1 %}
                                     <div class="d-flex justify-content-end mt-4">
                                         <button type="button" name="button" class="btn btn-light m-0">
                                             <a href="{% url "bioinformatic:delete" %}">Vazgeç</a>

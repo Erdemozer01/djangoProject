@@ -4,8 +4,8 @@ from django.db import models
 # Create your models here.
 
 
-class Slide(models.Model):
-    image = models.ImageField(upload_to="labratory/")
+class LabSlideModel(models.Model):
+    image = models.ImageField(upload_to="laboratory/slide/")
     title = models.CharField(max_length=100)
     text = models.CharField(max_length=100)
     content = models.TextField()
@@ -14,7 +14,7 @@ class Slide(models.Model):
         return self.title
 
     class Meta:
-        db_table = "slide"
+        db_table = "bioinformatic_home"
         verbose_name = "Slide"
         verbose_name_plural = "Slide"
 
@@ -33,16 +33,22 @@ class FastaRead(models.Model):
 
 
 class GenbankRead(models.Model):
-    gene = models.CharField(max_length=255)
-    sequence = models.TextField()
-    description = models.CharField(max_length=1000)
-    features = models.TextField()
-    dbxrefs = models.CharField(max_length=1000)
+    organism = models.CharField(verbose_name="Organizma", max_length=1000)
+    description = models.CharField(max_length=1000, verbose_name="Tanım")
+    protein_id = models.CharField(max_length=255, verbose_name="protein_id", blank=True, null=True)
+    taxonomy = models.CharField(max_length=1000, verbose_name="Taksonomi", null=True, blank=True)
+    dna_sequence = models.TextField()
+    dna_sequence_len = models.BigIntegerField(verbose_name="DNA Uzunluğu", null=True, blank=True)
+    protein_sequence = models.TextField(blank=True, null=True)
+    protein_sequence_len = models.BigIntegerField(verbose_name="Protein Uzunluğu")
+
+
 
     def __str__(self):
-        return self.gene
+        return self.organism
 
     class Meta:
+        ordering = ["id"]
         db_table = "genbank_read"
         verbose_name = "Genbank Okuması"
         verbose_name_plural = "Genbank Okumaları"
@@ -95,7 +101,6 @@ class MedlineArticle(models.Model):
 
 class SwissProtModel(models.Model):
     accessions = models.CharField(max_length=1000, verbose_name="Erişim Numarası")
-    taxonomy_id = models.CharField(max_length=1000, verbose_name="İD Numarası", null=True)
     organism = models.CharField(max_length=1000, verbose_name="Organizma")
     sequence = models.TextField(verbose_name="Sekans")
     sequence_length = models.CharField(max_length=1000, verbose_name="Sekans Uzunluğu")
@@ -107,3 +112,29 @@ class SwissProtModel(models.Model):
         db_table = "swiss-prot"
         verbose_name = "swiss-prot"
         verbose_name_plural = "swiss-prot"
+
+
+class BigFileUploadModel(models.Model):
+    big_file = models.FileField(verbose_name="Dosya Seçme", upload_to="laboratory/bigfile/")
+    created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.big_file
+
+    class Meta:
+        db_table = "bigfile"
+        verbose_name = "bigfile"
+        verbose_name_plural = "bigfile"
+
+
+class FileUploadModel(models.Model):
+    file = models.FileField(verbose_name="Dosya Seçme", upload_to="laboratory/bigfile/")
+    created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.file
+
+    class Meta:
+        db_table = "file"
+        verbose_name = "file"
+        verbose_name_plural = "files"

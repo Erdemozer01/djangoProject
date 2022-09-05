@@ -157,3 +157,13 @@ CKEDITOR_CONFIGS = {
         'width': 'auto',
     },
 }
+
+
+AWS_ACCESS_KEY_ID = 'AKIATDX3OSFT73MO2DVI'
+AWS_SECRET_ACCESS_KEY = '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'
+
+BIG_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_STORAGE_BUCKET_NAME = 'erdemozers3'
+AWS_UPLOAD_USERNAME = "erdemozers3"
+AWS_S3_REGION_NAME = 'eu-central-1'

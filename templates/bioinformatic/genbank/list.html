@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %} Swiss-Prot {% endblock title %}
+{% block title %} Genbank Dosyası Analiz Sonuçları {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock %}
@@ -15,16 +15,17 @@
                     <div class="card-header pb-0">
                         <div class="d-lg-flex">
                             <div>
-                                <h5 class="mb-0">Swiss-Prot</h5>
+                                <h5 class="mb-0">Genbank Dosyası Analiz Sonuçları</h5>
+                                <p class="text-center">{{ count }} adet bölge tespit edilmiştir</p>
                             </div>
 
                         </div>
                     </div>
                     <div class="card-body px-0 pb-0">
-                        <p class="text-center">{{ count }} adet bölge tespit edilmiştir</p>
+
                         <div class="table table-responsive">
                             <table class="table table-flush" id="products-list">
-                                <thead class="thead-light">
+                                <thead class="thead-light text-center">
                                 <tr>
                                     <th>Organizma</th>
                                     <th>Lokus</th>
@@ -36,24 +37,40 @@
                                 {% for object in object_list %}
                                     <tr>
                                         <td class="text-sm">
-                                            <a href="{% url "bioinformatic:swiss_prot_detail" object.pk object.accessions|slugify|lower %}">
+                                            <a href="{% url "bioinformatic:genbank_detail" object.pk object.organism|slugify|lower %}">
                                                 {{ object.organism }}
                                             </a>
                                         </td>
-                                        <td class="text-sm">{{ object.locus }}</td>
+                                        <td class="text-sm">{{ object.protein_id }}</td>
                                         <td class="text-sm">{{ object.dna_sequence_len }}</td>
                                         <td class="text-sm">{{ object.protein_sequence_len }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
-                            {{ fig2.to_html|safe }}
+                            {{ fig.to_html|safe }}
                         </div>
+                    </div>
+                    <div class="pagination mx-auto">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; İlk Sayfa</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Önceki Sayfa</a>
+        {% endif %}
+
+        <span class="current">
+            {{ page_obj.number }} ... {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Sonraki Sayfa</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Son Sayfa &raquo;</a>
+        {% endif %}
+    </span>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
 {% endblock content %}

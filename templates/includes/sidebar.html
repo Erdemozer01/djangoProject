@@ -10,9 +10,11 @@
                      class="navbar-brand-img h-100" alt="main_logo">
                 <span class="ms-1 font-weight-bold">{{ request.user.username }}</span>
             </a>
+
         {% else %}
             <a class="navbar-brand m-0" href="{% url "bioinformatic:home" %}">
-                <img src="{% static "assets/img/laboratory-scientist.svg" %}"
+
+                <img src="{% static "assets/img/42187-laboratory-icon.gif" %}"
                      class="navbar-brand-img h-100" alt="main_logo">
                 <span class="ms-1 font-weight-bold">Laboratuvar</span>
             </a>
