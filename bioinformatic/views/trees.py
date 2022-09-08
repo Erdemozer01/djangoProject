@@ -118,6 +118,7 @@ def FastaCreateTreesView(request):
 
                 os.remove(path + "aligned.fasta")
 
+
                 reading_align = open(path + "aligned.aln", "r")
 
                 alignment = AlignIO.read(reading_align, "clustal")
