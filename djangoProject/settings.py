@@ -18,7 +18,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MUSCLE_DIR = os.path.join(BASE_DIR, 'bioinformatic\\muscle5.1.linux_intel64')
+MUSCLE_DIR = os.path.join(BASE_DIR, 'bioinformatic\\muscle3.8.31_i86win32.exe')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
