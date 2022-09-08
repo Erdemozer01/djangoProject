@@ -15,7 +15,7 @@ import matplotlib
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files')
+path = os.path.join(BASE_DIR, 'files\\')
 
 muscle_exe = os.path.join(settings.MUSCLE_DIR)
 
@@ -117,7 +117,6 @@ def FastaCreateTreesView(request):
                 AlignIO.convert(path + "aligned.fasta", "fasta", path + "aligned.aln", "clustal")
 
                 os.remove(path + "aligned.fasta")
-
 
                 reading_align = open(path + "aligned.aln", "r")
 
