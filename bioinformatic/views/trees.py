@@ -1,13 +1,23 @@
 from django.shortcuts import *
 from bioinformatic.forms.file import FileReadForm
-from Bio import Phylo
+from Bio import Phylo, SeqIO
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
 from django.conf import settings
+from Bio import AlignIO
+from django.views import generic
+from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
+from bioinformatic.forms.filogeni import PhyloGeneticTreeForm
+from Bio.Align.Applications import MuscleCommandline
+from Bio.Phylo.TreeConstruction import DistanceCalculator
+import matplotlib
+import matplotlib.pyplot as plt
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
+
+muscle_exe = os.path.join(settings.MUSCLE_DIR)
 
 
 def handle_uploaded_file(f):
@@ -61,4 +71,85 @@ def trees_draw(request):
 
                 os.remove(file)
 
-    return render(request, "bioinformatic/trees/read.html", {'form': form, "bre": "Filogenetik Ağaç Oluşturma"})
+    return render(request, "bioinformatic/trees/xml.html",
+                  {'form': form, "bre": "XML Dosyasından Filogenetik Ağaç Oluşturma"})
+
+
+def FastaCreateTreesView(request):
+    global file
+    form = PhyloGeneticTreeForm(request.POST or None, request.FILES or None)
+
+    if request.method == "POST":
+
+        if form.is_valid():
+
+            try:
+
+                file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['files']))
+
+                handle_uploaded_file(form.cleaned_data['files'])
+
+                if not ".fasta" in file:
+                    msg = "Hatalı Dosya uzantısı, Lütfen .fasta uzantılı dosyası seçiniz"
+                    url = reverse("bioinformatic:filogenetik_agac_fasta")
+                    return render(request, 'bioinformatic/fasta/notfound.html',
+                                  {"msg": msg, 'url': url})
+
+                records = SeqIO.parse(file, "fasta")
+
+                seq_id = []
+
+                sequence = []
+
+                for record in records:
+                    seq_id.append(record.id)
+
+                if len(seq_id) < 3:
+                    return render(request, "bioinformatic/fasta/notfound.html", {'msg': "Ağaç oluşturmak"
+                                                                                        " için en az 3 canlı türü olmalıdır.",
+                                                                                 'url': reverse(
+                                                                                     'bioinformatic:filogenetik_agac_fasta')})
+                muscle_cline = MuscleCommandline(muscle_exe, input=file, out=path + "aligned.fasta")
+
+                muscle_cline()
+
+                AlignIO.convert(path + "aligned.fasta", "fasta", path + "aligned.aln", "clustal")
+
+                os.remove(path + "aligned.fasta")
+
+                reading_alin = open(path + "aligned.aln", "r")
+
+                alignment = AlignIO.read(reading_alin, "clustal")
+
+                calculator = DistanceCalculator('identity')
+
+                constructor = DistanceTreeConstructor(calculator)
+
+                tree = constructor.build_tree(alignment)
+
+                tree.rooted = True
+
+                Phylo.write(tree, path + "tree.xml", "phyloxml")
+
+                Phylo.draw(tree, do_show=False)
+
+                img_path = os.path.join(settings.MEDIA_ROOT, "tree.jpg")
+
+                plt.savefig(img_path)
+
+                return render(request, "bioinformatic/trees/result.html",
+                              {"bre": "Filogenetik Ağaç"})
+
+            except UnicodeDecodeError:
+                os.remove(file)
+
+                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
+
+            finally:
+                reading_alin.close()
+                os.remove(path+"aligned.aln")
+                os.remove(path+"tree.xml")
+                os.remove(file)
+
+    return render(request, "bioinformatic/trees/fasta.html",
+                  {'form': form, "bre": "Fasta Dosyasından Filogenetik Ağaç Oluşturma"})

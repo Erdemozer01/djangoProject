@@ -12,3 +12,4 @@ from .pubmed import pubmed
 from .medline import medline_article
 from .trees import trees_draw
 from .swiss_prot import swiss_prot_file, swiss_prot_url, swiss_list_view, SwissProtDetailView
+from .trees import FastaCreateTreesView

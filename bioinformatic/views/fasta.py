@@ -38,7 +38,7 @@ def fasta_read(request):
 
             except UnicodeDecodeError:
                 os.remove(file)
-                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Zip Dosyası Seçtiniz'})
+                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
 
             records = SeqIO.parse(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), "fasta")
 

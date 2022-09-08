@@ -1,5 +1,6 @@
 import gzip
 import pandas as pd
+import plotly.io
 from django.shortcuts import render, redirect, reverse
 from bioinformatic.forms.file import FileReadForm, GenbankIdForm, FileUploadModelForm
 from bioinformatic.forms.writing import GenbankWritingForm
@@ -173,6 +174,7 @@ class GenBankResultView(generic.ListView):
         context['count'] = GenbankRead.objects.all().count()
         context['bre'] = "Genbank Dosya Okuması Sonuçları"
         context['fig'] = fig
+
         return context
 
 

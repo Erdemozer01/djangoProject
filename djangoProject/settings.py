@@ -18,6 +18,8 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+MUSCLE_DIR = os.path.join(BASE_DIR, 'bioinformatic\\muscle3.8.31_i86win32.exe')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'storages',
+    'user_agents',
 ]
 
 MIDDLEWARE = [
@@ -60,9 +63,10 @@ MIDDLEWARE = [
     'django_auto_logout.middleware.auto_logout',
 ]
 
+
 AUTO_LOGOUT = {
-    'IDLE_TIME': timedelta(minutes=100),
-    'SESSION_TIME': timedelta(minutes=100),
+    'IDLE_TIME': timedelta(minutes=1000),
+    'SESSION_TIME': timedelta(minutes=1000),
 }
 
 ROOT_URLCONF = 'djangoProject.urls'
@@ -157,7 +161,6 @@ CKEDITOR_CONFIGS = {
         'width': 'auto',
     },
 }
-
 
 AWS_ACCESS_KEY_ID = 'AKIATDX3OSFT73MO2DVI'
 AWS_SECRET_ACCESS_KEY = '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'

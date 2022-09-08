@@ -170,24 +170,6 @@
                                     <span class="sidenav-normal"> Şifreyi Değiştir </span>
                                 </a>
                             </li>
-                            <li class="nav-item ">
-                                <a class="nav-link " href="/applications-datatables.html">
-                                    <span class="sidenav-mini-icon"> D </span>
-                                    <span class="sidenav-normal"> DataTables </span>
-                                </a>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link " href="/applications-calendar.html">
-                                    <span class="sidenav-mini-icon"> C </span>
-                                    <span class="sidenav-normal"> Calendar </span>
-                                </a>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link " href="/applications-analytics.html">
-                                    <span class="sidenav-mini-icon"> A </span>
-                                    <span class="sidenav-normal"> Analytics </span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>
@@ -239,13 +221,6 @@
                         </li>
 
                         <li class="nav-item ">
-                            <a class="nav-link " href="{% url "bioinformatic:filogenetik_agac" %}">
-                                <span class="sidenav-mini-icon"> FA </span>
-                                <span class="sidenav-normal"> Filogenetik Ağaç </span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item ">
                             <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false"
                                href="#productsExample">
                                 <span class="sidenav-mini-icon"> P </span>
@@ -263,6 +238,30 @@
                                         <a class="nav-link " href="{% url "bioinformatic:translation" %}">
                                             <span class="sidenav-mini-icon text-xs"> E </span>
                                             <span class="sidenav-normal"> Translasyon </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="nav-item ">
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false"
+                               href="#filogeni">
+                                <span class="sidenav-mini-icon"> P </span>
+                                <span class="sidenav-normal"> Filogeni <b class="caret"></b></span>
+                            </a>
+                            <div class="collapse " id="filogeni">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item ">
+                                        <a class="nav-link " href="{% url "bioinformatic:filogenetik_agac" %}">
+                                            <span class="sidenav-mini-icon text-xs"> N </span>
+                                            <span class="sidenav-normal"> XML Dosyasından Ağaç Oluşturma </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ">
+                                        <a class="nav-link " href="{% url "bioinformatic:filogenetik_agac_fasta" %}">
+                                            <span class="sidenav-mini-icon text-xs"> E </span>
+                                            <span class="sidenav-normal"> Fasta Dosyasından Ağaç Oluşturma </span>
                                         </a>
                                     </li>
                                 </ul>
