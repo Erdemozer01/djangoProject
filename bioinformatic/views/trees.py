@@ -15,7 +15,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files\\')
+path = os.path.join(BASE_DIR, 'files/')
 
 muscle_exe = os.path.join(settings.MUSCLE_DIR)
 
