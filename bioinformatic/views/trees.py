@@ -76,7 +76,7 @@ def trees_draw(request):
 
 
 def FastaCreateTreesView(request):
-    global file
+    global file, reading_align
     form = PhyloGeneticTreeForm(request.POST or None, request.FILES or None)
 
     if request.method == "POST":
@@ -117,9 +117,11 @@ def FastaCreateTreesView(request):
 
                 os.remove(path + "aligned.fasta")
 
-                reading_alin = open(path + "aligned.aln", "r")
+                reading_align = open(path + "aligned.aln", "r")
 
-                alignment = AlignIO.read(reading_alin, "clustal")
+                reading_align.close()
+
+                alignment = AlignIO.read(reading_align, "clustal")
 
                 calculator = DistanceCalculator('identity')
 
@@ -146,7 +148,7 @@ def FastaCreateTreesView(request):
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
 
             finally:
-                reading_alin.close()
+                reading_align.close()
                 os.remove(path+"aligned.aln")
                 os.remove(path+"tree.xml")
                 os.remove(file)
