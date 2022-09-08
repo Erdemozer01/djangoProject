@@ -119,6 +119,7 @@ def FastaCreateTreesView(request):
 
                 reading_align = open(path + "aligned.aln", "r")
 
+
                 alignment = AlignIO.read(reading_align, "clustal")
 
                 calculator = DistanceCalculator('identity')
