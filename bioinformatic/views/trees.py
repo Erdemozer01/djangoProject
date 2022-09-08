@@ -119,8 +119,6 @@ def FastaCreateTreesView(request):
 
                 reading_align = open(path + "aligned.aln", "r")
 
-                reading_align.close()
-
                 alignment = AlignIO.read(reading_align, "clustal")
 
                 calculator = DistanceCalculator('identity')
@@ -147,11 +145,7 @@ def FastaCreateTreesView(request):
 
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
 
-            finally:
-                reading_align.close()
-                os.remove(path+"aligned.aln")
-                os.remove(path+"tree.xml")
-                os.remove(file)
+
 
     return render(request, "bioinformatic/trees/fasta.html",
                   {'form': form, "bre": "Fasta Dosyasından Filogenetik Ağaç Oluşturma"})
