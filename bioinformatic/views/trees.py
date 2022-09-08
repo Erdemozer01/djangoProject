@@ -12,10 +12,10 @@ from bioinformatic.forms.filogeni import PhyloGeneticTreeForm
 from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 import matplotlib
-import matplotlib.pyplot as plt
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files/')
+path = os.path.join(BASE_DIR, 'files')
 
 muscle_exe = os.path.join(settings.MUSCLE_DIR)
 
@@ -109,6 +109,7 @@ def FastaCreateTreesView(request):
                                                                                         " için en az 3 canlı türü olmalıdır.",
                                                                                  'url': reverse(
                                                                                      'bioinformatic:filogenetik_agac_fasta')})
+
                 muscle_cline = MuscleCommandline(muscle_exe, input=file, out=path + "aligned.fasta")
 
                 muscle_cline()
@@ -118,7 +119,6 @@ def FastaCreateTreesView(request):
                 os.remove(path + "aligned.fasta")
 
                 reading_align = open(path + "aligned.aln", "r")
-
 
                 alignment = AlignIO.read(reading_align, "clustal")
 
