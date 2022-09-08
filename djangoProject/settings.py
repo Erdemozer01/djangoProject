@@ -18,7 +18,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MUSCLE_DIR = BASE_DIR / 'bioinformatic/muscle5.1.linux_intel64'
+MUSCLE_DIR = BASE_DIR / 'bioinformatic/muscle3.8.31_i86linux32'
 
 
 # Quick-start development settings - unsuitable for production
