@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %}
+{% load static bootstrap5 %}
+{% block title %} Filogenetik Ağaç {% endblock %}
+
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-12 mx-auto">
+                <div class="card card-body mt-3">
+                    <h6 class="mb-0">Filogenetik Ağaç</h6>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-12 mx-auto">
+                            <div class="form-group ">
+                                <div class="mx-auto">
+                                    <img src="/media/tree.jpg" alt="tree.png" class="img-fluid col-lg-10 col-sm-10 mx-auto">
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <a href="{% url "bioinformatic:filogenetik_agac_fasta" %}">
+                                            <button type="button" name="button" class="btn btn-light m-2">
+                                                Tamam
+                                            </button>
+                                        </a>
+                                        <a href="{% url "bioinformatic:tree_download" %}">
+                                            <button type="button" name="button" class="btn btn-dark m-2">
+                                                İndir
+                                            </button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

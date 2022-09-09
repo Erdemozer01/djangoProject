@@ -1,3 +1,5 @@
+import subprocess
+
 from django.shortcuts import *
 from bioinformatic.forms.file import FileReadForm
 from Bio import Phylo, SeqIO
@@ -110,7 +112,9 @@ def FastaCreateTreesView(request):
 
                 muscle_cline = MuscleCommandline(muscle_exe, input=file, out=path + "aligned.fasta")
 
-                muscle_cline()
+                std_output, err_output = muscle_cline()
+
+                print(std_output)
 
                 AlignIO.convert(path + "aligned.fasta", "fasta", path + "aligned.aln", "clustal")
 
@@ -122,7 +126,7 @@ def FastaCreateTreesView(request):
 
                 constructor = DistanceTreeConstructor(calculator, method=method)
 
-                input_file = open(path+"{}".format(form.cleaned_data['files']))
+                input_file = open(path + "{}".format(form.cleaned_data['files']))
 
                 input_file.close()
 
@@ -142,15 +146,27 @@ def FastaCreateTreesView(request):
 
                 Phylo.draw(tree, do_show=False)
 
+                plt.xlabel('Dal uzunluğu')
+
+                plt.ylabel('Taksonomi')
+
+                title = form.cleaned_data['method']
+
+                if title == "nj":
+                    plt.title("Neighbor Joining Ağacı")
+                else:
+                    plt.title(f"{title.upper()} Ağacı")
+
+
                 img_path = os.path.join(settings.MEDIA_ROOT, "tree.jpg")
 
                 plt.savefig(img_path)
 
                 plt.close()
 
-                os.remove(path+"tree.xml")
+                os.remove(path + "tree.xml")
 
-                return render(request, "bioinformatic/trees/result.html",
+                return render(request, "bioinformatic/trees/fasta_result.html",
                               {"bre": "Filogenetik Ağaç"})
 
             except UnicodeDecodeError:
