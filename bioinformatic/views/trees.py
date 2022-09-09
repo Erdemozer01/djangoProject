@@ -6,13 +6,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from django.conf import settings
 from Bio import AlignIO
-from django.views import generic
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
 from bioinformatic.forms.filogeni import PhyloGeneticTreeForm
 from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 import matplotlib
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
@@ -89,6 +87,8 @@ def FastaCreateTreesView(request):
 
                 handle_uploaded_file(form.cleaned_data['files'])
 
+                method = form.cleaned_data['method']
+
                 if not ".fasta" in file:
                     msg = "Hatalı Dosya uzantısı, Lütfen .fasta uzantılı dosyası seçiniz"
                     url = reverse("bioinformatic:filogenetik_agac_fasta")
@@ -98,8 +98,6 @@ def FastaCreateTreesView(request):
                 records = SeqIO.parse(file, "fasta")
 
                 seq_id = []
-
-                sequence = []
 
                 for record in records:
                     seq_id.append(record.id)
@@ -116,19 +114,29 @@ def FastaCreateTreesView(request):
 
                 AlignIO.convert(path + "aligned.fasta", "fasta", path + "aligned.aln", "clustal")
 
-                os.remove(path + "aligned.fasta")
-
                 reading_align = open(path + "aligned.aln", "r")
 
                 alignment = AlignIO.read(reading_align, "clustal")
 
                 calculator = DistanceCalculator('identity')
 
-                constructor = DistanceTreeConstructor(calculator)
+                constructor = DistanceTreeConstructor(calculator, method=method)
+
+                input_file = open(path+"{}".format(form.cleaned_data['files']))
+
+                input_file.close()
+
+                os.remove(file)
+
+                reading_align.close()
+
+                os.remove(path + "aligned.fasta")
+
+                reading_align.close()
+
+                os.remove(path + "aligned.aln")
 
                 tree = constructor.build_tree(alignment)
-
-                tree.rooted = True
 
                 Phylo.write(tree, path + "tree.xml", "phyloxml")
 
@@ -138,6 +146,10 @@ def FastaCreateTreesView(request):
 
                 plt.savefig(img_path)
 
+                plt.close()
+
+                os.remove(path+"tree.xml")
+
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç"})
 
@@ -145,8 +157,6 @@ def FastaCreateTreesView(request):
                 os.remove(file)
 
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
-
-
 
     return render(request, "bioinformatic/trees/fasta.html",
                   {'form': form, "bre": "Fasta Dosyasından Filogenetik Ağaç Oluşturma"})
