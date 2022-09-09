@@ -89,6 +89,7 @@ def FastaCreateTreesView(request):
 
                 method = form.cleaned_data['method']
 
+
                 if not ".fasta" in file:
                     msg = "Hatalı Dosya uzantısı, Lütfen .fasta uzantılı dosyası seçiniz"
                     url = reverse("bioinformatic:filogenetik_agac_fasta")
