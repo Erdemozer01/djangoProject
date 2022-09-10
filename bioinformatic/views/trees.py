@@ -131,7 +131,7 @@ def FastaCreateTreesView(request):
 
                 constructor = DistanceTreeConstructor(calculator, method=method)
 
-                input_file = open(path + "{}".format(form.cleaned_data['files']))
+                input_file = open(path + "/" + "{}".format(form.cleaned_data['files']))
 
                 input_file.close()
 
