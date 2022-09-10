@@ -96,6 +96,10 @@ def MuscleTreesView(request):
 
                 tree = constructor.build_tree(alignment)
 
+                tree.rooted = True
+
+                tree.root.color = "#596CFF"
+
                 Phylo.write(tree, path + "tree.xml", "phyloxml")
 
                 Phylo.draw(tree, do_show=False)
