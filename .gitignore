@@ -4,6 +4,8 @@ __pycache__/
 
 bioinformatic/files/*
 
+bioinformatic/views/trees.py
+
 .idea
 idea
 # tests and coverage
