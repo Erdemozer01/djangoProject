@@ -21,7 +21,7 @@ muscle_exe = os.path.join(settings.MUSCLE_DIR)
 
 
 def handle_uploaded_file(f):
-    with open(path + f.name, 'wb+') as destination:
+    with open(path + "/" + f.name, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
