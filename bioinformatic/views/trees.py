@@ -85,7 +85,7 @@ def FastaCreateTreesView(request):
 
             try:
 
-                file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['files']))
+                file = os.path.join(path, '{}'.format(form.cleaned_data['files']))
 
                 handle_uploaded_file(form.cleaned_data['files'])
 
