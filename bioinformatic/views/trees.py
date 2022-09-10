@@ -15,7 +15,7 @@ from Bio.Phylo.TreeConstruction import DistanceCalculator
 import matplotlib
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files')
+path = os.path.join(BASE_DIR, 'files\\')
 
 muscle_exe = os.path.join(settings.MUSCLE_DIR)
 
