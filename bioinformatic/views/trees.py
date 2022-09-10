@@ -118,7 +118,7 @@ def MuscleTreesView(request):
                 os.remove(path + "tree.xml")
 
                 return render(request, "bioinformatic/trees/result.html",
-                              {"bre": "Filogenetik Ağaç", 'muscle_result': muscle_result})
+                              {"bre": "Filogenetik Ağaç"})
 
             except UnicodeDecodeError:
                 os.remove(file)
@@ -126,4 +126,4 @@ def MuscleTreesView(request):
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
 
     return render(request, "bioinformatic/trees/muscle.html",
-                  {'form': form, "bre": "Fasta Dosyasından Filogenetik Ağaç Oluşturma"})
+                  {'form': form, "bre": "Muscle Filogenetik Ağaç Oluşturma"})
