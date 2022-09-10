@@ -139,11 +139,11 @@ def FastaCreateTreesView(request):
 
                 reading_align.close()
 
-                os.remove(path + "aligned.fasta")
+                os.remove(aligned_fasta)
 
                 reading_align.close()
 
-                os.remove(path + "aligned.aln")
+                os.remove(align_file)
 
                 tree = constructor.build_tree(alignment)
 
