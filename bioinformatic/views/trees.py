@@ -1,7 +1,5 @@
 import subprocess
-
 from django.shortcuts import *
-from bioinformatic.forms.file import FileReadForm
 from Bio import Phylo, SeqIO
 import os
 from pathlib import Path
@@ -119,7 +117,7 @@ def MuscleTreesView(request):
 
                 os.remove(path + "tree.xml")
 
-                return render(request, "bioinformatic/trees/fasta_result.html",
+                return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç", 'muscle_result': muscle_result})
 
             except UnicodeDecodeError:
@@ -127,5 +125,5 @@ def MuscleTreesView(request):
 
                 return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
 
-    return render(request, "bioinformatic/trees/fasta.html",
+    return render(request, "bioinformatic/trees/muscle.html",
                   {'form': form, "bre": "Fasta Dosyasından Filogenetik Ağaç Oluşturma"})
