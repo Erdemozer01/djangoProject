@@ -37,7 +37,7 @@ def trees_draw(request):
 
                 handle_uploaded_file(request.FILES['file'])
 
-                file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['file']))
+                file = os.path.join(BASE_DIR, 'files'.format(form.cleaned_data['file']))
 
                 if not file.endswith(".xml"):
                     msg = "Hatalı Dosya uzantısı, Lütfen xml dosyası seçiniz"
@@ -110,13 +110,18 @@ def FastaCreateTreesView(request):
                                                                                  'url': reverse(
                                                                                      'bioinformatic:filogenetik_agac_fasta')})
 
-                muscle_cline = MuscleCommandline(muscle_exe, input=file, out=path + "aligned.fasta")
+                aligned_fasta = os.path.join(path, 'aligned.fasta')
 
-                std_output, err_output = muscle_cline()
+                align_file = os.path.join(path, 'aligned.aln')
 
-                print(std_output)
+                open(aligned_fasta, 'w')
 
-                AlignIO.convert(path + "aligned.fasta", "fasta", path + "aligned.aln", "clustal")
+                muscle_cline = MuscleCommandline(muscle_exe, input=file, out=aligned_fasta)
+
+                import subprocess
+                muscle_result = subprocess.check_output([muscle_exe, "-in", file, "-out", aligned_fasta])
+
+                AlignIO.convert(aligned_fasta, "fasta", align_file, "clustal")
 
                 reading_align = open(path + "aligned.aln", "r")
 
@@ -157,17 +162,14 @@ def FastaCreateTreesView(request):
                 else:
                     plt.title(f"{title.upper()} Ağacı")
 
-
                 img_path = os.path.join(settings.MEDIA_ROOT, "tree.jpg")
 
                 plt.savefig(img_path)
 
-                plt.close()
-
                 os.remove(path + "tree.xml")
 
                 return render(request, "bioinformatic/trees/fasta_result.html",
-                              {"bre": "Filogenetik Ağaç"})
+                              {"bre": "Filogenetik Ağaç", 'muscle_result': muscle_result})
 
             except UnicodeDecodeError:
                 os.remove(file)
