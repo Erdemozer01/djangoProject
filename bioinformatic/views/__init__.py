@@ -10,6 +10,6 @@ from .xml import xml_file, blast_result_delete
 from .entrez import entrez
 from .pubmed import pubmed
 from .medline import medline_article
-from .trees import trees_draw
+from .trees import MuscleTreesView
 from .swiss_prot import swiss_prot_file, swiss_prot_url, swiss_list_view, SwissProtDetailView
-from .trees import FastaCreateTreesView
+
