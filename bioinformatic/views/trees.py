@@ -67,7 +67,7 @@ def MuscleTreesView(request):
                 if sys.platform.startswith('win32'):
                     muscle_exe = os.path.join(BASE_DIR, 'bioinformatic/apps/muscle3.8.425_win32.exe')
                 elif sys.platform.startswith('linux'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic/apps/muscle3.8.425_i86linux32')
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic/apps/muscle3.8.31_i86linux32')
 
                 muscle_result = subprocess.check_output([muscle_exe, "-in", file, "-out", aligned_fasta])
 
