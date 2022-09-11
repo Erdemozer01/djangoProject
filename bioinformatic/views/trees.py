@@ -15,7 +15,7 @@ from Bio.Phylo.TreeConstruction import DistanceCalculator
 import matplotlib
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-path = os.path.join(BASE_DIR, "bioinformatic", "files/")
+path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
 
 
 def handle_uploaded_file(f):
@@ -34,7 +34,7 @@ def MuscleTreesView(request):
 
             try:
 
-                file = os.path.join(BASE_DIR, "bioinformatic", "files", "{}".format(form.cleaned_data['files']))
+                file = os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['files']))
 
                 handle_uploaded_file(form.cleaned_data['files'])
 
@@ -58,15 +58,15 @@ def MuscleTreesView(request):
                                   {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                    'url': reverse('bioinformatic:filogenetik_agac_fasta')})
 
-                input_file = os.path.join(BASE_DIR, "bioinformatic", "files", "{}".format(form.cleaned_data['files']))
-                output_file = os.path.join(BASE_DIR, "bioinformatic", "files", "aligned.fasta")
-                align_file = os.path.join(BASE_DIR, "bioinformatic", "files", "align.aln")
+                input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['files']))
+                output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
+                align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
                 tree_file = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
 
                 if sys.platform.startswith('win32'):
                     MUSCLE_EXE = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
                 elif sys.platform.startswith('linux'):
-                    MUSCLE_EXE = os.path.join(BASE_DIR, "bioinformatic", "muscle3.8.31_i86linux32")
+                    MUSCLE_EXE = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
 
                 muscle_result = subprocess.check_output([MUSCLE_EXE, "-in", input_file, "-out", output_file])
 
