@@ -88,13 +88,17 @@ def MuscleTreesView(request):
 
                 output_file = open(output_file)
 
-                os.remove(str(output_file))
+                output_file.close()
+
+                os.remove(output_file)
 
                 align_file = open(align_file, 'r')
 
-                os.remove(str(align_file))
-
                 tree = constructor.build_tree(align_file)
+
+                align_file.close()
+
+                os.remove(align_file)
 
                 tree.rooted = True
 
