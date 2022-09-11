@@ -68,6 +68,8 @@ def MuscleTreesView(request):
                 align_file = os.path.join(BASE_DIR, 'bioinformatic/files/align.aln')
                 tree_file = os.path.join(BASE_DIR, "bioinformatic/files/tree.xml")
 
+                open(output_file, 'w')
+
                 muscle_cline = MuscleCommandline(muscle_exe, input=input_file, out=output_file)
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
