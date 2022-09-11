@@ -34,7 +34,7 @@ def MuscleTreesView(request):
 
             try:
 
-                file = os.path.join(path, '{}'.format(form.cleaned_data['files']))
+                file = os.path.join(BASE_DIR, "bioinformatic\\files\\{}".format(form.cleaned_data['files']))
 
                 handle_uploaded_file(form.cleaned_data['files'])
 
@@ -58,7 +58,6 @@ def MuscleTreesView(request):
                                                                                         " için en az 3 canlı türü olmalıdır.",
                                                                                  'url': reverse(
                                                                                      'bioinformatic:filogenetik_agac_fasta')})
-
                 if sys.platform.startswith('win32'):
                     muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_win32.exe')
                 elif sys.platform.startswith('linux'):
