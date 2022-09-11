@@ -34,7 +34,7 @@ def MuscleTreesView(request):
 
             try:
 
-                file = os.path.join(BASE_DIR, "bioinformatic\\files\\{}".format(form.cleaned_data['files']))
+                file = os.path.join(BASE_DIR, "bioinformatic/files/{}".format(form.cleaned_data['files']))
 
                 handle_uploaded_file(form.cleaned_data['files'])
 
