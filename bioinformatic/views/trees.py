@@ -66,7 +66,7 @@ def MuscleTreesView(request):
                 if sys.platform.startswith('win32'):
                     muscle = os.path.join(BASE_DIR, 'bioinformatic/apps/muscle3.8.425_win32.exe')
                 elif sys.platform.startswith('linux'):
-                    muscle = r"\home\erdem\djangoProject\bioinformatic\apps\muscle3.8.31_i86linux32"
+                    muscle = BASE_DIR / 'bioinformatic/apps/muscle3.8.425_i86linux32'
 
                 subprocess.call([muscle, "-in", input_file, "-out", output_file])
 
