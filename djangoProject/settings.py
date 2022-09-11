@@ -18,7 +18,7 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-global MUSCLE_EXE
+
 if sys.platform.startswith('win32'):
     MUSCLE_EXE = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
 elif sys.platform.startswith('linux'):
