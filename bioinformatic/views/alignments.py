@@ -1,13 +1,26 @@
 import os.path
+import sys
 from pathlib import Path
 from Bio import pairwise2
 from Bio.Align import substitution_matrices
 from django.shortcuts import render, redirect
-
+from Bio import AlignIO
+import subprocess
+from Bio.Align.Applications import MuscleCommandline
+from bioinformatic.models import MultipleSequenceAlignment
+from django.http import HttpResponse
 from bioinformatic \
-    .forms.alignments import GlobalForm, LocalForm
+    .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm, MultipleFileReading
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+path = os.path.join(BASE_DIR, "bioinformatic\\files\\")
+
+
+def handle_uploaded_file(f):
+    with open(path + f.name, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
 
 def global_alignment(request):
     form = GlobalForm(request.POST or None)
@@ -24,7 +37,7 @@ def global_alignment(request):
             alignments = pairwise2.align.globalxx(seq1, seq2)
             result = pairwise2.format_alignment(*alignments[0], full_sequences=True)
 
-            filepath = os.path.join(BASE_DIR, 'files\\global_alignment.txt')
+            filepath = os.path.join(BASE_DIR, 'bioinformatic\\files\\global_alignment.txt')
             file = open(filepath, "w")
 
             file.write(result)
@@ -55,7 +68,7 @@ def local_alignment(request):
             blosum62 = substitution_matrices.load(f"{align}")
             alignments = pairwise2.align.localds(seq1, seq2, blosum62, -10, -1)
             result = pairwise2.format_alignment(*alignments[0], full_sequences=True)
-            filepath = os.path.join(BASE_DIR, 'files\\local_alignment.txt')
+            filepath = os.path.join(BASE_DIR, 'bioinformatic\\files\\local_alignment.txt')
             file = open(filepath, "w")
 
             file.write(f"{align} Matrisine göre dizileme yapılmıştır\n\n")
@@ -71,3 +84,34 @@ def local_alignment(request):
             form = LocalForm()
 
     return render(request, "bioinformatic/alignments/local.html", {"form": form, "bre": "Local Alignment"})
+
+
+def MultipleSeqAlignment(request):
+    global muscle_exe
+    form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            method = form.cleaned_data['method']
+            if method == "MUSCLE":
+                if sys.platform.startswith('win32'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_win32.exe')
+                elif sys.platform.startswith('linux'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_i86linux32')
+
+                input_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\{}'.format(form.cleaned_data['file']))
+                output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.fasta')
+
+                muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
+
+                print(request.headers['user-agent'])
+
+                align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.txt')
+
+                AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+
+                reading = open(align_file, 'r+').read()
+
+                return render(request, 'bioinformatic/alignments/multiple_result.html', {'reading':reading})
+
+    return render(request, 'bioinformatic/alignments/multiple.html', {'form': form, 'bre': 'Multiple Sekans Alignment'})

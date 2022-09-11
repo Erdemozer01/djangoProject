@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from django.shortcuts import *
 from Bio import Phylo, SeqIO
 import os
@@ -12,20 +13,20 @@ from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 import matplotlib
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files')
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+path = os.path.join(BASE_DIR, "bioinformatic\\files\\")
 
 muscle_exe = os.path.join(settings.MUSCLE_DIR)
 
 
 def handle_uploaded_file(f):
-    with open(path + "/" + f.name, 'wb+') as destination:
+    with open(path + f.name, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
 
 def MuscleTreesView(request):
-    global file, reading_align
+    global file, muscle_exe
     form = PhyloGeneticTreeForm(request.POST or None, request.FILES or None)
 
     if request.method == "POST":
@@ -63,11 +64,11 @@ def MuscleTreesView(request):
 
                 align_file = os.path.join(path, 'aligned.aln')
 
-                open(aligned_fasta, 'w')
+                if sys.platform.startswith('win32'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_win32.exe')
+                elif sys.platform.startswith('linux'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_i86linux32')
 
-                muscle_cline = MuscleCommandline(muscle_exe, input=file, out=aligned_fasta)
-
-                import subprocess
                 muscle_result = subprocess.check_output([muscle_exe, "-in", file, "-out", aligned_fasta])
 
                 AlignIO.convert(aligned_fasta, "fasta", align_file, "clustal")
@@ -80,7 +81,7 @@ def MuscleTreesView(request):
 
                 constructor = DistanceTreeConstructor(calculator, method=method)
 
-                input_file = open(path + "/" + "{}".format(form.cleaned_data['files']))
+                input_file = open(path + "{}".format(form.cleaned_data['files']))
 
                 input_file.close()
 

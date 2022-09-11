@@ -42,8 +42,6 @@ class GenbankRead(models.Model):
     protein_sequence = models.TextField(blank=True, null=True)
     protein_sequence_len = models.BigIntegerField(verbose_name="Protein Uzunluğu", null=True, blank=True)
 
-
-
     def __str__(self):
         return self.organism
 
@@ -138,3 +136,16 @@ class FileUploadModel(models.Model):
         db_table = "file"
         verbose_name = "file"
         verbose_name_plural = "files"
+
+
+class MultipleSequenceAlignment(models.Model):
+    title = models.CharField(max_length=100, default="Title")
+    alignment = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = "MSA"
+        verbose_name = "MultipleSequenceAlignment"
+        verbose_name_plural = "MultipleSequenceAlignment"

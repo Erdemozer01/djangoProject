@@ -1,10 +1,11 @@
 from django.contrib import admin
 from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, BlastQuery, PubMedArticle, MedlineArticle, \
-    SwissProtModel, BigFileUploadModel
+    SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment
 
 # Register your models here.
 admin.site.register(BlastQuery)
 admin.site.register(MedlineArticle)
+admin.site.register(MultipleSequenceAlignment)
 
 
 
