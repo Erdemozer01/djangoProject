@@ -68,7 +68,7 @@ def MuscleTreesView(request):
                 elif sys.platform.startswith('linux'):
                     muscle = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
 
-                subprocess.call([muscle, "-in", input_file, "-out", output_file])
+                    subprocess.call([muscle, "-in", input_file, "-out", output_file])
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
 
