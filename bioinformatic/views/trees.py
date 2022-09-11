@@ -1,4 +1,6 @@
 import subprocess
+import sys
+
 from django.shortcuts import *
 from Bio import Phylo, SeqIO
 import os
@@ -12,20 +14,18 @@ from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 import matplotlib
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files')
-
-muscle_exe = os.path.join(settings.MUSCLE_DIR)
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+path = os.path.join(BASE_DIR, "bioinformatic\\files\\")
 
 
 def handle_uploaded_file(f):
-    with open(path + "/" + f.name, 'wb+') as destination:
+    with open(path + f.name, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
 
 def MuscleTreesView(request):
-    global file, reading_align
+    global file, muscle_exe
     form = PhyloGeneticTreeForm(request.POST or None, request.FILES or None)
 
     if request.method == "POST":
@@ -59,18 +59,21 @@ def MuscleTreesView(request):
                                                                                  'url': reverse(
                                                                                      'bioinformatic:filogenetik_agac_fasta')})
 
-                aligned_fasta = os.path.join(path, 'aligned.fasta')
+                if sys.platform.startswith('win32'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_win32.exe')
+                elif sys.platform.startswith('linux'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_i86linux32')
 
-                align_file = os.path.join(path, 'aligned.aln')
+                input_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\{}'.format(form.cleaned_data['file']))
+                output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.fasta')
+                align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.txt')
+                tree_file = os.path.join(BASE_DIR, "bioinformatic\\files\\tree.xml")
 
-                open(aligned_fasta, 'w')
+                muscle_cline = MuscleCommandline(muscle_exe, input=input_file, out=output_file)
 
-                muscle_cline = MuscleCommandline(muscle_exe, input=file, out=aligned_fasta)
+                muscle_result = subprocess.check_output([muscle_exe, "-in", file, "-out", output_file])
 
-                import subprocess
-                muscle_result = subprocess.check_output([muscle_exe, "-in", file, "-out", aligned_fasta])
-
-                AlignIO.convert(aligned_fasta, "fasta", align_file, "clustal")
+                AlignIO.convert(output_file, "fasta", align_file, "clustal")
 
                 reading_align = open(align_file, "r")
 
@@ -80,7 +83,7 @@ def MuscleTreesView(request):
 
                 constructor = DistanceTreeConstructor(calculator, method=method)
 
-                input_file = open(path + "/" + "{}".format(form.cleaned_data['files']))
+                input_file = open(input_file)
 
                 input_file.close()
 
@@ -88,7 +91,7 @@ def MuscleTreesView(request):
 
                 reading_align.close()
 
-                os.remove(aligned_fasta)
+                os.remove(output_file)
 
                 reading_align.close()
 
@@ -100,7 +103,7 @@ def MuscleTreesView(request):
 
                 tree.root.color = "#596CFF"
 
-                Phylo.write(tree, path + "tree.xml", "phyloxml")
+                Phylo.write(tree, tree_file, "phyloxml")
 
                 Phylo.draw(tree, do_show=False)
 
@@ -119,7 +122,7 @@ def MuscleTreesView(request):
 
                 plt.savefig(img_path)
 
-                os.remove(path + "tree.xml")
+                os.remove(tree_file)
 
                 return render(request, "bioinformatic/trees/result.html",
                               {"bre": "Filogenetik Ağaç"})
