@@ -86,7 +86,7 @@ def MuscleTreesView(request):
 
                 output_file.close()
 
-                os.remove(output_file)
+                os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "aligned.fasta"))
 
                 align_file = open(align_file, 'r')
 
@@ -94,7 +94,7 @@ def MuscleTreesView(request):
 
                 align_file.close()
 
-                os.remove(align_file)
+                os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "align.aln"))
 
                 tree.rooted = True
 
