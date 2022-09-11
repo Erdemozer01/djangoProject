@@ -25,7 +25,7 @@ def handle_uploaded_file(f):
 
 
 def MuscleTreesView(request):
-    global file
+    global file, MUSCLE_EXE
     form = PhyloGeneticTreeForm(request.POST or None, request.FILES or None)
 
     if request.method == "POST":
@@ -63,7 +63,12 @@ def MuscleTreesView(request):
                 align_file = os.path.join(BASE_DIR, "bioinformatic", "files", "align.aln")
                 tree_file = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
 
-                muscle_result = subprocess.check_output([settings.MUSCLE_EXE, "-in", input_file, "-out", output_file])
+                if sys.platform.startswith('win32'):
+                    MUSCLE_EXE = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
+                elif sys.platform.startswith('linux'):
+                    MUSCLE_EXE = os.path.join(BASE_DIR, "bioinformatic", "muscle3.8.31_i86linux32")
+
+                muscle_result = subprocess.check_output([MUSCLE_EXE, "-in", input_file, "-out", output_file])
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
 
