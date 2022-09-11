@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
@@ -17,7 +18,11 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-MUSCLE_DIR = BASE_DIR / "bioinformatic/muscle3.8.31_i86win32.exe"
+
+if sys.platform.startswith('win32'):
+    muscle_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
+elif sys.platform.startswith('linux'):
+    muscle_exe = os.path.join(BASE_DIR, "bioinformatic", "muscle3.8.31_i86linux32")
 
 
 # Quick-start development settings - unsuitable for production

@@ -25,7 +25,7 @@ def handle_uploaded_file(f):
 
 
 def MuscleTreesView(request):
-    global file, muscle_exe
+    global file
     form = PhyloGeneticTreeForm(request.POST or None, request.FILES or None)
 
     if request.method == "POST":
@@ -54,21 +54,17 @@ def MuscleTreesView(request):
                     seq_id.append(record.id)
 
                 if len(seq_id) < 3:
-                    return render(request, "bioinformatic/fasta/notfound.html", {'msg': "Ağaç oluşturmak"
-                                                                                        " için en az 3 canlı türü olmalıdır.",
-                                                                                 'url': reverse(
-                                                                                     'bioinformatic:filogenetik_agac_fasta')})
-                if sys.platform.startswith('win32'):
-                    muscle_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
-                elif sys.platform.startswith('linux'):
-                    muscle_exe = os.path.join(BASE_DIR, "bioinformatic", "muscle3.8.31_i86linux32")
+                    return render(request, "bioinformatic/fasta/notfound.html",
+                                  {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                   'url': reverse('bioinformatic:filogenetik_agac_fasta')})
+
 
                 input_file = os.path.join(BASE_DIR, "bioinformatic", "files", "{}".format(form.cleaned_data['files']))
                 output_file = os.path.join(BASE_DIR, "bioinformatic", "files", "aligned.fasta")
                 align_file = os.path.join(BASE_DIR, "bioinformatic", "files", "align.aln")
                 tree_file = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
 
-                muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
+                muscle_result = subprocess.check_output([settings.muscle_exe, "-in", input_file, "-out", output_file])
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
 
