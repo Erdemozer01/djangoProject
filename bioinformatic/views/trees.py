@@ -72,6 +72,8 @@ def MuscleTreesView(request):
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
 
+                alignment = AlignIO.read(output_file, "clustal")
+
                 calculator = DistanceCalculator('identity')
 
                 constructor = DistanceTreeConstructor(calculator, method=method)
@@ -90,7 +92,7 @@ def MuscleTreesView(request):
 
                 align_file = open(align_file, 'r')
 
-                tree = constructor.build_tree(align_file)
+                tree = constructor.build_tree(alignment)
 
                 align_file.close()
 
