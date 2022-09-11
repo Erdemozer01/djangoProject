@@ -69,6 +69,8 @@ def MuscleTreesView(request):
                 tree_file = os.path.join(BASE_DIR, "bioinformatic/files/tree.xml")
 
                 open(output_file, 'w')
+                open(align_file, 'w')
+                open(tree_file, 'w')
 
                 muscle_cline = MuscleCommandline(muscle_exe, input=input_file, out=output_file)
 
@@ -86,13 +88,13 @@ def MuscleTreesView(request):
 
                 os.remove(file)
 
-                reading_align.close()
+                output_file = open(output_file)
 
-                os.remove(output_file)
+                os.remove(str(output_file))
 
-                reading_align.close()
+                align_file = open(align_file, 'r')
 
-                os.remove(align_file)
+                os.remove(str(align_file))
 
                 tree = constructor.build_tree(alignment)
 
