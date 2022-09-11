@@ -72,7 +72,7 @@ def MuscleTreesView(request):
 
                 muscle_cline = MuscleCommandline(muscle_exe, input=input_file, out=output_file)
 
-                subprocess.check_output(muscle_cline)
+                subprocess.check_output([muscle_cline])
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
 
