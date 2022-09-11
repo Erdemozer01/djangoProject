@@ -15,7 +15,7 @@ from Bio.Phylo.TreeConstruction import DistanceCalculator
 import matplotlib
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-path = os.path.join(BASE_DIR, "bioinformatic\\files\\")
+path = os.path.join(BASE_DIR, "bioinformatic", "files/")
 
 
 def handle_uploaded_file(f):
