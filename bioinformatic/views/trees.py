@@ -58,13 +58,12 @@ def MuscleTreesView(request):
                                   {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                    'url': reverse('bioinformatic:filogenetik_agac_fasta')})
 
-
                 input_file = os.path.join(BASE_DIR, "bioinformatic", "files", "{}".format(form.cleaned_data['files']))
                 output_file = os.path.join(BASE_DIR, "bioinformatic", "files", "aligned.fasta")
                 align_file = os.path.join(BASE_DIR, "bioinformatic", "files", "align.aln")
                 tree_file = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
 
-                muscle_result = subprocess.check_output([settings.muscle_exe, "-in", input_file, "-out", output_file])
+                muscle_result = subprocess.check_output([settings.MUSCLE_EXE, "-in", input_file, "-out", output_file])
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
 

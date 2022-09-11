@@ -18,11 +18,11 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+global MUSCLE_EXE
 if sys.platform.startswith('win32'):
-    muscle_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
+    MUSCLE_EXE = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
 elif sys.platform.startswith('linux'):
-    muscle_exe = os.path.join(BASE_DIR, "bioinformatic", "muscle3.8.31_i86linux32")
+    MUSCLE_EXE = os.path.join(BASE_DIR, "bioinformatic", "muscle3.8.31_i86linux32")
 
 
 # Quick-start development settings - unsuitable for production
