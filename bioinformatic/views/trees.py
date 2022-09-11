@@ -59,14 +59,14 @@ def MuscleTreesView(request):
                                                                                  'url': reverse(
                                                                                      'bioinformatic:filogenetik_agac_fasta')})
                 if sys.platform.startswith('win32'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_win32.exe')
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic/apps/muscle3.8.425_win32.exe')
                 elif sys.platform.startswith('linux'):
                     muscle_exe = os.path.join(BASE_DIR, 'bioinformatic/apps/muscle3.8.31_i86linux32')
 
-                input_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\{}'.format(form.cleaned_data['files']))
-                output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.fasta')
-                align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.txt')
-                tree_file = os.path.join(BASE_DIR, "bioinformatic\\files\\tree.xml")
+                input_file = os.path.join(BASE_DIR, 'bioinformatic/files/{}'.format(form.cleaned_data['files']))
+                output_file = os.path.join(BASE_DIR, 'bioinformatic/files/aligned.fasta')
+                align_file = os.path.join(BASE_DIR, 'bioinformatic/files/align.txt')
+                tree_file = os.path.join(BASE_DIR, "bioinformatic/files/tree.xml")
 
                 muscle_cline = MuscleCommandline(muscle_exe, input=input_file, out=output_file)
 
