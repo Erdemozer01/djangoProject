@@ -68,7 +68,8 @@ def MuscleTreesView(request):
                 elif sys.platform.startswith('linux'):
                     muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
 
-                muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
+                muscle_cline = MuscleCommandline(muscle_exe, input=file, out=output_file)
+                muscle_result = subprocess.check_output([muscle_exe, "-in", file, "-out", output_file])
 
                 print(muscle_result)
 
