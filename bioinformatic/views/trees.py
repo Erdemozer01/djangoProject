@@ -4,7 +4,7 @@ import sys
 from django.shortcuts import *
 from Bio import Phylo, SeqIO
 import os
-from pathlib import Path
+from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
 from django.conf import settings
 from Bio import AlignIO
@@ -68,10 +68,7 @@ def MuscleTreesView(request):
                 elif sys.platform.startswith('linux'):
                     muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
 
-                muscle_cline = MuscleCommandline(muscle_exe, input=file, out=output_file)
                 muscle_result = subprocess.check_output([muscle_exe, "-in", file, "-out", output_file])
-
-                print(muscle_result)
 
                 AlignIO.convert(output_file, "fasta", align_file, "clustal")
 

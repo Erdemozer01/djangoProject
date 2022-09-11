@@ -9,6 +9,6 @@ METHOD = (
 
 
 class PhyloGeneticTreeForm(forms.Form):
-    method = forms.ChoiceField(choices=METHOD, label="Metod Seçiniz")
+    method = forms.ChoiceField(choices=METHOD, label="Algoritme Seçiniz")
     files = forms.FileField(label="Fasta Dosyası Seçiniz", widget=forms.ClearableFileInput())
 
