@@ -1,34 +1,58 @@
-{% extends "layouts/base.html" %}
-{% load static bootstrap5 %}
-{% block title %} Multiple Sekans Alignment {% endblock %}
+{% extends 'layouts/base.html' %}
 
+{% block title %} Multiple Sekans Alignment {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
 
 {% block content %}
 
-    <div class="container-fluid">
+    <div class="container-fluid py-4 mt-3 col-sm-10 shadow-md">
         <div class="row">
-            <div class="col-lg-12 col-12 mx-auto">
-                <div class="card card-body mt-3">
-                    <h6 class="mb-0">Multiple Sekans Alignment</h6>
-                    <div class="row mt-4">
-                        <div class="col-12 col-md-12 mx-auto">
-                            <div class="form-group ">
-                                <p>{{ reading|safe }}</p>
-                                <div class="mx-auto">
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <a href="{% url "bioinformatic:filogenetik_agac_fasta" %}">
-                                            <button type="button" name="button" class="btn btn-light m-2">
-                                                Tamam
-                                            </button>
-                                        </a>
-                                        <a href="{% url "bioinformatic:tree_download" %}">
-                                            <button type="button" name="button" class="btn btn-dark m-2">
-                                                İndir
-                                            </button>
-                                        </a>
-                                    </div>
-                                </div>
+            <div class="col-12">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">Multiple Sekans Alignment Sonuçları</h5>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-0">
+                        <div class="table-responsive">
+                            <table class="table table-flush" id="products-list">
+                                <tbody class="mx-auto">
+
+                                <tr>
+                                    <td class="text-sm">
+                                       Alignment Sonuçları
+                                        <a href="{% url "delete_bottom_dashboard" %}" class="float-end"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary"> İndir </i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
+                                        Evrimsel Grafik
+                                        <a href="{% url "delete_about_dashboard" %}" class="float-end"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary"> İndir </i>
+                                            <a href="{% url "add_about_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-eye text-success"></i>
+                                                <span class="text-info"> Görüntüle </span>
+                                            </a>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -36,5 +60,4 @@
         </div>
     </div>
 
-
-{% endblock %}
+{% endblock content %}

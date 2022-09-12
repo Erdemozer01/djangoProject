@@ -1,14 +1,14 @@
 import os.path
 import sys
 from pathlib import Path
-from Bio import pairwise2
+from matplotlib import pyplot as plt
+from Bio import pairwise2, Phylo
 from Bio.Align import substitution_matrices
 from django.shortcuts import render, redirect
 from Bio import AlignIO
 import subprocess
-from Bio.Align.Applications import MuscleCommandline
+from Bio.Align.Applications import MuscleCommandline, ClustalwCommandline, ClustalOmegaCommandline
 from bioinformatic.models import MultipleSequenceAlignment
-from django.http import HttpResponse
 from bioinformatic \
     .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm, MultipleFileReading
 
@@ -100,11 +100,9 @@ def MultipleSeqAlignment(request):
                     muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_i86linux32')
 
                 input_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\{}'.format(form.cleaned_data['file']))
-                output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.fasta')
+                output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.aln')
 
                 muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
-
-                print(request.headers['user-agent'])
 
                 align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.txt')
 
@@ -112,6 +110,36 @@ def MultipleSeqAlignment(request):
 
                 reading = open(align_file, 'r+').read()
 
-                return render(request, 'bioinformatic/alignments/multiple_result.html', {'reading':reading})
+                os.remove(input_file)
+                os.remove(output_file)
 
+                return render(request, 'bioinformatic/alignments/multiple_result.html', {'reading': reading})
+
+            elif method == "clustalw2":
+                if sys.platform.startswith('win32'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\clustalw2.exe')
+                elif sys.platform.startswith('linux'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\clustalw2')
+
+                input_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\{}'.format(form.cleaned_data['file']))
+                output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.aln')
+                dnd_file = os.path.join(BASE_DIR, "bioinformatic", "files", "turtles.fasta.dnd")
+
+                clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
+                assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
+                stdout, stderr = clustalw_cline()
+                align = open(output_file, 'r').read()
+
+                MultipleSequenceAlignment.objects.create(alignment=align)
+                tree = Phylo.read(dnd_file, "newick")
+                Phylo.draw(tree, branch_labels=lambda c: c.branch_length, do_show=False)
+
+                plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
+
+                os.remove(input_file)
+                os.remove(output_file)
+                os.remove(dnd_file)
+                plt.close()
+
+                return render(request, 'bioinformatic/alignments/multiple_result.html')
     return render(request, 'bioinformatic/alignments/multiple.html', {'form': form, 'bre': 'Multiple Sekans Alignment'})
