@@ -106,6 +106,8 @@ def MultipleSeqAlignment(request):
                 output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
                 dnd_file = os.path.join(BASE_DIR, "bioinformatic", "files", "turtles.fasta.dnd")
 
+                open(output_file, 'w')
+
                 try:
                     clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
                     assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
