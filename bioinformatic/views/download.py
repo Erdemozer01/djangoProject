@@ -252,9 +252,9 @@ def aligned_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
-    filename = 'aligned.aln'
+    filename = 'aligned.fasta'
     # Define the full file path
-    filepath = os.path.join(BASE_DIR, 'files\\aligned.aln')
+    filepath = os.path.join(BASE_DIR, 'files', 'aligned.fasta')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
