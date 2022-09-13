@@ -103,7 +103,7 @@ def MultipleSeqAlignment(request):
                     muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
                 input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file']))
-                output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.aln')
+                output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
                 dnd_file = os.path.join(BASE_DIR, "bioinformatic", "files", "turtles.fasta.dnd")
 
 
