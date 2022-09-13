@@ -91,8 +91,10 @@ def MultipleSeqAlignment(request):
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
+
             handle_uploaded_file(request.FILES['file'])
             method = form.cleaned_data['method']
+
             if method == "MUSCLE":
                return redirect('bioinformatic:filogenetik_agac_fasta')
 
@@ -106,15 +108,14 @@ def MultipleSeqAlignment(request):
                 output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
                 dnd_file = os.path.join(BASE_DIR, "bioinformatic", "files", "turtles.fasta.dnd")
 
-
                 try:
-                    clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
-                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
-                    muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
-                except:
                     clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
                     assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
                     stdout, stderr = clustalw_cline()
+                except:
+                    clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
+                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
+                    muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
                 align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.txt')
                 AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                 tree = Phylo.read(dnd_file, "newick")
