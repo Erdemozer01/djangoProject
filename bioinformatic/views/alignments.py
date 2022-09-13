@@ -112,7 +112,7 @@ def MultipleSeqAlignment(request):
                 assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                 stdout, stderr = clustalw_cline()
 
-                align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.aln')
+                align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'align.aln')
                 AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                 tree = Phylo.read(dnd_file, "newick")
                 Phylo.draw(tree, branch_labels=lambda c: c.branch_length, do_show=False)
@@ -121,6 +121,8 @@ def MultipleSeqAlignment(request):
 
                 os.remove(input_file)
                 os.remove(dnd_file)
+                plt.xlabel('Dal uzunluğu')
+                plt.ylabel('Taksonomi')
                 plt.close()
 
                 return render(request, 'bioinformatic/alignments/multiple_result.html')
