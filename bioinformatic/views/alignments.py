@@ -1,10 +1,12 @@
 import os.path
 import sys
 from pathlib import Path
+
+import Bio.Application
 from matplotlib import pyplot as plt
-from Bio import pairwise2, Phylo
+from Bio import pairwise2, Phylo, SeqIO
 from Bio.Align import substitution_matrices
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from Bio import AlignIO
 import subprocess
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculator
@@ -97,33 +99,65 @@ def MultipleSeqAlignment(request):
                 return redirect('bioinformatic:filogenetik_agac_fasta')
 
             elif method == "clustalw2":
-                if sys.platform.startswith('win32'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
-                elif sys.platform.startswith('linux'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+                try:
+                    if sys.platform.startswith('win32'):
+                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
+                    elif sys.platform.startswith('linux'):
+                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
-                input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file']))
-                output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
-                dnd_file = os.path.join(BASE_DIR, "bioinformatic", "files", "turtles.fasta.dnd")
+                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                              '{}'.format(form.cleaned_data['file']))
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
+                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
-                open(output_file, 'w')
+                    records = SeqIO.parse(input_file, "fasta")
 
-                clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
-                assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
-                stdout, stderr = clustalw_cline()
+                    seq_id = []
 
-                align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'align.aln')
-                AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-                tree = Phylo.read(dnd_file, "newick")
-                Phylo.draw(tree, branch_labels=lambda c: c.branch_length, do_show=False)
+                    for record in records:
+                        seq_id.append(record.id)
 
-                plt.xlabel('Dal uzunluğu')
-                plt.ylabel('Taksonomi')
+                    if len(seq_id) < 3:
+                        return render(request, "bioinformatic/fasta/notfound.html",
+                                      {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                       'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
-                plt.close()
-                os.remove(input_file)
-                os.remove(dnd_file)
 
-                return render(request, 'bioinformatic/alignments/multiple_result.html')
+                    clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
+                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
+                    stdout, stderr = clustalw_cline()
+
+                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+                    alignment = AlignIO.read(output_file, "clustal")
+                    calculator = DistanceCalculator('identity')
+
+                    constructor = DistanceTreeConstructor(calculator)
+                    tree = constructor.build_tree(alignment)
+                    tree.clade.name = None
+
+                    Phylo.write(tree, tree_file, "phyloxml")
+
+                    Phylo.draw(tree, do_show=False)
+
+                    plt.xlabel('Dal uzunluğu')
+                    plt.ylabel('Taksonomi')
+
+                    plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
+
+                    os.remove(input_file)
+                    os.remove(tree_file)
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'sequence1.fasta.dnd'))
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'align.aln'))
+
+                    return render(request, 'bioinformatic/alignments/multiple_result.html')
+
+                except Bio.Application.ApplicationError:
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+
+                    return render(request, 'bioinformatic/fasta/notfound.html', {
+                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                        'url': reverse('bioinformatic:multiplesequence_alignments')})
+
     return render(request, 'bioinformatic/alignments/multiple.html', {'form': form, 'bre': 'Multiple Sekans Alignment'})
