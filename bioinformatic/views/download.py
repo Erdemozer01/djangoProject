@@ -35,6 +35,8 @@ def swiss_download(request):
                       {"msg": msg})
     finally:
         os.remove(filepath)
+
+
 def fasta_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
@@ -116,7 +118,7 @@ def hsp_download(request):
         # Return the response value
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        url = reverse\
+        url = reverse \
             ("bioinformatic:xml_file")
         return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg, 'url': url})
@@ -128,6 +130,7 @@ def hsp_download(request):
                       {"msg": msg})
     finally:
         os.remove(filepath)
+
 
 def entrez_download(request):
     try:
@@ -161,6 +164,7 @@ def entrez_download(request):
     finally:
         os.remove(filepath)
 
+
 def tree_download(request):
     try:
         # Define Django project base directory
@@ -169,7 +173,7 @@ def tree_download(request):
         # Define the full file path
         filepath = os.path.join(settings.MEDIA_ROOT, "tree.jpg")
         # Open the file for reading content
-        path = open(filepath, 'rb')
+        path = open(filepath, 'rb').read()
         # Set the mime type
         mime_type, _ = mimetypes.guess_type(filepath)
         # Set the return value of the HttpResponse
@@ -190,6 +194,8 @@ def tree_download(request):
                       {"msg": msg})
     finally:
         os.remove(filepath)
+
+
 def global_alignments_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
@@ -240,3 +246,30 @@ def local_alignments_download(request):
                       {"msg": msg})
     finally:
         os.remove(filepath)
+
+
+def aligned_download(request):
+    # Define Django project base directory
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    # Define text file name
+    filename = 'aligned.aln'
+    # Define the full file path
+    filepath = os.path.join(BASE_DIR, 'files\\aligned.aln')
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg})
+    finally:
+        os.remove(filepath)
+

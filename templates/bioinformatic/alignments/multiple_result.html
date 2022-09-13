@@ -27,7 +27,7 @@
                                 <tr>
                                     <td class="text-sm">
                                        Alignment Sonuçları
-                                        <a href="{% url "delete_bottom_dashboard" %}" class="float-end"
+                                        <a href="{% url "bioinformatic:aligned_download" %}" class="float-end"
                                            data-bs-toggle="tooltip"
                                            data-bs-original-title="Sil">
                                             <i class="fas fa-download text-secondary"> İndir </i>
@@ -38,7 +38,7 @@
                                 <tr>
                                     <td class="text-sm">
                                         Evrimsel Grafik
-                                        <a href="{% url "delete_about_dashboard" %}" class="float-end"
+                                        <a href="{% url "bioinformatic:tree_download" %}" class="float-end"
                                            data-bs-toggle="tooltip"
                                            data-bs-original-title="Sil">
                                             <i class="fas fa-download text-secondary"> İndir </i>
@@ -51,6 +51,7 @@
                                         </a>
                                     </td>
                                 </tr>
+
                                 </tbody>
                             </table>
                         </div>

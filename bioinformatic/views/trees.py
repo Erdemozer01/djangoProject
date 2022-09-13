@@ -74,8 +74,6 @@ def MuscleTreesView(request):
 
                 alignment = AlignIO.read(align_file, "clustal")
 
-                print(alignment)
-
                 calculator = DistanceCalculator('identity')
 
                 constructor = DistanceTreeConstructor(calculator, method=method)

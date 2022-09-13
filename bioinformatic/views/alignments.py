@@ -7,8 +7,8 @@ from Bio.Align import substitution_matrices
 from django.shortcuts import render, redirect
 from Bio import AlignIO
 import subprocess
+from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculator
 from Bio.Align.Applications import MuscleCommandline, ClustalwCommandline, ClustalOmegaCommandline
-from bioinformatic.models import MultipleSequenceAlignment
 from bioinformatic \
     .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm, MultipleFileReading
 
@@ -94,26 +94,7 @@ def MultipleSeqAlignment(request):
             handle_uploaded_file(request.FILES['file'])
             method = form.cleaned_data['method']
             if method == "MUSCLE":
-                if sys.platform.startswith('win32'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_win32.exe')
-                elif sys.platform.startswith('linux'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\muscle3.8.425_i86linux32')
-
-                input_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\{}'.format(form.cleaned_data['file']))
-                output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.aln')
-
-                muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
-
-                align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.txt')
-
-                AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-
-                reading = open(align_file, 'r+').read()
-
-                os.remove(input_file)
-                os.remove(output_file)
-
-                return render(request, 'bioinformatic/alignments/multiple_result.html', {'reading': reading})
+               return redirect('bioinformatic:filogenetik_agac_fasta')
 
             elif method == "clustalw2":
                 if sys.platform.startswith('win32'):
@@ -128,16 +109,14 @@ def MultipleSeqAlignment(request):
                 clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
                 assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
                 stdout, stderr = clustalw_cline()
-                align = open(output_file, 'r').read()
-
-                MultipleSequenceAlignment.objects.create(alignment=align)
+                align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.txt')
+                AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                 tree = Phylo.read(dnd_file, "newick")
                 Phylo.draw(tree, branch_labels=lambda c: c.branch_length, do_show=False)
 
                 plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
 
                 os.remove(input_file)
-                os.remove(output_file)
                 os.remove(dnd_file)
                 plt.close()
 
