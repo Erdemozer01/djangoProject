@@ -13,7 +13,7 @@ from bioinformatic \
     .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm, MultipleFileReading
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-path = os.path.join(BASE_DIR, "bioinformatic\\files\\")
+path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
 
 
 def handle_uploaded_file(f):
@@ -111,7 +111,6 @@ def MultipleSeqAlignment(request):
                 clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
                 assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                 stdout, stderr = clustalw_cline()
-
 
                 align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.aln')
                 AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
