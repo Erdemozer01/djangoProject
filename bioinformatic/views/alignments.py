@@ -116,7 +116,7 @@ def MultipleSeqAlignment(request):
                 except:
                     clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
 
-                    call_cline = subprocess.call(str(clustalw_cline), shell=(sys.platform!="win32"))
+                    call_cline = subprocess.check_output(str(clustalw_cline), shell=(sys.platform!="win32"))
 
                 align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.aln')
                 AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
