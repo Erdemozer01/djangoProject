@@ -108,7 +108,7 @@ def MultipleSeqAlignment(request):
 
                 open(output_file, 'w')
 
-                clustalw_cline = ClustalwCommandline(os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe'), infile=input_file, outfile=output_file, pim=True)
+                clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
                 assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                 stdout, stderr = clustalw_cline()
 
