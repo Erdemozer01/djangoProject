@@ -108,7 +108,7 @@ def MultipleSeqAlignment(request):
 
                 clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
                 try:
-                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
+                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
                     muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
                 except:
                     assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
