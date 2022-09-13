@@ -98,9 +98,9 @@ def MultipleSeqAlignment(request):
 
             elif method == "clustalw2":
                 if sys.platform.startswith('win32'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\clustalw2.exe')
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
                 elif sys.platform.startswith('linux'):
-                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic\\apps\\clustalw2')
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
                 input_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\{}'.format(form.cleaned_data['file']))
                 output_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\aligned.aln')
