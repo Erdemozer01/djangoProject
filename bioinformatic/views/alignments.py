@@ -117,13 +117,13 @@ def MultipleSeqAlignment(request):
                 tree = Phylo.read(dnd_file, "newick")
                 Phylo.draw(tree, branch_labels=lambda c: c.branch_length, do_show=False)
 
-                plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
-
-                os.remove(input_file)
-                os.remove(dnd_file)
                 plt.xlabel('Dal uzunluğu')
                 plt.ylabel('Taksonomi')
+
+                plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
                 plt.close()
+                os.remove(input_file)
+                os.remove(dnd_file)
 
                 return render(request, 'bioinformatic/alignments/multiple_result.html')
     return render(request, 'bioinformatic/alignments/multiple.html', {'form': form, 'bre': 'Multiple Sekans Alignment'})
