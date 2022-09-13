@@ -94,7 +94,7 @@ def MultipleSeqAlignment(request):
             handle_uploaded_file(request.FILES['file'])
             method = form.cleaned_data['method']
             if method == "MUSCLE":
-               return redirect('bioinformatic:filogenetik_agac_fasta')
+                return redirect('bioinformatic:filogenetik_agac_fasta')
 
             elif method == "clustalw2":
                 if sys.platform.startswith('win32'):
@@ -116,7 +116,7 @@ def MultipleSeqAlignment(request):
                 except:
                     clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
 
-                    call_cline = subprocess.check_output(str(clustalw_cline), shell=(sys.platform!="win32"))
+                    call_cline = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file], shell=(sys.platform!="win32"))
 
                 align_file = os.path.join(BASE_DIR, 'bioinformatic\\files\\align.aln')
                 AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
