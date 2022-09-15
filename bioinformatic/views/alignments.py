@@ -260,6 +260,7 @@ def MultipleSeqAlignment(request):
 
 
                     alignment = AlignIO.read(child.stdout, "fasta")
+                    AlignIO.convert(child.stdout, "fasta", align_file, "clustal")
                     calculator = DistanceCalculator('identity')
 
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
