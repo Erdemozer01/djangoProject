@@ -247,9 +247,16 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file,outfile=output_file, auto=True)
-                    assert os.path.isfile(clustal_omega_exe)
-                    stdout, stderr = clustal_omega_cline()
+                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file, auto=True)
+                    child = subprocess.Popen(str(clustal_omega_cline),
+
+                    stdout = subprocess.PIPE,
+
+                    stderr = subprocess.PIPE,
+
+                    universal_newlines = True,
+
+                    shell = (sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     alignment = AlignIO.read(align_file, "clustal")
