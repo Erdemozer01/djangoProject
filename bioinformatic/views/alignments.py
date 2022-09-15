@@ -247,12 +247,12 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file, auto=True)
-                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
+                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, auto=True)
+                    assert os.path.isfile(clustal_omega_exe)
                     stdout, stderr = clustal_omega_cline()
 
-                    alignment = AlignIO.read(align_file, "clustal")
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+                    alignment = AlignIO.read(align_file, "clustal")
                     calculator = DistanceCalculator('identity')
 
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
@@ -275,7 +275,6 @@ def MultipleSeqAlignment(request):
 
                     os.remove(input_file)
                     os.remove(tree_file)
-
 
                     return render(request, 'bioinformatic/alignments/clustal.html')
 
