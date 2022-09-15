@@ -226,10 +226,8 @@ def MultipleSeqAlignment(request):
 
             elif method == "omega":
                 try:
-                    if sys.platform.startswith('win32'):
-                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustal-omega-1.2.2-win64/clustalo.exe')
-                    elif sys.platform.startswith('linux'):
-                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalo-1.2.4-Ubuntu-32-bit')
+
+                    clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustal-omega-1.2.2-win64/clustalo.exe')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -250,7 +248,8 @@ def MultipleSeqAlignment(request):
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
                     clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file, auto=True)
-                    subprocess.check_output([clustal_omega_exe, "-in", input_file, "-out", output_file][0])
+                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
+                    stdout, stderr = clustal_omega_cline()
 
                     alignment = AlignIO.read(align_file, "clustal")
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
