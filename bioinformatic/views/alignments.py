@@ -259,7 +259,7 @@ def MultipleSeqAlignment(request):
                     shell = (sys.platform != "win32"))
 
 
-                    alignment = AlignIO.read(child.stdout, "clustal")
+                    alignment = AlignIO.read(child.stdout, "fasta")
                     calculator = DistanceCalculator('identity')
 
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
