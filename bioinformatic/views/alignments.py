@@ -197,7 +197,7 @@ def MultipleSeqAlignment(request):
                                                           universal_newlines=True, shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-                    alignment = AlignIO.read(clustal_result.stdout, "fasta")
+                    alignment = AlignIO.read(output_file, "fasta")
 
                     calculator = DistanceCalculator('identity')
 
