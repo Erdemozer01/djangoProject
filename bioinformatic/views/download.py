@@ -200,9 +200,9 @@ def clustal_tree_download(request):
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "aligned.fasta"
+        filename = "align.aln"
         # Define the full file path
-        filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'aligned.fasta')
+        filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'align.aln')
         # Open the file for reading content
         path = open(filepath, 'rb').read()
         # Set the mime type
