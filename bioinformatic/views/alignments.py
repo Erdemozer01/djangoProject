@@ -94,9 +94,11 @@ def MultipleSeqAlignment(request):
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
+
             handle_uploaded_file(request.FILES['file'])
             method = form.cleaned_data['method']
             algoritma = form.cleaned_data['algoritma']
+
             if method == "MUSCLE":
                 try:
                     if sys.platform.startswith('win32'):
@@ -195,7 +197,7 @@ def MultipleSeqAlignment(request):
                                                           universal_newlines=True, shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-                    alignment = AlignIO.read(output_file, "clustal")
+                    alignment = AlignIO.read(align_file, "clustal")
 
                     calculator = DistanceCalculator('identity')
 
