@@ -89,21 +89,19 @@ def local_alignment(request):
 
 
 def MultipleSeqAlignment(request):
-    global muscle_exe
+    global clustalw2_exe, muscle_exe, clustal_omega_exe
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
             handle_uploaded_file(request.FILES['file'])
             method = form.cleaned_data['method']
+            algoritma = form.cleaned_data['algoritma']
             if method == "MUSCLE":
-                return redirect('bioinformatic:filogenetik_agac_fasta')
-
-            elif method == "clustalw2":
                 try:
                     if sys.platform.startswith('win32'):
-                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
+                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
                     elif sys.platform.startswith('linux'):
-                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -123,18 +121,79 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
+                    muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
 
-                    clustalw_cline = ClustalwCommandline(muscle_exe, infile=input_file, outfile=output_file, pim=True)
+                    AlignIO.convert(output_file, "fasta", align_file, "clustal")
+                    alignment = AlignIO.read(align_file, "clustal")
+                    calculator = DistanceCalculator('identity')
+
+                    constructor = DistanceTreeConstructor(calculator, method=algoritma)
+                    tree = constructor.build_tree(alignment)
+                    Phylo.write(tree, tree_file, "phyloxml")
+
+                    Phylo.draw(tree, do_show=False)
+
+                    plt.xlabel('Dal uzunluğu')
+                    plt.ylabel('Taksonomi')
+                    if algoritma == "nj":
+                        plt.title('Neighbor Joining Ağacı')
+                    elif algoritma == "upgma":
+                        plt.title('UPGMA Ağacı')
+
+                    plt.suptitle(f'{method} Metodu')
+
+                    plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
+
+                    os.remove(input_file)
+                    os.remove(output_file)
+                    os.remove(tree_file)
+
+                    return render(request, 'bioinformatic/alignments/multiple_result.html')
+
+                except Bio.Application.ApplicationError:
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+
+                    return render(request, 'bioinformatic/fasta/notfound.html', {
+                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                        'url': reverse('bioinformatic:multiplesequence_alignments')})
+
+            elif method == "clustalw2":
+                try:
+                    if sys.platform.startswith('win32'):
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
+                    elif sys.platform.startswith('linux'):
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+
+                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                              '{}'.format(form.cleaned_data['file']))
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
+                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
+
+                    records = SeqIO.parse(input_file, "fasta")
+
+                    seq_id = []
+
+                    for record in records:
+                        seq_id.append(record.id)
+
+                    if len(seq_id) < 3:
+                        return render(request, "bioinformatic/fasta/notfound.html",
+                                      {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                       'url': reverse('bioinformatic:multiplesequence_alignments')})
+
+                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
+                                                         pim=True)
                     assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                     stdout, stderr = clustalw_cline()
 
-                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     alignment = AlignIO.read(output_file, "clustal")
+                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     calculator = DistanceCalculator('identity')
 
-                    constructor = DistanceTreeConstructor(calculator)
+                    constructor = DistanceTreeConstructor(calculator, method=algoritma)
                     tree = constructor.build_tree(alignment)
-                    tree.clade.name = None
 
                     Phylo.write(tree, tree_file, "phyloxml")
 
@@ -142,15 +201,85 @@ def MultipleSeqAlignment(request):
 
                     plt.xlabel('Dal uzunluğu')
                     plt.ylabel('Taksonomi')
+                    if algoritma == "nj":
+                        plt.title('Neighbor Joining Ağacı')
+                    elif algoritma == "upgma":
+                        plt.title('UPGMA Ağacı')
+
+                    plt.suptitle(f'{method.upper()} Metodu')
 
                     plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
 
                     os.remove(input_file)
                     os.remove(tree_file)
-                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'sequence1.fasta.dnd'))
-                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'align.aln'))
 
-                    return render(request, 'bioinformatic/alignments/multiple_result.html')
+
+                    return render(request, 'bioinformatic/alignments/clustal.html')
+
+                except Bio.Application.ApplicationError:
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+
+                    return render(request, 'bioinformatic/fasta/notfound.html', {
+                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                        'url': reverse('bioinformatic:multiplesequence_alignments')})
+
+            elif method == "omega":
+                try:
+                    if sys.platform.startswith('win32'):
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustal-omega-1.2.2-win64/clustalo.exe')
+                    elif sys.platform.startswith('linux'):
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalo-1.2.4-Ubuntu-32-bit')
+
+                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                              '{}'.format(form.cleaned_data['file']))
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.fasta")
+                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
+
+                    records = SeqIO.parse(input_file, "fasta")
+
+                    seq_id = []
+
+                    for record in records:
+                        seq_id.append(record.id)
+
+                    if len(seq_id) < 3:
+                        return render(request, "bioinformatic/fasta/notfound.html",
+                                      {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                       'url': reverse('bioinformatic:multiplesequence_alignments')})
+
+                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file, auto=True)
+                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
+                    stdout, stderr = clustal_omega_cline()
+
+                    alignment = AlignIO.read(align_file, "clustal")
+                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+                    calculator = DistanceCalculator('identity')
+
+                    constructor = DistanceTreeConstructor(calculator, method=algoritma)
+                    tree = constructor.build_tree(alignment)
+
+                    Phylo.write(tree, tree_file, "phyloxml")
+
+                    Phylo.draw(tree, do_show=False)
+
+                    plt.xlabel('Dal uzunluğu')
+                    plt.ylabel('Taksonomi')
+                    if algoritma == "nj":
+                        plt.title('Neighbor Joining Ağacı')
+                    elif algoritma == "upgma":
+                        plt.title('UPGMA Ağacı')
+
+                    plt.suptitle(f'{method.upper()} Metodu')
+
+                    plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
+
+                    os.remove(input_file)
+                    os.remove(tree_file)
+
+
+                    return render(request, 'bioinformatic/alignments/clustal.html')
 
                 except Bio.Application.ApplicationError:
                     os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))

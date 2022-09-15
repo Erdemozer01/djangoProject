@@ -183,7 +183,7 @@ def tree_download(request):
         # Return the response value
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        url = reverse("bioinformatic:filogenetik_agac")
+        url = reverse("bioinformatic:multiplesequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg, 'url': url})
     try:
@@ -195,6 +195,36 @@ def tree_download(request):
     finally:
         os.remove(filepath)
 
+def clustal_tree_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "aligned.fasta"
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'aligned.fasta')
+        # Open the file for reading content
+        path = open(filepath, 'rb').read()
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiplesequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg})
+    finally:
+        os.remove(filepath)
 
 def global_alignments_download(request):
     # Define Django project base directory
@@ -252,9 +282,9 @@ def aligned_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
-    filename = 'aligned.fasta'
+    filename = 'align.aln'
     # Define the full file path
-    filepath = os.path.join(BASE_DIR, 'files', 'aligned.fasta')
+    filepath = os.path.join(BASE_DIR, 'files', 'align.aln')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type

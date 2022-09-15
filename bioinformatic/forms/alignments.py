@@ -1,5 +1,6 @@
 from django import forms
 from bioinformatic.models import MultipleSequenceAlignment
+
 MATRIS = (
     ('', '------------'),
     ('BENNER22', 'BENNER22'),
@@ -30,9 +31,18 @@ MATRIS = (
 
 METHOD = (
     ('', '------------'),
-    ('clustalw2', 'clustalw2'.upper()),
     ('MUSCLE', 'MUSCLE'),
+    ('clustalw2', 'clustalw2'.upper()),
+    ('omega', 'ClustalOmega'),
 )
+
+ALGORITMA = (
+    ('', '------------'),
+    ('nj', 'Neighbor Joining'),
+    ('upgma', 'UPGMA'),
+
+)
+
 
 class LocalForm(forms.Form):
     algo = forms.ChoiceField(
@@ -93,6 +103,7 @@ class GlobalForm(forms.Form):
 
 class MultipleSequenceAlignmentForm(forms.Form):
     method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Metodu Seçiniz")
+    algoritma = forms.ChoiceField(choices=ALGORITMA, label="Algoritma Seçiniz")
     file = forms.FileField(label="Fasta Dosyası Giriniz")
 
 

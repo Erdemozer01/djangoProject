@@ -31,12 +31,12 @@ urlpatterns = [
     path('entrez_file_download/', views.entrez_download, name="entrez_file_download"),
     path('pubmed/articles/id/', views.pubmed, name="pubmed_article"),
     path('pubmed/articles/term/', views.medline_article, name="medline_article"),
-    path('filogenetik_agac/muscle/', views.MuscleTreesView, name="filogenetik_agac_fasta"),
     path('filogenetik_agac/download/', views.tree_download, name="tree_download"),
     path('swiss_prot/', views.swiss_prot_file, name="swiss_prot_file"),
     path('swiss_prot_url/', views.swiss_prot_url, name="swiss_prot_url"),
     path('swiss_prot_download/', views.swiss_download, name="swiss_prot_download"),
     path('swiss_prot/table/', views.swiss_list_view, name="swiss_prot_list"),
     path('aligned_download/', views.aligned_download, name="aligned_download"),
+    path('clustal_tree_download/', views.clustal_tree_download, name="clustal_tree_download"),
     path('swiss_prot/<int:pk><slug:accessions>/', views.SwissProtDetailView.as_view(), name="swiss_prot_detail"),
 ]

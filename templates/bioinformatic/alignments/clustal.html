@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Multiple Sekans Alignment {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid py-4 mt-3 col-sm-10 shadow-md">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">Multiple Sekans Alignment Sonuçları</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-0">
+                        <div class="table-responsive">
+                            <table class="table table-flush" id="products-list">
+                                <tbody class="mx-auto">
+
+                                <tr>
+                                    <td class="text-sm">
+                                       Alignment Sonuçları
+                                        <a href="{% url "bioinformatic:clustal_tree_download" %}" class="float-end"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary"> İndir </i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
+                                        Filogenetik Ağaç
+                                        <a href="{% url "bioinformatic:tree_download" %}" class="float-end"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary"> İndir </i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
