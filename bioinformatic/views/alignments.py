@@ -226,8 +226,10 @@ def MultipleSeqAlignment(request):
             elif method == "omega":
                 try:
 
-                    clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
-                                                     'clustal-omega-1.2.2-win64/clustalo.exe')
+                    if sys.platform.startswith('win32'):
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustal-omega-1.2.2-win64/clustalo.exe')
+                    elif sys.platform.startswith('linux'):
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalo-1.2.4-Ubuntu-32-bit')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
