@@ -184,16 +184,14 @@ def MultipleSeqAlignment(request):
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
                     clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
-                    if sys.platform.startswith('win32'):
-                        assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
-                        stdout, stderr = clustalw_cline()
-                    elif sys.platform.startswith('linux'):
-                        subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE,
-                                         stdout=subprocess.PIPE, universal_newlines=True,
-                                         shell=(sys.platform != "win32"))
 
-                    alignment = AlignIO.read(output_file, "clustal")
+                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
+                    clustalw_cline()
+
+
+
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+                    alignment = AlignIO.read(output_file, "clustal")
 
                     calculator = DistanceCalculator('identity')
 
