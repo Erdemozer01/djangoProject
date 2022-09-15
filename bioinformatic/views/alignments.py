@@ -170,7 +170,7 @@ def MultipleSeqAlignment(request):
                     output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
                     align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
-                    open(output_file, 'w')
+
 
                     records = SeqIO.parse(input_file, "fasta")
 
@@ -190,7 +190,7 @@ def MultipleSeqAlignment(request):
                         assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                         stdout, stderr = clustalw_cline()
                     elif sys.platform.startswith('linux'):
-                        subprocess.check_output([str(clustalw_cline), "-in", input_file, "-out", output_file])
+                        subprocess.run([str(clustalw_cline), "-in", input_file, "-out", output_file])
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     alignment = AlignIO.read(align_file, "clustal")
