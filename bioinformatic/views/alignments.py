@@ -193,7 +193,7 @@ def MultipleSeqAlignment(request):
                                                            shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-                    alignment = AlignIO.read(align_file, "clustal")
+                    alignment = AlignIO.read(output_file, "clustal")
                     calculator = DistanceCalculator('identity')
 
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
