@@ -188,8 +188,9 @@ def MultipleSeqAlignment(request):
                     assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                     stdout, stderr = clustalw_cline()
 
-                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+
                     alignment = AlignIO.read(output_file, "clustal")
+                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     calculator = DistanceCalculator('identity')
 
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
