@@ -170,6 +170,7 @@ def MultipleSeqAlignment(request):
                     output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
                     align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
+                    open(output_file, 'w')
 
                     records = SeqIO.parse(input_file, "fasta")
 
