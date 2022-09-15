@@ -167,10 +167,9 @@ def MultipleSeqAlignment(request):
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
-                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.aln')
                     align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
-
 
                     records = SeqIO.parse(input_file, "fasta")
 
@@ -189,10 +188,12 @@ def MultipleSeqAlignment(request):
                         assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                         stdout, stderr = clustalw_cline()
                     elif sys.platform.startswith('linux'):
-                        clustalw_result = subprocess.call(str(clustalw_cline), shell=(sys.platform!="win32"))
+                        clustalw_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE,
+                                                           stdout=subprocess.PIPE, universal_newlines=True,
+                                                           shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-                    alignment = AlignIO.read(output_file, "clustal")
+                    alignment = AlignIO.read(align_file, "clustal")
                     calculator = DistanceCalculator('identity')
 
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
@@ -230,9 +231,11 @@ def MultipleSeqAlignment(request):
                 try:
 
                     if sys.platform.startswith('win32'):
-                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustal-omega-1.2.2-win64/clustalo.exe')
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
+                                                         'clustal-omega-1.2.2-win64/clustalo.exe')
                     elif sys.platform.startswith('linux'):
-                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalo-1.2.4-Ubuntu-32-bit')
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
+                                                         'clustalo-1.2.4-Ubuntu-32-bit')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
