@@ -227,7 +227,7 @@ def MultipleSeqAlignment(request):
             elif method == "omega":
                 try:
 
-                    clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalo-1.2.4-Ubuntu-32-bit')
+                    clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustal-omega-1.2.2-win64/clustalo.exe')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -247,20 +247,12 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file, auto=True)
-                    child = subprocess.Popen(str(clustal_omega_cline),
+                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file)
+                    assert os.path.isfile(clustal_omega_exe)
+                    stdout, stderr = clustal_omega_cline()
 
-                    stdout = subprocess.PIPE,
-
-                    stderr = subprocess.PIPE,
-
-                    universal_newlines = True,
-
-                    shell = (sys.platform != "win32"))
-
-
-                    alignment = AlignIO.read(child.stdout, "fasta")
-                    AlignIO.convert(child.stdout, "fasta", align_file, "clustal")
+                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+                    alignment = AlignIO.read(align_file, "clustal")
                     calculator = DistanceCalculator('identity')
 
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
