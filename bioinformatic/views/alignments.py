@@ -213,7 +213,6 @@ def MultipleSeqAlignment(request):
                     os.remove(input_file)
                     os.remove(tree_file)
 
-
                     return render(request, 'bioinformatic/alignments/clustal.html')
 
                 except Bio.Application.ApplicationError:
@@ -227,7 +226,8 @@ def MultipleSeqAlignment(request):
             elif method == "omega":
                 try:
 
-                    clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustal-omega-1.2.2-win64/clustalo.exe')
+                    clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
+                                                     'clustal-omega-1.2.2-win64/clustalo.exe')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -247,9 +247,15 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file)
-                    assert os.path.isfile(clustal_omega_exe)
-                    stdout, stderr = clustal_omega_cline()
+                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file,
+                                                                  outfile=output_file)
+                    if sys.platform.startswith('win32'):
+                        assert os.path.isfile(clustal_omega_exe)
+                        stdout, stderr = clustal_omega_cline()
+                    elif sys.platform.startswith('linux'):
+                        subprocess.Popen(str(clustal_omega_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE, universal_newlines=True,
+                                         shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     alignment = AlignIO.read(align_file, "clustal")
