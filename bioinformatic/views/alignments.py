@@ -189,7 +189,7 @@ def MultipleSeqAlignment(request):
                         assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                         stdout, stderr = clustalw_cline()
                     elif sys.platform.startswith('linux'):
-                        subprocess.check_output([clustalw_cline, "-in", input_file, "-out", output_file][0])
+                        subprocess.check_output([clustalw_cline, "-in", input_file, "-out", output_file])
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     alignment = AlignIO.read(align_file, "clustal")
