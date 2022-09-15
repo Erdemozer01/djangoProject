@@ -250,7 +250,7 @@ def MultipleSeqAlignment(request):
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
                     clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file, outfile=output_file, auto=True)
-                    subprocess.check_output([clustal_omega_exe, "-in", input_file, "-out", output_file])
+                    subprocess.check_output([clustal_omega_exe, "-in", input_file, "-out", output_file][0])
 
                     alignment = AlignIO.read(align_file, "clustal")
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
