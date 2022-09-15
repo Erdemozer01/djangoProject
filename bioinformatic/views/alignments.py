@@ -199,7 +199,7 @@ def MultipleSeqAlignment(request):
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     with open(output_file, 'r') as aln:
 
-                        alignment = AlignIO.parse(aln, "clustal")
+                        alignment = AlignIO.read(aln, "clustal")
 
                     calculator = DistanceCalculator('identity')
 
