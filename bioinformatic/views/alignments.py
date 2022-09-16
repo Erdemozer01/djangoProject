@@ -190,7 +190,7 @@ def MultipleSeqAlignment(request):
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
                     clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file, align=True,
-                                                         outorder="ALIGNED", convert=True, output="pir", newtree=dnd_file)
+                                                         outorder="ALIGNED", convert=True, newtree=dnd_file)
 
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                     stdout, stderr = clustalw_cline()
