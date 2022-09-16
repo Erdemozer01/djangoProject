@@ -198,6 +198,7 @@ def MultipleSeqAlignment(request):
                     elif sys.platform.startswith('linux'):
 
                         child = subprocess.check_output([clustalw2_exe, "-in", input_file, "-out", output_file])
+                        subprocess.Popen(str(child))
 
                     alignment = AlignIO.read(output_file, 'clustal')
 
