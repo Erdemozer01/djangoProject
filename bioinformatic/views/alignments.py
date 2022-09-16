@@ -220,7 +220,7 @@ def MultipleSeqAlignment(request):
                     os.remove(input_file)
                     os.remove(tree_file)
 
-                    return render(request, 'bioinformatic/alignments/clustal.html')
+                    return render(request, 'bioinformatic/alignments/clustal.html', {'bre':'Clustalw2 Metodu Sonuçları'})
 
                 except Bio.Application.ApplicationError:
                     os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
