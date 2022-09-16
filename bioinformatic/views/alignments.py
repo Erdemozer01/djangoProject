@@ -164,6 +164,11 @@ def MultipleSeqAlignment(request):
             elif method == "clustalw2":
                 try:
 
+                    if sys.platform.startswith('win32'):
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
+                    elif sys.platform.startswith('linux'):
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -185,14 +190,14 @@ def MultipleSeqAlignment(request):
 
                     if sys.platform.startswith('win32'):
 
-                        clustalw_cline = ClustalwCommandline(os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe'), infile=input_file, outfile=output_file,
+                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
                                                              newtree=dnd_file)
                         assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                         stdout, stderr = clustalw_cline()
 
                     elif sys.platform.startswith('linux'):
-                        clustalw_cline = ClustalwCommandline("clustalw2", infile=input_file, outfile=output_file, newtree=dnd_file)
-                        stdout, stderr = clustalw_cline()
+
+                        child = subprocess.check_output([clustalw2_exe, "-in", input_file, "-out", output_file])
 
                     alignment = AlignIO.read(output_file, 'clustal')
 
