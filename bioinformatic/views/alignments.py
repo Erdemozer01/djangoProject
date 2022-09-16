@@ -193,7 +193,7 @@ def MultipleSeqAlignment(request):
 
                     elif sys.platform.startswith('linux'):
                         clustalw_cline = ClustalwCommandline(clustalw2, infile=input_file, outfile=output_file)
-                        muscle_result = subprocess.run(clustalw_cline.parameters)
+                        muscle_result = subprocess.run(str(clustalw_cline.parameters))
 
                     AlignIO.convert(output_file, "fasta", align_file, "clustal")
                     alignment = AlignIO.read(output_file, 'clustal')
