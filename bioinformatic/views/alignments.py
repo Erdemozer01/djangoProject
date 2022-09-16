@@ -166,7 +166,7 @@ def MultipleSeqAlignment(request):
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
                     elif sys.platform.startswith('linux'):
-                        clustalw2 = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
