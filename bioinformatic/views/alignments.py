@@ -186,19 +186,19 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file, align=True, newtree=tree_file)
-
+                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
+                                                         align=True, newtree=tree_file)
 
                     if sys.platform.startswith('win32'):
                         assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
                         stdout, stderr = clustalw_cline()
 
                     elif sys.platform.startswith('linux'):
-                        subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                        subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                         universal_newlines=True)
 
                     AlignIO.convert(output_file, "fasta", align_file, "clustal")
                     alignment = AlignIO.read(align_file, 'clustal')
-
 
                     calculator = DistanceCalculator('identity')
 
@@ -211,6 +211,7 @@ def MultipleSeqAlignment(request):
 
                     plt.xlabel('Dal uzunluğu')
                     plt.ylabel('Taksonomi')
+
                     if algoritma == "nj":
                         plt.title('Neighbor Joining Ağacı')
                     elif algoritma == "upgma":
@@ -292,8 +293,6 @@ def MultipleSeqAlignment(request):
                     plt.suptitle(f'{method.upper()} Metodu')
 
                     plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
-
-
 
                     os.remove(input_file)
                     os.remove(tree_file)
