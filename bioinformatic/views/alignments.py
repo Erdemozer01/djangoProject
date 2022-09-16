@@ -186,7 +186,7 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    muscle_result = subprocess.check_output([clustalw2_exe, "-in", input_file, "-out", output_file])
+                    clustalw2_result = subprocess.check_output([clustalw2_exe, "-in", input_file, "-out", output_file])
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     alignment = AlignIO.read(align_file, "clustal")
