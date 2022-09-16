@@ -191,7 +191,7 @@ def MultipleSeqAlignment(request):
                         stdout, stderr = clustalw_cline()
 
                     elif sys.platform.startswith('linux'):
-                        clustalw_cline = ClustalwCommandline(os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2'), infile=input_file, outfile=output_file, newtree=dnd_file)
+                        clustalw_cline = ClustalwCommandline("clustalw2", infile=input_file, outfile=output_file, newtree=dnd_file)
                         stdout, stderr = clustalw_cline()
 
                     alignment = AlignIO.read(output_file, 'clustal')
