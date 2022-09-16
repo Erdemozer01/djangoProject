@@ -190,7 +190,7 @@ def MultipleSeqAlignment(request):
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                     stdout, stderr = clustalw_cline()
 
-                    alignment = next(AlignIO.read(output_file, "clustal"))
+                    alignment = AlignIO.read(open(output_file, 'r'), "clustal")
 
                     calculator = DistanceCalculator('identity')
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
