@@ -124,9 +124,7 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline("clustalw2", infile=input_file)
-
-                    muscle_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True,shell=(sys.platform!="win32"))
+                    muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                     alignment = AlignIO.read(align_file, "clustal")
@@ -168,7 +166,7 @@ def MultipleSeqAlignment(request):
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
                     elif sys.platform.startswith('linux'):
-                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+                        clustalw2 = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -188,10 +186,14 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw2_result = subprocess.check_output([clustalw2_exe, "-in", input_file, "-out", output_file])
 
-                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-                    alignment = AlignIO.read(align_file, "clustal")
+                    clustalw_cline = ClustalwCommandline("clustalw2", infile=input_file)
+
+                    muscle_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                                     universal_newlines=True, shell=(sys.platform != "win32"))
+
+                    AlignIO.convert(output_file, "fasta", align_file, "clustal")
+                    alignment = AlignIO.read(output_file, 'clustal')
 
                     calculator = DistanceCalculator('identity')
 
