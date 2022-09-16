@@ -221,6 +221,7 @@ def MultipleSeqAlignment(request):
                     os.remove(input_file)
                     os.remove(tree_file)
                     os.remove(dnd_file)
+                    os.remove(output_file)
 
                     return render(request, 'bioinformatic/alignments/clustal.html', {'bre':'Clustalw2 Metodu Sonuçları'})
 
