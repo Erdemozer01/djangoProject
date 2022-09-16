@@ -197,8 +197,10 @@ def MultipleSeqAlignment(request):
 
                     elif sys.platform.startswith('linux'):
 
-                        child = subprocess.check_output([clustalw2_exe, "-in", input_file, "-out", output_file])
-                        stdout, stderr = child()
+                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
+                                                             newtree=dnd_file)
+                        assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
+                        stdout, stderr = clustalw_cline()
 
                     alignment = AlignIO.read(output_file, 'clustal')
 
