@@ -196,7 +196,7 @@ def MultipleSeqAlignment(request):
                         clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
                         stdout, stderr = clustalw_cline()
 
-                    alignment = AlignIO.read(align_file, 'clustal')
+                    alignment = AlignIO.read(output_file, 'clustal')
 
                     calculator = DistanceCalculator('identity')
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
