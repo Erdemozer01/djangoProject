@@ -197,7 +197,7 @@ def MultipleSeqAlignment(request):
 
                     elif sys.platform.startswith('linux'):
 
-                        clustalw_cline = ClustalwCommandline(clustalw2, infile=input_file, outfile=output_file,
+                        clustalw_cline = ClustalwCommandline(clustalw2, infile=input_file, outfile="opt.aln",
                                                              newtree=dnd_file)
 
                         assert os.path.isfile(clustalw2), "Clustal W executable missing"
