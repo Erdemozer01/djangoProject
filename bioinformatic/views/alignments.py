@@ -188,7 +188,6 @@ def MultipleSeqAlignment(request):
 
 
                     clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=align_file)
-                    stdout, stderr = clustalw_cline()
 
                     clustalw_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                                      universal_newlines=True, shell=(sys.platform != "win32"))
