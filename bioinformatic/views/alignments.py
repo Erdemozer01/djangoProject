@@ -170,7 +170,7 @@ def MultipleSeqAlignment(request):
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
-                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.aln')
                     align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
@@ -188,12 +188,14 @@ def MultipleSeqAlignment(request):
 
 
                     clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
+                    assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
+                    stdout, stderr = clustalw_cline()
 
                     clustalw_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                                      universal_newlines=True, shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal', molecule_type="DNA")
-                    align = next(AlignIO.parse(output_file, 'clustal'))
+                    align = AlignIO.read(output_file, 'clustal')
 
                     calculator = DistanceCalculator('identity')
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
