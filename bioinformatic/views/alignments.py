@@ -167,7 +167,7 @@ def MultipleSeqAlignment(request):
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
                     elif sys.platform.startswith('linux'):
-                        clustalw2 = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
@@ -188,20 +188,11 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    if sys.platform.startswith('win32'):
+                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file, align=True,
+                                                         outorder="ALIGNED", convert=True, output="pir")
 
-                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
-                                                             newtree=dnd_file)
-                        assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
-                        stdout, stderr = clustalw_cline()
-
-                    elif sys.platform.startswith('linux'):
-
-                        clustalw_cline = ClustalwCommandline(clustalw2, infile=input_file, outfile=output_file, align=True,
-                                                             outorder="ALIGNED", convert=True, output="pir")
-
-                        assert os.path.isfile(clustalw2), "Clustal W executable missing"
-                        stdout, stderr = clustalw_cline()
+                    assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
+                    stdout, stderr = clustalw_cline()
 
                     alignment = AlignIO.read(output_file, 'clustal')
 
