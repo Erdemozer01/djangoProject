@@ -200,7 +200,7 @@ def MultipleSeqAlignment(request):
                         clustalw_cline = ClustalwCommandline(clustalw2, infile=input_file, outfile=output_file,
                                                              newtree=dnd_file)
 
-                        assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
+                        assert os.path.isfile(clustalw2), "Clustal W executable missing"
                         stdout, stderr = clustalw_cline()
 
                     alignment = AlignIO.read(output_file, 'clustal')
