@@ -187,17 +187,16 @@ def MultipleSeqAlignment(request):
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
 
-                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=align_file)
+                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
 
                     clustalw_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                                      universal_newlines=True, shell=(sys.platform != "win32"))
 
-                    alignment = AlignIO.read(align_file, 'clustal')
+                    align = AlignIO.read(align_file, 'fasta')
 
                     calculator = DistanceCalculator('identity')
-
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
-                    tree = constructor.build_tree(alignment)
+                    tree = constructor.build_tree(align)
 
                     Phylo.write(tree, tree_file, "phyloxml")
 
