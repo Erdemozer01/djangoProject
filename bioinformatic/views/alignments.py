@@ -193,7 +193,7 @@ def MultipleSeqAlignment(request):
                                                      universal_newlines=True, shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, 'clustal', molecule_type="DNA")
-                    align = AlignIO.read(align_file, 'clustal')
+                    align = next(AlignIO.parse(output_file, 'clustal'))
 
                     calculator = DistanceCalculator('identity')
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
