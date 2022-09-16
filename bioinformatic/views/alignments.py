@@ -90,7 +90,7 @@ def local_alignment(request):
 
 
 def MultipleSeqAlignment(request):
-    global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result
+    global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
@@ -166,7 +166,7 @@ def MultipleSeqAlignment(request):
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
                     elif sys.platform.startswith('linux'):
-                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+                        clustalw2 = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -186,15 +186,16 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
-                                                         align=True)
+                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
 
                     if sys.platform.startswith('win32'):
+                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
                         assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
                         stdout, stderr = clustalw_cline()
 
                     elif sys.platform.startswith('linux'):
-                        assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
+                        clustalw_cline = ClustalwCommandline(clustalw2, infile=input_file, outfile=output_file)
+                        assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2"))
                         stdout, stderr = clustalw_cline()
 
                     AlignIO.convert(output_file, "fasta", align_file, "clustal")
