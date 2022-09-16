@@ -192,8 +192,8 @@ def MultipleSeqAlignment(request):
 
                     clustalw_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                                      universal_newlines=True, shell=(sys.platform != "win32"))
-                    from io import StringIO
-                    alignment = AlignIO.read(StringIO(stdout), 'clustal')
+
+                    alignment = AlignIO.read(clustalw_result.stdout, 'clustal')
 
                     calculator = DistanceCalculator('identity')
 
