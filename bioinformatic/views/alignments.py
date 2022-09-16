@@ -186,12 +186,10 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
-                    assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
-                    stdout, stderr = clustalw_cline()
+                    muscle_result = subprocess.check_output([clustalw2_exe, "-in", input_file, "-out", output_file])
 
-                    alignment = AlignIO.read(output_file, 'clustal')
-                    AlignIO.convert(output_file, "fasta", align_file, "clustal")
+                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+                    alignment = AlignIO.read(align_file, "clustal")
 
                     calculator = DistanceCalculator('identity')
 
