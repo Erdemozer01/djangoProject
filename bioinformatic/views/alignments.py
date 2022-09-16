@@ -186,7 +186,7 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
+
 
                     if sys.platform.startswith('win32'):
                         clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
