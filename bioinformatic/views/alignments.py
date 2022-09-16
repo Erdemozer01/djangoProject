@@ -186,26 +186,13 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    if sys.platform.startswith('win32'):
-                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file, newtree=tree_file)
-                        assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
-                        stdout, stderr = clustalw_cline()
 
-                    elif sys.platform.startswith('linux'):
-                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file, newtree=tree_file)
+                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=align_file, newtree=tree_file)
+                    assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
+                    stdout, stderr = clustalw_cline()
 
-                        subprocess.call(str(clustalw_cline))
 
-                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
-                    alignment = AlignIO.read(align_file, "clustal")
-
-                    calculator = DistanceCalculator('identity')
-                    constructor = DistanceTreeConstructor(calculator, method=algoritma)
-                    tree = constructor.build_tree(alignment)
-
-                    Phylo.write(tree, tree_file, "phyloxml")
-
-                    Phylo.draw(tree, do_show=False)
+                    Phylo.draw(tree_file, do_show=False)
 
                     plt.xlabel('Dal uzunluğu')
                     plt.ylabel('Taksonomi')
