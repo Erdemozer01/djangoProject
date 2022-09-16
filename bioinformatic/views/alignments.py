@@ -170,7 +170,7 @@ def MultipleSeqAlignment(request):
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
-                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.aln')
                     align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
@@ -188,13 +188,12 @@ def MultipleSeqAlignment(request):
 
                     if sys.platform.startswith('win32'):
 
-                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
-                                                             newtree=tree_file)
+                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
                         assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                         stdout, stderr = clustalw_cline()
 
                     elif sys.platform.startswith('linux'):
-                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file, newtree=align_file)
+                        clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file)
                         stdout, stderr = clustalw_cline()
 
                     alignment = AlignIO.read(align_file, 'clustal')
