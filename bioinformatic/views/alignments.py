@@ -194,6 +194,7 @@ def MultipleSeqAlignment(request):
                         stdout, stderr = clustalw_cline()
 
                     elif sys.platform.startswith('linux'):
+                        stdout, stderr = clustalw_cline()
                         subprocess.check_output(str(clustalw_cline))
 
                     AlignIO.convert(output_file, "fasta", align_file, "clustal")
