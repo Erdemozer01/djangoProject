@@ -187,7 +187,7 @@ def MultipleSeqAlignment(request):
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
                     clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
-                                                         align=True, newtree=tree_file)
+                                                         align=True)
 
                     if sys.platform.startswith('win32'):
                         assert os.path.isfile(os.path.join(BASE_DIR, "bioinformatic", "apps", "clustalw2.exe"))
