@@ -188,11 +188,12 @@ def MultipleSeqAlignment(request):
 
 
                     clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=align_file)
+                    stdout, stderr = clustalw_cline()
 
-                    muscle_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                    clustalw_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                                      universal_newlines=True, shell=(sys.platform != "win32"))
 
-                    alignment = AlignIO.read(align_file, 'clustal')
+                    alignment = AlignIO.read(stdout, 'clustal')
 
                     calculator = DistanceCalculator('identity')
 
