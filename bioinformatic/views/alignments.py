@@ -191,10 +191,6 @@ def MultipleSeqAlignment(request):
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                     stdout, stderr = clustalw_cline()
 
-                    clustalw_result = subprocess.Popen(str(clustalw_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                                     universal_newlines=True, shell=(sys.platform != "win32"))
-
-                    AlignIO.convert(output_file, 'fasta', align_file, 'clustal', molecule_type="DNA")
                     align = AlignIO.read(output_file, 'clustal')
 
                     calculator = DistanceCalculator('identity')
