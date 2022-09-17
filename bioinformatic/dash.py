@@ -3,8 +3,8 @@ import os
 
 from Bio import Phylo
 import dash_cytoscape
-import dash
-import dash_html_components as html
+from dash import Dash, html, dcc
+
 from dash.dependencies import Input, Output
 
 
@@ -115,7 +115,10 @@ def generate_elements(tree, xlen=30, ylen=30, grabbable=False):
 
 # Define elements, stylesheet and layout
 # download this from http://www.phyloxml.org/examples/apaf.xml
-tree = Phylo.read('apaf.xml', 'phyloxml')
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+tree = Phylo.read(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'apaf.xml'), 'phyloxml')
 nodes, edges = generate_elements(tree)
 elements = nodes + edges
 
@@ -156,7 +159,7 @@ stylesheet = [
 ]
 
 # Start the app
-app = dash.Dash(__name__)
+app = Dash(__name__)
 
 app.layout = html.Div([
     dash_cytoscape.Cytoscape(

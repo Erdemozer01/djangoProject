@@ -26,7 +26,7 @@
 
                                 <tr>
                                     <td class="text-sm">
-                                       Alignment Sonuçları
+                                        Alignment Sonuçları
                                         <a href="{% url "bioinformatic:aligned_download" %}" class="float-end"
                                            data-bs-toggle="tooltip"
                                            data-bs-original-title="Sil">
@@ -54,5 +54,8 @@
             </div>
         </div>
     </div>
+    {% for foo in img %}
+        {{ foo|safe }}
+    {% endfor %}
 
 {% endblock content %}
