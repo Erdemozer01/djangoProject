@@ -134,7 +134,6 @@ def MultipleSeqAlignment(request):
                     constructor = DistanceTreeConstructor(calculator, method=algoritma)
                     tree = constructor.build_tree(alignment)
                     Phylo.write(tree, tree_file, "phyloxml")
-                    images_tree = generate_elements(Phylo.read(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml'), 'phyloxml'))
 
                     Phylo.draw(tree, do_show=False)
 
@@ -159,7 +158,7 @@ def MultipleSeqAlignment(request):
                         file_obj.write(str(timezone.now().date()))
 
                     return render(request, 'bioinformatic/alignments/multiple_result.html',
-                                  {'bre': 'Muscle Metodu Sonuçları', 'img':images_tree})
+                                  {'bre': 'Muscle Metodu Sonuçları'})
 
                 except Bio.Application.ApplicationError:
                     os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
