@@ -195,6 +195,7 @@ def tree_download(request):
     finally:
         os.remove(filepath)
 
+
 def clustal_tree_download(request):
     try:
         # Define Django project base directory
@@ -225,6 +226,7 @@ def clustal_tree_download(request):
                       {"msg": msg})
     finally:
         os.remove(filepath)
+
 
 def clustal_stats_download(request):
     try:
@@ -288,6 +290,7 @@ def clustal_scores_download(request):
                       {"msg": msg})
     finally:
         os.remove(filepath)
+
 
 def global_alignments_download(request):
     # Define Django project base directory
@@ -365,4 +368,3 @@ def aligned_download(request):
                       {"msg": msg})
     finally:
         os.remove(filepath)
-
