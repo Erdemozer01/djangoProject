@@ -26,8 +26,19 @@
 
                                 <tr>
                                     <td class="text-sm">
-                                       Alignment Sonuçları
+                                        Alignment Sonuçları
                                         <a href="{% url "bioinformatic:clustal_tree_download" %}" class="float-end"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary"> İndir </i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
+                                        İstatistiksel Bilgiler
+                                        <a href="{% url "bioinformatic:clustal_stats_download" %}" class="float-end"
                                            data-bs-toggle="tooltip"
                                            data-bs-original-title="Sil">
                                             <i class="fas fa-download text-secondary"> İndir </i>
@@ -54,5 +65,9 @@
             </div>
         </div>
     </div>
+
+    {% for stat in stats %}
+        {{ stat|safe }}
+    {% endfor %}
 
 {% endblock content %}
