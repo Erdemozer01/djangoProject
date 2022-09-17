@@ -3,7 +3,6 @@ import io
 import os.path
 import sys
 from pathlib import Path
-from bioinformatic.dash import generate_elements
 import Bio.Application
 from matplotlib import pyplot as plt
 from Bio import pairwise2, Phylo, SeqIO
