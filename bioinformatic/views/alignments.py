@@ -1,8 +1,9 @@
+import datetime
 import io
 import os.path
 import sys
 from pathlib import Path
-
+from bioinformatic.dash import generate_elements
 import Bio.Application
 from matplotlib import pyplot as plt
 from Bio import pairwise2, Phylo, SeqIO
@@ -150,8 +151,14 @@ def MultipleSeqAlignment(request):
                     os.remove(input_file)
                     os.remove(output_file)
                     os.remove(tree_file)
+                    with open(align_file, 'a') as file_obj:
+                        file_obj.write('Muscle Metodu ile oluşturulmuştur.\n')
+                        file_obj.write('Tarih:')
+                        from django.utils import timezone
+                        file_obj.write(str(timezone.now().date()))
 
-                    return render(request, 'bioinformatic/alignments/multiple_result.html')
+                    return render(request, 'bioinformatic/alignments/multiple_result.html',
+                                  {'bre': 'Muscle Metodu Sonuçları'})
 
                 except Bio.Application.ApplicationError:
                     os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
@@ -168,7 +175,6 @@ def MultipleSeqAlignment(request):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
                     elif sys.platform.startswith('linux'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
-
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
@@ -189,8 +195,10 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file, align=True,
-                                                         outorder="ALIGNED", convert=True, output="FASTA", newtree=dnd_file)
+                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
+                                                         align=True,
+                                                         outorder="ALIGNED", convert=True, output="FASTA",
+                                                         newtree=dnd_file)
 
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                     stdout, stderr = clustalw_cline()
@@ -222,8 +230,15 @@ def MultipleSeqAlignment(request):
                     os.remove(tree_file)
                     os.remove(dnd_file)
                     os.remove(output_file)
+                    with open(align_file, 'a') as file_obj:
+                        file_obj.write('Clustalw2 Metodu ile oluşturulmuştur.\n')
+                        file_obj.write('Tarih:')
+                        from django.utils import timezone
+                        file_obj.write(str(timezone.now().date()))
 
-                    return render(request, 'bioinformatic/alignments/clustal.html', {'bre':'Clustalw2 Metodu Sonuçları'})
+
+                    return render(request, 'bioinformatic/alignments/clustal.html',
+                                  {'bre': 'Clustalw2 Metodu Sonuçları'})
 
                 except Bio.Application.ApplicationError:
                     os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
@@ -295,8 +310,14 @@ def MultipleSeqAlignment(request):
 
                     os.remove(input_file)
                     os.remove(tree_file)
+                    with open(align_file, 'a') as file_obj:
+                        file_obj.write('OMEGA Metodu ile oluşturulmuştur.\n')
+                        file_obj.write('Tarih:')
+                        from django.utils import timezone
+                        file_obj.write(str(timezone.now().date()))
 
-                    return render(request, 'bioinformatic/alignments/omega.html')
+
+                    return render(request, 'bioinformatic/alignments/omega.html', {'bre': 'Omega Metodu Sonuçları'})
 
                 except Bio.Application.ApplicationError:
                     os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
