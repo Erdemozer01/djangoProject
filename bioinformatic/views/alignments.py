@@ -90,8 +90,6 @@ def local_alignment(request):
 
 
 def MultipleSeqAlignment(request):
-    from  uuid import NAMESPACE_DNS
-    print(NAMESPACE_DNS.int)
     global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
@@ -158,7 +156,7 @@ def MultipleSeqAlignment(request):
                         from django.utils import timezone
                         file_obj.write(str(timezone.now().date()))
 
-                    return render(request, 'bioinformatic/alignments/multiple_result.html',
+                    return render(request, 'bioinformatic/alignments/muscle.html',
                                   {'bre': 'Muscle Metodu Sonuçları'})
 
                 except Bio.Application.ApplicationError:
