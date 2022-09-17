@@ -183,6 +183,8 @@ def MultipleSeqAlignment(request):
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
                     stats = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'stats.txt')
                     pwmatrix = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'pwmatrix.txt')
+                    scores_path = os.path.join(BASE_DIR, "bioinformatic", "files", "scrores.txt")
+
 
                     records = SeqIO.parse(input_file, "fasta")
 
@@ -196,10 +198,17 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline(clustalw2_exe, infile=input_file, outfile=output_file,
-                                                         align=True,
-                                                         outorder="ALIGNED", convert=True, output="FASTA",
-                                                         newtree=dnd_file, stats=stats, matrix="GONNET")
+                    clustalw_cline = ClustalwCommandline(
+                        clustalw2_exe,
+                        infile=input_file,
+                        outfile=output_file,
+                        align=True,
+                        outorder="ALIGNED",
+                        convert=True,
+                        output="FASTA",
+                        newtree=dnd_file,
+                        stats=stats
+                    )
 
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                     stdout, stderr = clustalw_cline()
@@ -237,13 +246,23 @@ def MultipleSeqAlignment(request):
                         from django.utils import timezone
                         file_obj.write(str(timezone.now().date()))
 
-
                     read_stats = open(stats, 'r').readlines()[1:16]
 
                     os.remove(stats)
 
                     for i in read_stats:
                         open(stats, 'a').writelines(i)
+
+
+                    open(scores_path, "w").writelines(stdout)
+
+                    scores = open(scores_path, 'r').readlines()[44:52]
+
+                    os.remove(scores_path)
+
+                    for i in scores:
+                        open(scores_path, 'a').writelines(i)
+
 
                     return render(request, 'bioinformatic/alignments/clustal.html',
                                   {'bre': 'Clustalw2 Metodu Sonuçları'})
@@ -323,7 +342,6 @@ def MultipleSeqAlignment(request):
                         file_obj.write('Tarih:')
                         from django.utils import timezone
                         file_obj.write(str(timezone.now().date()))
-
 
                     return render(request, 'bioinformatic/alignments/omega.html', {'bre': 'Omega Metodu Sonuçları'})
 
