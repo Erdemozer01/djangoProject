@@ -39,5 +39,6 @@ urlpatterns = [
     path('aligned_download/', views.aligned_download, name="aligned_download"),
     path('clustal_tree_download/', views.clustal_tree_download, name="clustal_tree_download"),
     path('clustal_stats_download/', views.clustal_stats_download, name="clustal_stats_download"),
+    path('clustal_scores_download/', views.clustal_scores_download, name="clustal_scores_download"),
     path('swiss_prot/<int:pk><slug:accessions>/', views.SwissProtDetailView.as_view(), name="swiss_prot_detail"),
 ]
