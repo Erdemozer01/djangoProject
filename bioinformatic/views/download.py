@@ -4,7 +4,7 @@ from pathlib import Path
 from django.http import HttpResponse
 from django.shortcuts import render, reverse
 from django.conf import settings
-from bioinformatic.views.alignments import user_id
+
 
 def swiss_download(request):
     # Define Django project base directory
@@ -348,9 +348,9 @@ def aligned_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
-    filename = f'{user_id[0]}.aln'
+    filename = 'align.aln'
     # Define the full file path
-    filepath = os.path.join(BASE_DIR, 'files', f'{user_id[0]}.aln')
+    filepath = os.path.join(BASE_DIR, 'files', 'align.aln')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
