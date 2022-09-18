@@ -2,6 +2,7 @@ import datetime
 import io
 import os.path
 import sys
+import uuid
 from pathlib import Path
 import Bio.Application
 from matplotlib import pyplot as plt
@@ -17,6 +18,9 @@ from bioinformatic \
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
+
+user_id = []
+
 
 
 def handle_uploaded_file(f):
@@ -91,6 +95,9 @@ def local_alignment(request):
 
 def MultipleSeqAlignment(request):
     global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2
+    request.user.id = uuid.uuid4()
+    user_id.append(request.user.id)
+    user_file = user_id[0]
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
@@ -108,8 +115,8 @@ def MultipleSeqAlignment(request):
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
-                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
-                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'{user_file}.fasta')
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f"{user_file}.aln")
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
                     records = SeqIO.parse(input_file, "fasta")
@@ -149,6 +156,7 @@ def MultipleSeqAlignment(request):
 
                     os.remove(input_file)
                     os.remove(output_file)
+                    os.remove(tree_file)
 
                     with open(align_file, 'a') as file_obj:
                         file_obj.write('Muscle Metodu ile oluşturulmuştur.\n')
@@ -353,3 +361,5 @@ def MultipleSeqAlignment(request):
                         'url': reverse('bioinformatic:multiplesequence_alignments')})
 
     return render(request, 'bioinformatic/alignments/multiple.html', {'form': form, 'bre': 'Multiple Sekans Alignment'})
+
+
