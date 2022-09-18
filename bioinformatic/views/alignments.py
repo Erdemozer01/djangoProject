@@ -22,7 +22,6 @@ path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
 
 user_id = []
 
-user_file = user_id
 
 
 def handle_uploaded_file(f):
@@ -98,7 +97,7 @@ def local_alignment(request):
 def MultipleSeqAlignment(request):
     global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2
 
-    user_id.append(uuid.uuid4())
+    user_id.append(uuid.uuid4().hex)
 
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
@@ -117,9 +116,11 @@ def MultipleSeqAlignment(request):
 
                     input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                               '{}'.format(form.cleaned_data['file']))
-                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'{user_id[0]}.fasta')
-                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'{user_id[0]}.aln')
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'{user_id[-1]}.fasta')
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'{user_id[-1]}.aln')
                     tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
+
+
 
                     records = SeqIO.parse(input_file, "fasta")
 
