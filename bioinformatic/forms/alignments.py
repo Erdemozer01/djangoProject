@@ -107,7 +107,4 @@ class MultipleSequenceAlignmentForm(forms.Form):
     file = forms.FileField(label="Fasta Dosyası Giriniz")
 
 
-class MultipleFileReading(forms.ModelForm):
-    class Meta:
-        model = MultipleSequenceAlignment
-        fields = ['alignment']
+

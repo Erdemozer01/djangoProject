@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.contrib.auth import get_user_model
+from os.path import splitext
 
 # Create your models here.
 
@@ -126,6 +127,7 @@ class BigFileUploadModel(models.Model):
 
 
 class FileUploadModel(models.Model):
+
     file = models.FileField(verbose_name="Dosya Seçme", upload_to="laboratory/bigfile/")
     created = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -138,12 +140,34 @@ class FileUploadModel(models.Model):
         verbose_name_plural = "files"
 
 
+METHOD = (
+    ('', '------------'),
+    ('MUSCLE', 'MUSCLE'),
+    ('clustalw2', 'clustalw2'.upper()),
+    ('omega', 'ClustalOmega'),
+)
+
+ALGORITMA = (
+    ('', '------------'),
+    ('nj', 'Neighbor Joining'),
+    ('upgma', 'UPGMA'),
+
+)
+
+
+def rent_filename(self, filename):
+    __, ext = splitext(filename)
+    return '{}'.format(self.user.username, ext)
 class MultipleSequenceAlignment(models.Model):
-    title = models.CharField(max_length=100, default="Title")
-    alignment = models.TextField()
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Metodu")
+    algoritma = models.CharField(choices=ALGORITMA, verbose_name="Algoritma")
+    file = models.FileField(verbose_name="Fasta Dosyası", upload_to="msa/")
+    msa = models.TextField()
+
 
     def __str__(self):
-        return self.title
+        return self.method
 
     class Meta:
         db_table = "MSA"
