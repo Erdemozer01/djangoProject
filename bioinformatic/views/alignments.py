@@ -14,7 +14,7 @@ import subprocess
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculator
 from Bio.Align.Applications import MuscleCommandline, ClustalwCommandline, ClustalOmegaCommandline
 from bioinformatic \
-    .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm, MultipleFileReading
+    .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')

@@ -160,8 +160,8 @@ def rent_filename(self, filename):
     return '{}'.format(self.user.username, ext)
 class MultipleSequenceAlignment(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Metodu")
-    algoritma = models.CharField(choices=ALGORITMA, verbose_name="Algoritma")
+    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Metodu", max_length=1000)
+    algoritma = models.CharField(choices=ALGORITMA, verbose_name="Algoritma", max_length=1000)
     file = models.FileField(verbose_name="Fasta Dosyası", upload_to="msa/")
     msa = models.TextField()
 
