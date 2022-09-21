@@ -174,7 +174,7 @@ def MultipleSeqAlignment(request):
                                                     "{}_filogenetik_ağaç.jpg".format(request.user)))
 
                         with open(align_file, 'a') as file_obj:
-                            file_obj.write('Muscle Metodu ile oluşturulmuştur.\n')
+                            file_obj.write('Muscle Metodu kullanilmistir\n')
                             file_obj.write('Tarih: ')
                             for created in MultipleSequenceAlignment.objects.all().filter(user=request.user,
                                                                                           method=method):
@@ -356,6 +356,12 @@ def MultipleSeqAlignment(request):
 
                     try:
 
+                        user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
+                        if Path(user_path).exists():
+                            pass
+                        else:
+                            os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+
                         if sys.platform.startswith('win32'):
                             clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
                                                              'clustal-omega-1.2.2-win64/clustalo.exe')
@@ -365,8 +371,10 @@ def MultipleSeqAlignment(request):
 
                         input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
                                                   '{}'.format(form.cleaned_data['file']))
-                        output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta')
-                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "align.aln")
+                        output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
+                        output_path = Path(output_file)
+                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "aligned.aln")
+                        aligned_path = Path(align_file)
                         tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
                         records = SeqIO.parse(input_file, "fasta")
@@ -382,16 +390,18 @@ def MultipleSeqAlignment(request):
                                            'url': reverse('bioinformatic:multiplesequence_alignments')})
 
                         clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file,
-                                                                      outfile=output_file, version=True)
+                                                                      outfile=output_path, force=True, verbose=True, auto=True,
+                                                                      usekimura="yes")
                         if sys.platform.startswith('win32'):
                             assert os.path.isfile(clustal_omega_exe)
                             stdout, stderr = clustal_omega_cline()
+                            print(stdout)
                         elif sys.platform.startswith('linux'):
                             subprocess.Popen(str(clustal_omega_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                              stderr=subprocess.PIPE, universal_newlines=True,
                                              shell=(sys.platform != "win32"))
 
-                        AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
+                        AlignIO.convert(output_file, 'fasta', aligned_path, 'clustal')
                         alignment = AlignIO.read(align_file, "clustal")
                         calculator = DistanceCalculator('identity')
 
