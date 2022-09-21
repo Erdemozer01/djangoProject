@@ -293,7 +293,7 @@ def MultipleSeqAlignment(request):
                                                     "{}_filogenetik_ağaç.jpg".format(request.user)))
 
                         with open(align_file, 'a') as file_obj:
-                            file_obj.write('Clustalw2 Metodu ile oluşturulmuştur.\n')
+                            file_obj.write('Clustalw2 Metodu kullanilmiştir.\n')
                             file_obj.write('Tarih:')
                             from django.utils import timezone
                             file_obj.write(str(timezone.now().date()))
