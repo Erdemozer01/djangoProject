@@ -338,6 +338,7 @@ def MultipleSeqAlignment(request):
                         os.remove(align_file)
                         os.remove(scores_path)
                         os.remove(stats)
+
                         results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
                         return render(request, "bioinformatic/alignments/clustal.html",
                                       {'results': results, 'bre': "ClustalW2 Metodu Sonuçları"})
