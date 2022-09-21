@@ -30,22 +30,6 @@
                                         <a href="{{ results.align_file.url }}" class="float-end m-2"
                                            data-bs-toggle="tooltip"
                                            data-bs-original-title="Sil">
-                                            <i class="fas fa-download text-secondary"> İndir </i>
-                                        </a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="text-sm">
-                                        İstatistiksel Bilgiler
-                                        <a href="{{ results.stats.url }}" class="float-end m-2"
-                                           data-bs-toggle="tooltip"
-                                           data-bs-original-title="Sil">
-                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
-                                        </a>
-                                        <a href="{% url "bioinformatic:clustal_stats_download" %}" class="float-end m-2"
-                                           data-bs-toggle="tooltip"
-                                           data-bs-original-title="Sil">
                                             <i class="fas fa-download text-secondary" title="İndir"></i>
                                         </a>
                                     </td>
@@ -53,23 +37,53 @@
 
                                 <tr>
                                     <td class="text-sm">
-                                        Eşleşme Puanları
-                                        <a href="{% url "bioinformatic:clustal_scores_download" %}" class="float-end m-2"
+                                        İstatistiksel Bilgiler
+                                        <a href="{% url "bioinformatic:clustal_stats_download" %}" class="float-end m-2"
                                            data-bs-toggle="tooltip"
                                            data-bs-original-title="Sil">
-                                            <i class="fas fa-download text-secondary"> İndir </i>
+                                            <i class="fas fa-download text-secondary" title="İndir"></i>
                                         </a>
+                                        <a href="{{ results.stats.url }}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                        </a>
+
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
+                                        Eşleşme Puanları
+                                        <a href="{% url "bioinformatic:clustal_scores_download" %}"
+                                           class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary"></i>
+                                        </a>
+                                        <a href="{{ results.scores.url }}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                        </a>
+
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td class="text-sm">
                                         Filogenetik Ağaç
-                                        <a href="{% url "bioinformatic:tree_download" %}" class="float-end"
+                                        <a href="{% url "bioinformatic:tree_download" %}" class="float-end m-2"
                                            data-bs-toggle="tooltip"
                                            data-bs-original-title="Sil">
-                                            <i class="fas fa-download text-secondary"> İndir </i>
+                                            <i class="fas fa-download text-secondary"></i>
                                         </a>
+                                        <a href="{{ results.tree.url }}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                        </a>
+
                                     </td>
                                 </tr>
 
@@ -81,9 +95,5 @@
             </div>
         </div>
     </div>
-
-    {% for stat in stats %}
-        {{ stat|safe }}
-    {% endfor %}
 
 {% endblock content %}

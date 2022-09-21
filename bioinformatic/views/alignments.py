@@ -145,10 +145,6 @@ def MultipleSeqAlignment(request):
 
                         muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
 
-                        muscle_cline = MuscleCommandline(input=input_file, out=output_file)
-
-                        stdout, stderr = muscle_cline()
-
                         AlignIO.convert(output_file, 'fasta', align_file, 'clustal')
                         alignment = AlignIO.read(align_file, "clustal")
                         doc = MultipleSequenceAlignment()
@@ -172,33 +168,33 @@ def MultipleSeqAlignment(request):
 
                         plt.suptitle(f'{method} Metodu')
 
-                        plt.savefig(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user),
-                                                 "{}_{}_{}_filogenetik_ağaç.jpg".format(request.user, method.lower(),
-                                                                                        algoritma)))
+                        plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                    "{}_filogenetik_ağaç.jpg".format(request.user)))
 
                         with open(align_file, 'a') as file_obj:
                             file_obj.write('Muscle Metodu ile oluşturulmuştur.\n')
                             file_obj.write('Tarih: ')
-                            for created in MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method):
+                            for created in MultipleSequenceAlignment.objects.all().filter(user=request.user,
+                                                                                          method=method):
                                 print(created.created)
-
 
                         with path.open(mode='r') as f:
                             doc.align_file = File(f, name=path.name)
                             doc.user = request.user
                             doc.method = method
                             doc.algoritma = algoritma
-                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user), "{}_{}_{}_filogenetik_ağaç.jpg".format(request.user, method,
-                                                                                        algoritma))
+                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
                             doc.save()
 
                         os.remove(input_file)
                         os.remove(output_file)
                         os.remove(align_file)
                         os.remove(tree_file)
+                        results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
 
                         return render(request, 'bioinformatic/alignments/muscle.html',
-                                      {'bre': 'Muscle Metodu Sonuçları'})
+                                      {'bre': 'Muscle Metodu Sonuçları', 'results': results})
 
                     except Bio.Application.ApplicationError:
                         os.remove(
@@ -270,6 +266,8 @@ def MultipleSeqAlignment(request):
                             doc.user = request.user
                             doc.method = method
                             doc.algoritma = algoritma
+                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
                             doc.save()
 
                         calculator = DistanceCalculator('identity')
@@ -290,8 +288,8 @@ def MultipleSeqAlignment(request):
 
                         plt.suptitle(f'{method.upper()} Metodu')
 
-                        plt.savefig(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user),
-                                                 "{}_{}_{}_filogenetik_ağaç.jpg".format(request.user, algoritma, method)))
+                        plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                    "{}_filogenetik_ağaç.jpg".format(request.user)))
 
                         with open(align_file, 'a') as file_obj:
                             file_obj.write('Clustalw2 Metodu ile oluşturulmuştur.\n')
@@ -332,7 +330,7 @@ def MultipleSeqAlignment(request):
                         os.remove(stats)
                         results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
                         return render(request, "bioinformatic/alignments/clustal.html",
-                                      {'results': results, 'bre': "Multiple Sequence Alignment Sonuçları"})
+                                      {'results': results, 'bre': "ClustalW2 Metodu Sonuçları"})
 
                     except Bio.Application.ApplicationError:
                         os.remove(
