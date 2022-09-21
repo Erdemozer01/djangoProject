@@ -5,9 +5,12 @@ from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, BlastQue
 # Register your models here.
 admin.site.register(BlastQuery)
 admin.site.register(MedlineArticle)
-admin.site.register(MultipleSequenceAlignment)
 
-
+@admin.register(MultipleSequenceAlignment)
+class LabSlideModelAdmin(admin.ModelAdmin):
+    list_display = ['user', 'method', 'algoritma', 'created']
+    list_filter = ['user', 'method', 'algoritma', 'created']
+    search_fields = ['user', 'method', 'algoritma', 'created']
 
 @admin.register(LabSlideModel)
 class LabSlideModelAdmin(admin.ModelAdmin):

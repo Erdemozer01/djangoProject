@@ -1,5 +1,5 @@
+from django.contrib.auth.models import User
 from django.db import models
-from django.contrib.auth import get_user_model
 from os.path import splitext
 
 # Create your models here.
@@ -155,21 +155,27 @@ ALGORITMA = (
 )
 
 
-def rent_filename(self, filename):
-    __, ext = splitext(filename)
-    return '{}'.format(self.user.username, ext)
-class MultipleSequenceAlignment(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Metodu", max_length=1000)
-    algoritma = models.CharField(choices=ALGORITMA, verbose_name="Algoritma", max_length=1000)
-    file = models.FileField(verbose_name="Fasta Dosyası", upload_to="msa/")
-    msa = models.TextField()
+def upload_to(instance, filename):
+    return 'msa/{username}/{username}_{filename}'.format(
+        username=instance.user.username, filename=filename)
 
+
+class MultipleSequenceAlignment(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
+    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Metodu Seçiniz", max_length=1000)
+    algoritma = models.CharField(choices=ALGORITMA, verbose_name="Algoritma Seçiniz", max_length=1000)
+    input_file = models.FileField(verbose_name="Fasta Dosyası", upload_to=upload_to)
+    output_file = models.FileField(verbose_name="Alignment Dosyası", upload_to=upload_to, blank=True, null=True)
+    align_file = models.FileField(verbose_name="Aligned Dosyası", upload_to=upload_to, blank=True, null=True)
+    stats = models.FileField(verbose_name="İstatistik Dosyası", upload_to=upload_to, blank=True, null=True)
+    scores = models.FileField(verbose_name="Alignment Scor Dosyası", upload_to=upload_to, blank=True, null=True)
+    tree = models.ImageField(verbose_name="Filogenetik Ağaç")
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
 
     def __str__(self):
         return self.method
 
     class Meta:
-        db_table = "MSA"
-        verbose_name = "MultipleSequenceAlignment"
-        verbose_name_plural = "MultipleSequenceAlignment"
+        db_table = "msa"
+        verbose_name = "Multiple Sequence Alignment"
+        verbose_name_plural = "Multiple Sequence Alignment"

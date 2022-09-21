@@ -101,10 +101,10 @@ class GlobalForm(forms.Form):
     )
 
 
-class MultipleSequenceAlignmentForm(forms.ModelForm):
-    class Meta:
-        model = MultipleSequenceAlignment
-        exclude = ['user', 'msa']
+class MultipleSequenceAlignmentForm(forms.Form):
+    method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Metodu Seçiniz")
+    algoritma = forms.ChoiceField(choices=ALGORITMA, label="Algoritma Seçiniz")
+    file = forms.FileField(label="Fasta Dosyası Giriniz")
 
 
 

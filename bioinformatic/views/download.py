@@ -3,8 +3,6 @@ import os
 from pathlib import Path
 from django.http import HttpResponse
 from django.shortcuts import render, reverse
-from django.conf import settings
-from bioinformatic.views.alignments import user_id
 
 def swiss_download(request):
     # Define Django project base directory
@@ -168,10 +166,12 @@ def entrez_download(request):
 def tree_download(request):
     try:
         # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "tree.jpg"
+        filename = "{}_filogenetik_ağaç.jpg".format(request.user.username)
         # Define the full file path
-        filepath = os.path.join(settings.MEDIA_ROOT, "tree.jpg")
+        filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
+                                "{}_filogenetik_ağaç.jpg".format(request.user.username))
         # Open the file for reading content
         path = open(filepath, 'rb').read()
         # Set the mime type
@@ -196,14 +196,15 @@ def tree_download(request):
         os.remove(filepath)
 
 
-def clustal_tree_download(request):
+def clustal_alignment_download(request):
     try:
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "align.aln"
+        filename = "{}_aligned.aln".format(request.user.username)
         # Define the full file path
-        filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'align.aln')
+        filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
+                                "{}_aligned.aln".format(request.user.username))
         # Open the file for reading content
         path = open(filepath, 'rb').read()
         # Set the mime type
@@ -233,9 +234,10 @@ def clustal_stats_download(request):
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "stats.txt"
+        filename = "{}_stats.txt".format(request.user)
         # Define the full file path
-        filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'stats.txt')
+        filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user),
+                                "{}_stats.txt".format(request.user))
         # Open the file for reading content
         path = open(filepath, 'rb').read()
         # Set the mime type
@@ -265,9 +267,10 @@ def clustal_scores_download(request):
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "scores.txt"
+        filename = "{}_scores.txt".format(request.user.username)
         # Define the full file path
-        filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'scrores.txt')
+        filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user),
+                                "{}_scores.txt".format(request.user.username))
         # Open the file for reading content
         path = open(filepath, 'rb').read()
         # Set the mime type
@@ -348,9 +351,9 @@ def aligned_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
-    filename = f'{user_id(request.user.id)}.aln'
+    filename = 'aligm.aln'
     # Define the full file path
-    filepath = os.path.join(BASE_DIR, 'files', f'{user_id(request.user.id)}.aln')
+    filepath = os.path.join(BASE_DIR, 'files', 'aligm.aln')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
