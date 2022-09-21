@@ -209,6 +209,9 @@ def MultipleSeqAlignment(request):
 
                     try:
 
+                        if not os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)):
+                            os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+
                         if sys.platform.startswith('win32'):
                             clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
                         elif sys.platform.startswith('linux'):
