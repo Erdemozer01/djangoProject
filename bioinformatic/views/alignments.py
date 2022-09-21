@@ -183,8 +183,7 @@ def MultipleSeqAlignment(request):
                             doc.user = request.user
                             doc.method = method
                             doc.algoritma = algoritma
-                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
+
                             doc.save()
 
                         os.remove(input_file)
