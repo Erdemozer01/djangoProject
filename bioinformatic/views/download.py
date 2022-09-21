@@ -347,13 +347,14 @@ def local_alignments_download(request):
         os.remove(filepath)
 
 
-def aligned_download(request):
+def muscle_aligned_download(request):
     # Define Django project base directory
-    BASE_DIR = Path(__file__).resolve().parent.parent
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
     # Define text file name
-    filename = 'aligm.aln'
+    filename = filename = "{}_aligment.aln".format(request.user.username)
     # Define the full file path
-    filepath = os.path.join(BASE_DIR, 'files', 'aligm.aln')
+    filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
+                                "{}_aligment.aln".format(request.user.username))
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
