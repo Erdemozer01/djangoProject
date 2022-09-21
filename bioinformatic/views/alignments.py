@@ -269,14 +269,7 @@ def MultipleSeqAlignment(request):
                         alignment = AlignIO.read(align_file, 'clustal')
 
                         doc = MultipleSequenceAlignment()
-                        with aligned_path.open(mode='r') as f:
-                            doc.align_file = File(f, name=aligned_path.name)
-                            doc.user = request.user
-                            doc.method = method
-                            doc.algoritma = algoritma
-                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
-                            doc.save()
+
 
                         calculator = DistanceCalculator('identity')
                         constructor = DistanceTreeConstructor(calculator, method=algoritma)
@@ -320,6 +313,15 @@ def MultipleSeqAlignment(request):
 
                         for i in scores:
                             open(scores_path, 'a').writelines(i)
+
+                        with aligned_path.open(mode='r') as f:
+                            doc.align_file = File(f, name=aligned_path.name)
+                            doc.user = request.user
+                            doc.method = method
+                            doc.algoritma = algoritma
+                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
+                            doc.save()
 
                         with stats_path.open(mode='r') as stats_file_obj:
                             doc.stats = File(stats_file_obj, name=stats_path.name)
