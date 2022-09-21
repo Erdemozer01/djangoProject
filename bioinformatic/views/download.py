@@ -1,9 +1,9 @@
 import mimetypes
 import os
 from pathlib import Path
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, reverse
-
+from bioinformatic.models import MultipleSequenceAlignment
 def swiss_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
@@ -177,10 +177,12 @@ def tree_download(request):
         # Set the mime type
         mime_type, _ = mimetypes.guess_type(filepath)
         # Set the return value of the HttpResponse
-        response = HttpResponse(path, content_type=mime_type)
+        response = FileResponse(MultipleSequenceAlignment.tree, as_attachment=True)
         # Set the HTTP header for sending to browser
-        response['Content-Disposition'] = "attachment; filename=%s" % filename
+
         # Return the response value
+
+
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:multiplesequence_alignments")
