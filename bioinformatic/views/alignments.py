@@ -145,7 +145,7 @@ def MultipleSeqAlignment(request):
 
                         muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
 
-                        muscle_cline = MuscleCommandline(input="opuntia.fasta")
+                        muscle_cline = MuscleCommandline(input=input_file)
 
                         stdout, stderr = muscle_cline()
 
