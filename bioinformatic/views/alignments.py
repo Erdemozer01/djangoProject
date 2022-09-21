@@ -109,8 +109,8 @@ def MultipleSeqAlignment(request):
                 if method == "MUSCLE":
                     try:
 
-                        if not os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)):
-                            os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+
+                        os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
 
                         if sys.platform.startswith('win32'):
                             muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
@@ -183,7 +183,8 @@ def MultipleSeqAlignment(request):
                             doc.user = request.user
                             doc.method = method
                             doc.algoritma = algoritma
-
+                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
                             doc.save()
 
                         os.remove(input_file)
