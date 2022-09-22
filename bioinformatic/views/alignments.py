@@ -433,7 +433,7 @@ def MultipleSeqAlignment(request):
                                                  "{}_filogenetik_ağaç.jpg".format(request.user)))
 
                         with open(align_file, 'a') as file_obj:
-                            file_obj.write('OMEGA Metodu ile oluşturulmuştur.\n')
+                            file_obj.write('OMEGA Metodu kullanilmistir.\n')
                             file_obj.write('Tarih:')
                             from django.utils import timezone
                             file_obj.write(str(timezone.now().date()))
