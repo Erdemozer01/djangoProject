@@ -376,8 +376,8 @@ def MultipleSeqAlignment(request):
                         aligned_path = Path(align_file)
                         tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
-                        if MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method):
-                            MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method).delete()
+                        if MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method, algoritma=algoritma):
+                            MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method, algoritma=algoritma).delete()
 
                         records = SeqIO.parse(input_file, "fasta")
 
