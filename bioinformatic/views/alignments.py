@@ -453,7 +453,7 @@ def MultipleSeqAlignment(request):
                             os.remove(output_file)
                             os.remove(aligned_path)
 
-                            results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest(
+                            results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method).latest(
                                 'created')
 
                         return render(request, 'bioinformatic/alignments/omega.html',
