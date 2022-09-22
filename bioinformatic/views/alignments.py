@@ -124,7 +124,7 @@ def MultipleSeqAlignment(request):
 
                         output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
 
-                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.aln')
+                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.aln')
 
                         path = Path(align_file)
 
@@ -171,7 +171,7 @@ def MultipleSeqAlignment(request):
                         plt.suptitle(f'{method} Metodu')
 
                         plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                    "{}_filogenetik_ağaç.jpg".format(request.user)))
+                                                 "{}_filogenetik_ağaç.jpg".format(request.user)))
 
                         with open(align_file, 'a') as file_obj:
                             file_obj.write('Muscle Metodu kullanilmistir\n')
@@ -270,7 +270,6 @@ def MultipleSeqAlignment(request):
 
                         doc = MultipleSequenceAlignment()
 
-
                         calculator = DistanceCalculator('identity')
                         constructor = DistanceTreeConstructor(calculator, method=algoritma)
                         tree = constructor.build_tree(alignment)
@@ -290,7 +289,7 @@ def MultipleSeqAlignment(request):
                         plt.suptitle(f'{method.upper()} Metodu')
 
                         plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                    "{}_filogenetik_ağaç.jpg".format(request.user)))
+                                                 "{}_filogenetik_ağaç.jpg".format(request.user)))
 
                         with open(align_file, 'a') as file_obj:
                             file_obj.write('Clustalw2 Metodu kullanilmistir.\n')
@@ -377,7 +376,12 @@ def MultipleSeqAlignment(request):
                         aligned_path = Path(align_file)
                         tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
+                        if MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method):
+                            MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method).delete()
+
                         records = SeqIO.parse(input_file, "fasta")
+
+                        doc = MultipleSequenceAlignment()
 
                         seq_id = []
 
@@ -389,13 +393,17 @@ def MultipleSeqAlignment(request):
                                           {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                            'url': reverse('bioinformatic:multiplesequence_alignments')})
 
-                        clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe, infile=input_file,
-                                                                      outfile=output_path, force=True, verbose=True, auto=True,
+                        clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe,
+                                                                      infile=input_file,
+                                                                      outfile=output_path,
+                                                                      force=True,
+                                                                      verbose=True,
+                                                                      auto=True,
                                                                       usekimura="yes")
                         if sys.platform.startswith('win32'):
                             assert os.path.isfile(clustal_omega_exe)
                             stdout, stderr = clustal_omega_cline()
-                            print(stdout)
+
                         elif sys.platform.startswith('linux'):
                             subprocess.Popen(str(clustal_omega_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                              stderr=subprocess.PIPE, universal_newlines=True,
@@ -421,17 +429,35 @@ def MultipleSeqAlignment(request):
 
                         plt.suptitle(f'{method.upper()} Metodu')
 
-                        plt.savefig(os.path.join(BASE_DIR, "media", "tree.jpg"))
+                        plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                 "{}_filogenetik_ağaç.jpg".format(request.user)))
 
-                        os.remove(input_file)
-                        os.remove(tree_file)
                         with open(align_file, 'a') as file_obj:
                             file_obj.write('OMEGA Metodu ile oluşturulmuştur.\n')
                             file_obj.write('Tarih:')
                             from django.utils import timezone
                             file_obj.write(str(timezone.now().date()))
 
-                        return render(request, 'bioinformatic/alignments/omega.html', {'bre': 'Omega Metodu Sonuçları'})
+                        with aligned_path.open(mode='r') as f:
+                            doc.align_file = File(f, name=aligned_path.name)
+                            doc.user = request.user
+                            doc.method = method
+                            doc.algoritma = algoritma
+                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
+                            doc.save()
+                            f.close()
+
+                            os.remove(input_file)
+                            os.remove(tree_file)
+                            os.remove(output_file)
+                            os.remove(aligned_path)
+
+                            results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest(
+                                'created')
+
+                        return render(request, 'bioinformatic/alignments/omega.html',
+                                      {'bre': 'Omega Metodu Sonuçları', 'results': results})
 
                     except Bio.Application.ApplicationError:
                         os.remove(

@@ -42,5 +42,6 @@ urlpatterns = [
     path('clustal_stats_download/', views.clustal_stats_download, name="clustal_stats_download"),
     path('clustal_scores_download/', views.clustal_scores_download, name="clustal_scores_download"),
     path('clustal_alignment/', views.clustal_alignment_download, name="clustal_alignment_download"),
+    path('clustalomega_alignment/', views.clustalomega_alignment_download, name="clustalomega_alignment_download"),
     path('swiss_prot/<int:pk><slug:accessions>/', views.SwissProtDetailView.as_view(), name="swiss_prot_detail"),
 ]
