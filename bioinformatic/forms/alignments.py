@@ -53,7 +53,6 @@ MOLECULE_TYPE = (
 
 ALIGNMENT_FILE_TYPE = (
     ('', '------------'),
-    ('fasta', 'FASTA'),
     ('clustal', 'CLUSTAL'),
     ('phylip', 'PHYLİB'),
     ('nexus', 'NEXUS'),
