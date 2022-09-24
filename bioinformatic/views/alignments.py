@@ -432,12 +432,6 @@ def MultipleSeqAlignment(request):
                         plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                                  "{}_filogenetik_ağaç.jpg".format(request.user)))
 
-                        with open(align_file, 'a') as file_obj:
-                            file_obj.write('OMEGA\n')
-                            file_obj.write('Tarih:')
-                            from django.utils import timezone
-                            file_obj.write(str(timezone.now().date()))
-
                         with aligned_path.open(mode='r') as f:
                             doc.align_file = File(f, name=aligned_path.name)
                             doc.user = request.user
