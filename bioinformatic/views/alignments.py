@@ -427,7 +427,7 @@ def MultipleSeqAlignment(request):
                         elif algoritma == "upgma":
                             plt.title('UPGMA Ağacı')
 
-                        plt.suptitle(f'{method.upper()} Metodu')
+                        plt.suptitle(f'{method.upper()}')
 
                         plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                                  "{}_filogenetik_ağaç.jpg".format(request.user)))
