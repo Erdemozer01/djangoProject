@@ -127,7 +127,6 @@ class BigFileUploadModel(models.Model):
 
 
 class FileUploadModel(models.Model):
-
     file = models.FileField(verbose_name="Dosya Seçme", upload_to="laboratory/bigfile/")
     created = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -154,6 +153,21 @@ ALGORITMA = (
 
 )
 
+MOLECULE_TYPE = (
+    ('', '------------'),
+    ('DNA', 'DNA'),
+    ('RNA', 'RNA'),
+    ('protein', 'PROTEİN'),
+)
+
+ALIGNMENT_FILE_TYPE = (
+    ('', '------------'),
+    ('fasta', 'FASTA'),
+    ('clustal', 'CLUSTAL'),
+    ('phylip', 'PHYLİB'),
+    ('nexus', 'NEXUS'),
+)
+
 
 def upload_to(instance, filename):
     return 'msa/{username}/{username}_{filename}'.format(
@@ -162,8 +176,10 @@ def upload_to(instance, filename):
 
 class MultipleSequenceAlignment(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
-    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Metodu Seçiniz", max_length=1000)
-    algoritma = models.CharField(choices=ALGORITMA, verbose_name="Algoritma Seçiniz", max_length=1000)
+    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Aracı", max_length=1000)
+    algoritma = models.CharField(choices=ALGORITMA, verbose_name="Filogenetik Ağaç Türü", max_length=1000)
+    molecule_type = models.CharField(choices=MOLECULE_TYPE, verbose_name="Molekül Tipi", max_length=1000)
+    alignment_filetype = models.CharField(choices=ALIGNMENT_FILE_TYPE, verbose_name="Alignment Dosya Tipi", max_length=1000)
     input_file = models.FileField(verbose_name="Fasta Dosyası", upload_to=upload_to)
     output_file = models.FileField(verbose_name="Alignment Dosyası", upload_to=upload_to, blank=True, null=True)
     align_file = models.FileField(verbose_name="Aligned Dosyası", upload_to=upload_to, blank=True, null=True)

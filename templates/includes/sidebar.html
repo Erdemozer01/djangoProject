@@ -4,13 +4,13 @@
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
            aria-hidden="true" id="iconSidenav"></i>
-        {% if request.user.is_staff %}
+        {% if request.user.is_staff and not "/laboratory/" in request.build_absolute_uri %}
             <a class="navbar-brand m-0" href="{% url "profile" request.user.pk request.user.username|slugify %}">
                 <img src="{% static "assets/img/logo-ct-dark.png" %}"
                      class="navbar-brand-img h-100" alt="main_logo">
                 <span class="ms-1 font-weight-bold">{{ request.user.username }}</span>
             </a>
-        {% elif "laboratory" in request.build_absolute_uri %}
+        {% elif "/laboratory/" in request.build_absolute_uri %}
             <a class="navbar-brand m-0" href="{% url "bioinformatic:home" %}">
 
                 <img src="{% static "assets/img/42187-laboratory-icon.gif" %}"
@@ -66,35 +66,6 @@
                                 <a class="nav-link  " href="{% url "blog_dashboard" %}">
                                     <span class="sidenav-mini-icon"> A </span>
                                     <span class="sidenav-normal"> Blog </span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item ">
-                                <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#vrExamples">
-                                    <span class="sidenav-mini-icon"> V </span>
-                                    <span class="sidenav-normal"> Virtual Reality <b class="caret"></b></span>
-                                </a>
-                                <div class="collapse  " id="vrExamples">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item ">
-                                            <a class="nav-link " href="/dashboards-vr-default.html">
-                                                <span class="sidenav-mini-icon text-xs"> V </span>
-                                                <span class="sidenav-normal"> VR Default </span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item ">
-                                            <a class="nav-link " href="/dashboards-vr-info.html">
-                                                <span class="sidenav-mini-icon text-xs"> V </span>
-                                                <span class="sidenav-normal"> VR Info </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link " href="/dashboards-crm.html">
-                                    <span class="sidenav-mini-icon"> C </span>
-                                    <span class="sidenav-normal"> CRM </span>
                                 </a>
                             </li>
                         </ul>
@@ -182,7 +153,7 @@
             </li>
 
             <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#ecommerceExamples" class="nav-link " aria-expanded=" false "
+                <a data-bs-toggle="collapse" href="#Biyoinformatik" class="nav-link " aria-expanded=" false "
                    aria-controls="ecommerceExamples" role="button">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
                         <svg class="text-dark" width="16px" height="16px" viewBox="0 0 42 42" version="1.1"
@@ -210,8 +181,9 @@
                     <span class="nav-link-text ms-1">Biyoinformatik</span>
                 </a>
 
-                <div class="collapse  false " id="ecommerceExamples">
+                <div class="collapse  false " id="Biyoinformatik">
                     <ul class="nav ms-4 ps-3">
+
                         <li class="nav-item ">
                             <a class="nav-link " href="{% url "bioinformatic:home" %}">
                                 <span class="sidenav-mini-icon"> A </span>
@@ -242,7 +214,6 @@
                                 </ul>
                             </div>
                         </li>
-
 
                         <li class="nav-item ">
                             <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#ordersExample">
@@ -292,22 +263,22 @@
                         </li>
 
                         <li class="nav-item ">
-                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#signupExample">
-                                <span class="sidenav-mini-icon"> S </span>
-                                <span class="sidenav-normal"> Alignment <b class="caret"></b></span>
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#Alignment">
+                                <span class="sidenav-mini-icon"> A </span>
+                                <span class="sidenav-normal"> Alignment - Filogeni <b class="caret"></b></span>
                             </a>
-                            <div class="collapse " id="signupExample">
+                            <div class="collapse " id="Alignment">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
                                         <a class="nav-link " href="{% url "bioinformatic:local_alignment" %}">
                                             <span class="sidenav-mini-icon text-xs"> LC </span>
-                                            <span class="sidenav-normal"> Local </span>
+                                            <span class="sidenav-normal"> Local Alignment </span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link " href="{% url "bioinformatic:global_alignment" %}">
                                             <span class="sidenav-mini-icon text-xs"> GB </span>
-                                            <span class="sidenav-normal"> Global </span>
+                                            <span class="sidenav-normal"> Global Alignment </span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -381,6 +352,7 @@
                     </ul>
                 </div>
             </li>
+
             <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#authExamples" class="nav-link " aria-controls="authExamples"
                    role="button" aria-expanded="false">
@@ -432,7 +404,6 @@
                     </ul>
                 </div>
             </li>
-
 
             <li class="nav-item">
                 <hr class="horizontal dark"/>

@@ -8,8 +8,8 @@ admin.site.register(MedlineArticle)
 
 @admin.register(MultipleSequenceAlignment)
 class LabSlideModelAdmin(admin.ModelAdmin):
-    list_display = ['user', 'method', 'algoritma', 'created']
-    list_filter = ['user', 'method', 'algoritma', 'created']
+    list_display = ['user', 'method', 'algoritma', 'molecule_type', 'created']
+    list_filter = ['user', 'method', 'algoritma', 'molecule_type', 'created']
     search_fields = ['user', 'method', 'algoritma', 'created']
 
 @admin.register(LabSlideModel)

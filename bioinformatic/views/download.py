@@ -195,7 +195,6 @@ def tree_download(request):
     finally:
         os.remove(filepath)
 
-
 def clustal_alignment_download(request):
     try:
         # Define Django project base directory
@@ -356,6 +355,7 @@ def global_alignments_download(request):
 def local_alignments_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
+
     # Define text file name
     filename = 'local_alignment.txt'
     # Define the full file path
@@ -382,11 +382,13 @@ def local_alignments_download(request):
 def muscle_aligned_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    from bioinformatic.models import MultipleSequenceAlignment
+    get_file_type = MultipleSequenceAlignment.objects.all().filter(user=request.user.id).latest('created').alignment_filetype
     # Define text file name
-    filename = filename = "{}_aligment.aln".format(request.user.username)
+    filename = "{}_aligned.{}".format(request.user.username, get_file_type)
     # Define the full file path
     filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
-                                "{}_aligment.aln".format(request.user.username))
+                                "{}_aligned.{}".format(request.user.username, get_file_type))
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type

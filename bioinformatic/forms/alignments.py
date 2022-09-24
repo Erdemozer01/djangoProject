@@ -34,6 +34,7 @@ METHOD = (
     ('MUSCLE', 'MUSCLE'),
     ('clustalw2', 'clustalw2'.upper()),
     ('omega', 'ClustalOmega'),
+    ('PAML', "Maximum Likelihood (PALM) - Codeml"),
 )
 
 ALGORITMA = (
@@ -43,6 +44,20 @@ ALGORITMA = (
 
 )
 
+MOLECULE_TYPE = (
+    ('', '------------'),
+    ('DNA', 'DNA'),
+    ('RNA', 'RNA'),
+    ('protein', 'PROTEİN'),
+)
+
+ALIGNMENT_FILE_TYPE = (
+    ('', '------------'),
+    ('fasta', 'FASTA'),
+    ('clustal', 'CLUSTAL'),
+    ('phylip', 'PHYLİB'),
+    ('nexus', 'NEXUS'),
+)
 
 class LocalForm(forms.Form):
     algo = forms.ChoiceField(
@@ -102,8 +117,10 @@ class GlobalForm(forms.Form):
 
 
 class MultipleSequenceAlignmentForm(forms.Form):
-    method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Metodu Seçiniz")
-    algoritma = forms.ChoiceField(choices=ALGORITMA, label="Algoritma Seçiniz")
+    method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Aracı")
+    molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
+    algoritma = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
+    alignment_filetype = forms.ChoiceField(choices=ALIGNMENT_FILE_TYPE, label="Alignment Dosya Tipi")
     file = forms.FileField(label="Fasta Dosyası Giriniz")
 
 
