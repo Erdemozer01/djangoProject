@@ -200,11 +200,14 @@ def clustal_alignment_download(request):
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "{}_aligned.aln".format(request.user.username)
+        from bioinformatic.models import MultipleSequenceAlignment
+        get_file_type = MultipleSequenceAlignment.objects.all().filter(user=request.user.id).latest(
+            'created').alignment_filetype
+        # Define text file name
+        filename = "{}_aligned.{}".format(request.user.username, get_file_type)
         # Define the full file path
         filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
-                                "{}_aligned.aln".format(request.user.username))
-        # Open the file for reading content
+                                "{}_aligned.{}".format(request.user.username, get_file_type))
         path = open(filepath, 'rb').read()
         # Set the mime type
         mime_type, _ = mimetypes.guess_type(filepath)
@@ -232,11 +235,14 @@ def clustalomega_alignment_download(request):
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "{}_aligned.aln".format(request.user.username)
+        from bioinformatic.models import MultipleSequenceAlignment
+        get_file_type = MultipleSequenceAlignment.objects.all().filter(user=request.user.id).latest(
+            'created').alignment_filetype
+        # Define text file name
+        filename = "{}_aligned.{}".format(request.user.username, get_file_type)
         # Define the full file path
         filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
-                                "{}_aligned.aln".format(request.user.username))
-        # Open the file for reading content
+                                "{}_aligned.{}".format(request.user.username, get_file_type))
         path = open(filepath, 'rb').read()
         # Set the mime type
         mime_type, _ = mimetypes.guess_type(filepath)
