@@ -52,10 +52,8 @@ def maxlikehood(request):
                     elif sys.platform.startswith('linux'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
-                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                              '{}'.format(form.cleaned_data['file']))
+                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file']))
                     output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
-
                     align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.txt')
                     aligned_path = Path(align_file)
                     dnd_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "tree.dnd")
@@ -65,7 +63,6 @@ def maxlikehood(request):
                     scores_path = os.path.join(BASE_DIR, "bioinformatic", "files", "scores.txt")
                     score_path = Path(scores_path)
                     max_like_path = os.path.join(BASE_DIR, "bioinformatic", "files", "result_{}.txt".format(palm_tools))
-
 
                     if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
                         MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
@@ -163,8 +160,7 @@ def maxlikehood(request):
                     cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
                     cml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
                     cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
-                    cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files",
-                                                "result_{}.txt".format(palm_tools))
+                    cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_{}.txt".format(palm_tools))
                     cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
 
                     if sys.platform.startswith('win32'):
@@ -178,12 +174,7 @@ def maxlikehood(request):
                     return render(request, "bioinformatic/alignments/palm_results.html",
                                   {'results': results, 'bre': "Maximum Likelihood Sonuçları"})
 
-                except ApplicationError:
-                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
 
-                    return render(request, 'bioinformatic/alignments/file_notfound.html', {
-                        'msg': 'Hatalı Dosya Seçtiniz.', 'bre': 'Hata',
-                        'url': reverse('bioinformatic:maximum_likelihood')})
 
                 except FileNotFoundError:
                     return render(request, 'bioinformatic/fasta/notfound.html', {
