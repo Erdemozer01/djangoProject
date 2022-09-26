@@ -159,7 +159,7 @@ def maxlikehood(request):
                         doc.save()
 
                     if sys.platform.startswith('win32'):
-                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml")
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
                     elif sys.platform.startswith('linux'):
                         cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml")
                     try:
