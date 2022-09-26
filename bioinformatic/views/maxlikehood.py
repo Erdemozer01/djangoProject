@@ -1,5 +1,7 @@
 import os
 import sys
+
+import Bio.Phylo.PAML._paml
 from Bio.Application import ApplicationError
 from pathlib import Path
 from django.shortcuts import render, reverse
@@ -168,7 +170,7 @@ def maxlikehood(request):
                         cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
                         cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
                         cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-                        cml.run()
+                        cml.run(command=cml_exe, verbose=True)
 
                     except PamlError:
                         pass
