@@ -100,8 +100,7 @@ def maxlikehood(request):
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
                     stdout, stderr = clustalw_cline()
 
-                    AlignIO.convert(output_file, 'fasta', align_file, "clustal",
-                                    molecule_type=molecule_type)
+                    AlignIO.convert(output_file, 'fasta', align_file, "clustal", molecule_type=molecule_type)
                     alignment = AlignIO.read(align_file, 'clustal')
 
                     doc = MultipleSequenceAlignment()
@@ -170,7 +169,7 @@ def maxlikehood(request):
                         cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
                         cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
                         cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-                        cml.run(command=cml_exe, verbose=True)
+                        results_code = cml.run(command=cml_exe, verbose=True)
 
                     except PamlError:
                         pass
