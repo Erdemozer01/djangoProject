@@ -176,10 +176,7 @@ def maxlikehood(request):
 
 
 
-                except FileNotFoundError:
-                    return render(request, 'bioinformatic/fasta/notfound.html', {
-                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
 
                 except PamlError:
                     pass
