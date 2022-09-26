@@ -22,7 +22,7 @@ urlpatterns = [
     path('local_alignment/', views.local_alignment, name="local_alignment"),
     path('local_alignment/download/', views.local_alignments_download, name="local_alignment_download"),
     path('global_alignment/', views.global_alignment, name="global_alignment"),
-    path('multiple_sequence_alignments_analiz/', views.MultipleSeqAlignment, name="multiplesequence_alignments"),
+    path('multiple_sequence_alignments_analiz/', views.MultipleSeqAlignment, name="multiple_sequence_alignments"),
     path('global_alignment/download/', views.global_alignments_download, name="global_alignment_download"),
     path('blast/xml_file_read/', views.xml_file, name="xml_file"),
     path('xml_file_result/', views.blast_result_delete, name="xml_file_delete"),
@@ -40,6 +40,8 @@ urlpatterns = [
     path('clustal_stats_download/', views.clustal_stats_download, name="clustal_stats_download"),
     path('clustal_scores_download/', views.clustal_scores_download, name="clustal_scores_download"),
     path('clustal_alignment/', views.clustal_alignment_download, name="clustal_alignment_download"),
+    path('maximum_likelihood/', views.maxlikehood, name="maximum_likelihood"),
+    path('maximum_likelihood_download/', views.maximum_likelihood_download, name="maximum_likelihood_download"),
     path('clustalomega_alignment/', views.clustalomega_alignment_download, name="clustalomega_alignment_download"),
     path('swiss_prot/<int:pk><slug:accessions>/', views.SwissProtDetailView.as_view(), name="swiss_prot_detail"),
 ]

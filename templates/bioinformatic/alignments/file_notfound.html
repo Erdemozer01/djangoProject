@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+{% load static bootstrap5 %}
+{% block title %} Hatalı Dosya {% endblock %}
+
+{% block content %}
+
+    <section class="my-6">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-sm-5 my-auto">
+                    {% if msg %}
+                        <h5 class="display-1 text-bolder text-gradient text-danger text-lg">{{ msg }}</h5>
+                        <a href="{% url "bioinformatic:home" %}">
+                            <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
+                        </a>
+                        {% if url %}
+                            <a href="{{ url }}">
+                                <button type="button" class="btn bg-gradient-dark mt-4 text-white">Geri</button>
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
+                        <a href="{% url "blog:home" %}">
+                            <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="col-lg-7 col-sm-7 my-auto position-relative">
+                    <lottie-player src="https://assets7.lottiefiles.com/packages/lf20_JU1ujr.json"
+                                   background="transparent" speed="1" style="width: 600px; height: 400px;" loop
+                                   autoplay></lottie-player>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+

@@ -41,7 +41,6 @@ ALGORITMA = (
     ('', '------------'),
     ('nj', 'Neighbor Joining'),
     ('upgma', 'UPGMA'),
-
 )
 
 MOLECULE_TYPE = (
@@ -56,6 +55,12 @@ ALIGNMENT_FILE_TYPE = (
     ('clustal', 'CLUSTAL'),
     ('phylip', 'PHYLİB'),
     ('nexus', 'NEXUS'),
+)
+
+PALM_TOOLS = (
+    ('', '------------'),
+    ('codeml', 'CODEML'),
+    ('baseml', 'BASEML'),
 )
 
 class LocalForm(forms.Form):
@@ -92,6 +97,7 @@ class LocalForm(forms.Form):
     )
 
 
+
 class GlobalForm(forms.Form):
     seq1 = forms.CharField(
         label="Sekans1 Giriniz",
@@ -118,9 +124,13 @@ class GlobalForm(forms.Form):
 class MultipleSequenceAlignmentForm(forms.Form):
     method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Aracı")
     molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
-    algoritma = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
+    tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
     alignment_filetype = forms.ChoiceField(choices=ALIGNMENT_FILE_TYPE, label="Alignment Dosya Tipi")
     file = forms.FileField(label="Fasta Dosyası Giriniz")
 
 
-
+class MaximumLikeHoodForm(forms.Form):
+    palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="Palm Aracı")
+    molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
+    tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
+    file = forms.FileField(label="Fasta Dosyası Giriniz", help_text=" Not: Alignment olmamış dosya giriniz")

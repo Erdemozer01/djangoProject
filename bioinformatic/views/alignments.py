@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, reverse
 from Bio import AlignIO
 import subprocess
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculator
-from Bio.Align.Applications import MuscleCommandline, ClustalwCommandline, ClustalOmegaCommandline
+from Bio.Align.Applications import ClustalwCommandline, ClustalOmegaCommandline
 from bioinformatic \
     .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm
 from bioinformatic.models import MultipleSequenceAlignment
@@ -106,7 +106,7 @@ def MultipleSeqAlignment(request):
 
                 handle_uploaded_file(request.FILES['file'])
                 method = form.cleaned_data['method']
-                algoritma = form.cleaned_data['algoritma']
+                tree_type = form.cleaned_data['tree_type']
                 molecule_type = form.cleaned_data['molecule_type']
                 alignment_filetype = form.cleaned_data['alignment_filetype']
 
@@ -151,7 +151,7 @@ def MultipleSeqAlignment(request):
                         if len(seq_id) < 3:
                             return render(request, "bioinformatic/fasta/notfound.html",
                                           {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
-                                           'url': reverse('bioinformatic:multiplesequence_alignments')})
+                                           'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
                         muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
 
@@ -162,7 +162,7 @@ def MultipleSeqAlignment(request):
 
                         calculator = DistanceCalculator('identity')
 
-                        constructor = DistanceTreeConstructor(calculator, method=algoritma)
+                        constructor = DistanceTreeConstructor(calculator, method=tree_type)
                         tree = constructor.build_tree(alignment)
 
                         Phylo.write(tree, tree_file, "phyloxml")
@@ -172,9 +172,9 @@ def MultipleSeqAlignment(request):
                         plt.xlabel('Dal uzunluğu')
                         plt.ylabel('Taksonomi')
 
-                        if algoritma == "nj":
+                        if tree_type == "nj":
                             plt.title('Neighbor Joining Ağacı')
-                        elif algoritma == "upgma":
+                        elif tree_type == "upgma":
                             plt.title('UPGMA Ağacı')
 
                         plt.suptitle(f'{method}')
@@ -186,7 +186,7 @@ def MultipleSeqAlignment(request):
                             doc.align_file = File(f, name=path.name)
                             doc.user = request.user
                             doc.method = method
-                            doc.algoritma = algoritma
+                            doc.tree_type = tree_type
                             doc.molecule_type = molecule_type
                             doc.alignment_filetype = alignment_filetype
                             doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
@@ -208,7 +208,7 @@ def MultipleSeqAlignment(request):
 
                         return render(request, 'bioinformatic/fasta/notfound.html', {
                             'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                            'url': reverse('bioinformatic:multiplesequence_alignments')})
+                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
                 elif method == "clustalw2":
 
@@ -251,7 +251,7 @@ def MultipleSeqAlignment(request):
                         if len(seq_id) < 3:
                             return render(request, "bioinformatic/fasta/notfound.html",
                                           {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
-                                           'url': reverse('bioinformatic:multiplesequence_alignments')})
+                                           'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
                         clustalw_cline = ClustalwCommandline(
                             clustalw2_exe,
@@ -275,7 +275,7 @@ def MultipleSeqAlignment(request):
                         doc = MultipleSequenceAlignment()
 
                         calculator = DistanceCalculator('identity')
-                        constructor = DistanceTreeConstructor(calculator, method=algoritma)
+                        constructor = DistanceTreeConstructor(calculator, method=tree_type)
                         tree = constructor.build_tree(alignment)
 
                         Phylo.write(tree, tree_file, "phyloxml")
@@ -285,9 +285,9 @@ def MultipleSeqAlignment(request):
                         plt.xlabel('Dal uzunluğu')
                         plt.ylabel('Taksonomi')
 
-                        if algoritma == "nj":
+                        if tree_type == "nj":
                             plt.title('Neighbor Joining Ağacı')
-                        elif algoritma == "upgma":
+                        elif tree_type == "upgma":
                             plt.title('UPGMA Ağacı')
 
                         plt.suptitle(f'{method.upper()}')
@@ -315,7 +315,7 @@ def MultipleSeqAlignment(request):
                             doc.align_file = File(f, name=aligned_path.name)
                             doc.user = request.user
                             doc.method = method
-                            doc.algoritma = algoritma
+                            doc.tree_type = tree_type
                             doc.molecule_type = molecule_type
                             doc.alignment_filetype = alignment_filetype
                             doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
@@ -331,13 +331,7 @@ def MultipleSeqAlignment(request):
                             doc.save()
 
                         results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
-                        os.remove(input_file)
-                        os.remove(output_file)
-                        os.remove(align_file)
-                        os.remove(tree_file)
-                        os.remove(stats)
-                        os.remove(scores_path)
-                        os.remove(dnd_file)
+
                         return render(request, "bioinformatic/alignments/clustal.html",
                                       {'results': results, 'bre': "ClustalW2 Multiple Sekans Alignment Sonuçları"})
 
@@ -348,7 +342,7 @@ def MultipleSeqAlignment(request):
 
                         return render(request, 'bioinformatic/fasta/notfound.html', {
                             'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                            'url': reverse('bioinformatic:multiplesequence_alignments')})
+                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
                 elif method == "omega":
 
@@ -389,7 +383,7 @@ def MultipleSeqAlignment(request):
                         if len(seq_id) < 3:
                             return render(request, "bioinformatic/fasta/notfound.html",
                                           {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
-                                           'url': reverse('bioinformatic:multiplesequence_alignments')})
+                                           'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
                         clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe,
                                                                       infile=input_file,
@@ -412,7 +406,7 @@ def MultipleSeqAlignment(request):
                         alignment = AlignIO.read(align_file, f'{alignment_filetype}')
                         calculator = DistanceCalculator('identity')
 
-                        constructor = DistanceTreeConstructor(calculator, method=algoritma)
+                        constructor = DistanceTreeConstructor(calculator, method=tree_type)
                         tree = constructor.build_tree(alignment)
 
                         Phylo.write(tree, tree_file, "phyloxml")
@@ -422,9 +416,9 @@ def MultipleSeqAlignment(request):
                         plt.xlabel('Dal uzunluğu')
                         plt.ylabel('Taksonomi')
 
-                        if algoritma == "nj":
+                        if tree_type == "nj":
                             plt.title('Neighbor Joining Ağacı')
-                        elif algoritma == "upgma":
+                        elif tree_type == "upgma":
                             plt.title('UPGMA Ağacı')
 
                         plt.suptitle(f'{method.upper()}')
@@ -436,7 +430,7 @@ def MultipleSeqAlignment(request):
                             doc.align_file = File(f, name=aligned_path.name)
                             doc.user = request.user
                             doc.method = method
-                            doc.algoritma = algoritma
+                            doc.tree_type = tree_type
                             doc.molecule_type = molecule_type
                             doc.alignment_filetype = alignment_filetype
                             doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
@@ -445,7 +439,7 @@ def MultipleSeqAlignment(request):
                             f.close()
 
                             results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method,
-                                                                                     algoritma=algoritma).latest(
+                                                                                     algoritma=tree_type).latest(
                                 'created')
 
                             os.remove(input_file)
@@ -463,7 +457,7 @@ def MultipleSeqAlignment(request):
 
                         return render(request, 'bioinformatic/fasta/notfound.html', {
                             'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                            'url': reverse('bioinformatic:multiplesequence_alignments')})
+                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
         return render(request, 'bioinformatic/alignments/multiple.html',
                       {'form': form, 'bre': 'Multiple Sekans Alignment'})

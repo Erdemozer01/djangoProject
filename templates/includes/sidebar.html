@@ -268,7 +268,22 @@
                                 <span class="sidenav-normal"> Alignment - Filogeni <b class="caret"></b></span>
                             </a>
                             <div class="collapse " id="Alignment">
+
                                 <ul class="nav nav-sm flex-column">
+                                     <li class="nav-item">
+                                        <a class="nav-link "
+                                           href="{% url "bioinformatic:multiple_sequence_alignments" %}">
+                                            <span class="sidenav-mini-icon text-xs"> MSA </span>
+                                            <span class="sidenav-normal"> Multiple Sekans Aligment </span>
+                                        </a>
+                                    </li>
+                                     <li class="nav-item">
+                                        <a class="nav-link "
+                                           href="{% url "bioinformatic:maximum_likelihood" %}">
+                                            <span class="sidenav-mini-icon text-xs"> MSA </span>
+                                            <span class="sidenav-normal"> Maximum Likelihood (PALM) </span>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a class="nav-link " href="{% url "bioinformatic:local_alignment" %}">
                                             <span class="sidenav-mini-icon text-xs"> LC </span>
@@ -281,13 +296,8 @@
                                             <span class="sidenav-normal"> Global Alignment </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link "
-                                           href="{% url "bioinformatic:multiplesequence_alignments" %}">
-                                            <span class="sidenav-mini-icon text-xs"> MSA </span>
-                                            <span class="sidenav-normal"> Multiple Sekans Aligment </span>
-                                        </a>
-                                    </li>
+
+
                                 </ul>
                             </div>
                         </li>
