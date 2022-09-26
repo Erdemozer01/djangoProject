@@ -14,6 +14,7 @@ from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculat
 from bioinformatic.forms.alignments import MaximumLikeHoodForm
 from Bio.Phylo.PAML import codeml
 from django.contrib.auth.decorators import login_required
+from Bio.Phylo.PAML._paml import PamlError
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
@@ -29,7 +30,6 @@ def handle_uploaded_file(f):
 def maxlikehood(request):
     global clustalw2_exe, cml_exe
     form = MaximumLikeHoodForm(request.POST or None, request.FILES or None)
-
     if request.method == "POST":
         if form.is_valid():
             handle_uploaded_file(request.FILES['file'])
@@ -65,6 +65,7 @@ def maxlikehood(request):
                     scores_path = os.path.join(BASE_DIR, "bioinformatic", "files", "scores.txt")
                     score_path = Path(scores_path)
                     max_like_path = os.path.join(BASE_DIR, "bioinformatic", "files", "result_{}.txt".format(palm_tools))
+
 
                     if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
                         MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
@@ -133,29 +134,24 @@ def maxlikehood(request):
                     for i in scores:
                         open(scores_path, 'a').writelines(i)
 
-                    if palm_tools == "codeml":
+                    try:
+                        cml = codeml.Codeml()
+                        cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
+                        cml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
+                        cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
+                        cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files",
+                                                    "result_{}.txt".format(palm_tools))
+                        cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
 
-                        from Bio.Phylo.PAML._paml import PamlError
+                        if sys.platform.startswith('win32'):
+                            cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j/bin/codeml.exe")
+                            results = cml.run(verbose=True, command=cml_exe, parse=True)
+                        elif sys.platform.startswith('linux'):
+                            cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm_linux/codeml")
+                            results = cml.run(verbose=True, command=cml_exe, parse=True)
 
-                        try:
-                            cml = codeml.Codeml()
-
-                            cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
-                            cml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
-                            cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
-                            cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files",
-                                                        "result_{}.txt".format(palm_tools))
-                            cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-
-                            if sys.platform.startswith('win32'):
-                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j/bin/codeml.exe")
-                                results = cml.run(verbose=True, command=cml_exe, parse=True)
-                            elif sys.platform.startswith('linux'):
-                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.8", "bin", "codeml")
-                                results = cml.run(verbose=True, command=cml_exe, parse=True)
-
-                        except PamlError:
-                            pass
+                    except PamlError:
+                        pass
 
                     with aligned_path.open(mode='r') as f:
                         doc.align_file = File(f, name=aligned_path.name)
