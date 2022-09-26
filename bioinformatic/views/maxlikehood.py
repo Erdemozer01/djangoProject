@@ -134,25 +134,6 @@ def maxlikehood(request):
                     for i in scores:
                         open(scores_path, 'a').writelines(i)
 
-                    try:
-                        cml = codeml.Codeml()
-                        cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
-                        cml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
-                        cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
-                        cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files",
-                                                    "result_{}.txt".format(palm_tools))
-                        cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-
-                        if sys.platform.startswith('win32'):
-                            cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j/bin/codeml.exe")
-                            results = cml.run(verbose=True, command=cml_exe, parse=True)
-                        elif sys.platform.startswith('linux'):
-                            cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm_linux/codeml")
-                            results = cml.run(verbose=True, command=cml_exe, parse=True)
-
-                    except PamlError:
-                        pass
-
                     with aligned_path.open(mode='r') as f:
                         doc.align_file = File(f, name=aligned_path.name)
                         doc.user = request.user
@@ -178,8 +159,22 @@ def maxlikehood(request):
                         doc.ml_file = File(max_file, name=max_like.name)
                         doc.save()
 
-                    results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
+                    cml = codeml.Codeml()
+                    cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
+                    cml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
+                    cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
+                    cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files",
+                                                "result_{}.txt".format(palm_tools))
+                    cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
 
+                    if sys.platform.startswith('win32'):
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j/bin/codeml.exe")
+                        result = cml.run(verbose=True, command=cml_exe, parse=True)
+                    elif sys.platform.startswith('linux'):
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.8", "bin", "codeml")
+                        result = cml.run(verbose=True, command=cml_exe, parse=True)
+
+                    results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
                     return render(request, "bioinformatic/alignments/palm_results.html",
                                   {'results': results, 'bre': "Maximum Likelihood Sonuçları"})
 
@@ -194,5 +189,8 @@ def maxlikehood(request):
                     return render(request, 'bioinformatic/fasta/notfound.html', {
                         'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
                         'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+                except PamlError:
+                    pass
 
     return render(request, "bioinformatic/alignments/palm.html", {'form': form, 'bre': 'Maximum Likelihood '})
