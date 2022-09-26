@@ -61,6 +61,7 @@ PALM_TOOLS = (
     ('', '------------'),
     ('codeml', 'CODEML'),
     ('baseml', 'BASEML'),
+    ('basemlg', 'BASEMLG'),
 )
 
 class LocalForm(forms.Form):
