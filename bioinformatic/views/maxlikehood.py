@@ -1,10 +1,8 @@
 import os
-import subprocess
 import sys
-from django.contrib import messages
 from Bio.Application import ApplicationError
 from pathlib import Path
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse
 from bioinformatic.models import MultipleSequenceAlignment
 from Bio import SeqIO, Phylo
 from Bio.Align.Applications import ClustalwCommandline
@@ -153,9 +151,7 @@ def maxlikehood(request):
                                 results = cml.run(verbose=True, command=cml_exe, parse=True)
                             elif sys.platform.startswith('linux'):
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm_linux/codeml")
-                                results = cml.run(verbose=True, command=cml_exe, parse=True)
-                                subprocess.call(results)
-
+                                stdout, stderr = cml.run(verbose=True, command=cml_exe, parse=True)
 
 
                         except PamlError:
