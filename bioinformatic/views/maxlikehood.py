@@ -1,5 +1,4 @@
 import os
-import subprocess
 import sys
 
 import Bio.Phylo.PAML._paml
@@ -171,7 +170,7 @@ def maxlikehood(request):
                         cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
                         cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
                         cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-                        results_code = subprocess.call([cml_exe])
+                        cml.run(command=cml_exe, verbose=True)
 
                     except PamlError:
                         pass
