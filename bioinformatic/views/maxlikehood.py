@@ -152,9 +152,7 @@ def maxlikehood(request):
 
                     max_like = Path(max_like_path)
 
-                    with max_like.open(mode='r') as max_file:
-                        doc.ml_file = File(max_file, name=max_like.name)
-                        doc.save()
+
 
                     cml = codeml.Codeml()
                     cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
@@ -169,6 +167,11 @@ def maxlikehood(request):
                     elif sys.platform.startswith('linux'):
                         cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.8", "bin", "codeml")
                         result = cml.run(verbose=True, command=cml_exe, parse=True)
+
+
+                    with max_like.open(mode='r') as max_file:
+                        doc.ml_file = File(max_file, name=max_like.name)
+                        doc.save()
 
                     results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
                     return render(request, "bioinformatic/alignments/palm_results.html",
