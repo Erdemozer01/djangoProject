@@ -159,9 +159,9 @@ def maxlikehood(request):
                         doc.save()
 
                     if sys.platform.startswith('win32'):
-                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml")
                     elif sys.platform.startswith('linux'):
-                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.8", "bin", "baseml")
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.8", "bin", "codeml")
                     try:
                         cml = codeml.Codeml()
                         cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
@@ -169,7 +169,7 @@ def maxlikehood(request):
                         cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
                         cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
                         cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-                        results_code = cml.run(command=cml_exe, verbose=True)
+                        cml.run(command=cml_exe, verbose=True)
 
                     except PamlError:
                         pass
