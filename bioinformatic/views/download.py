@@ -256,7 +256,7 @@ def maximum_likelihood_download(request):
         # Return the response value
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        url = reverse("bioinformatic:multiplesequence_alignments")
+        url = reverse("bioinformatic:maximum_likelihood")
         return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg, 'url': url})
     try:
