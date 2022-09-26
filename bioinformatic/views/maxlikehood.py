@@ -161,7 +161,7 @@ def maxlikehood(request):
                     if sys.platform.startswith('win32'):
                         cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
                     elif sys.platform.startswith('linux'):
-                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.8", "bin", "codeml")
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.8", "bin", "baseml")
                     try:
                         cml = codeml.Codeml()
                         cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
