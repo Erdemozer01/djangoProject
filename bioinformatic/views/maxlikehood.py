@@ -151,8 +151,8 @@ def maxlikehood(request):
                                 results = cml.run(verbose=True, command=cml_exe, parse=True)
                             elif sys.platform.startswith('linux'):
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm_linux/codeml")
-                                cml.read_ctl_file(os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl"))
-                                stdout = cml.run(verbose=True, command=cml_exe)
+
+                                stdout = cml.run(verbose=True, parse=True)
 
 
                         except PamlError:
