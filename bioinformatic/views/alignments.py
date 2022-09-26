@@ -329,8 +329,15 @@ def MultipleSeqAlignment(request):
                         with score_path.open(mode='r') as file_obj:
                             doc.scores = File(file_obj, name=score_path.name)
                             doc.save()
-
                         results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
+
+                        os.remove(input_file)
+                        os.remove(output_file)
+                        os.remove(align_file)
+                        os.remove(stats)
+                        os.remove(scores_path)
+                        os.remove(dnd_file)
+                        os.remove(tree_file)
 
                         return render(request, "bioinformatic/alignments/clustal.html",
                                       {'results': results, 'bre': "ClustalW2 Multiple Sekans Alignment Sonuçları"})
@@ -438,14 +445,13 @@ def MultipleSeqAlignment(request):
                             doc.save()
                             f.close()
 
-                            results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method,
-                                                                                     algoritma=tree_type).latest(
+                        results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method, algoritma=tree_type).latest(
                                 'created')
 
-                            os.remove(input_file)
-                            os.remove(output_path)
-                            os.remove(align_file)
-                            os.remove(tree_file)
+                        os.remove(input_file)
+                        os.remove(output_path)
+                        os.remove(align_file)
+                        os.remove(tree_file)
 
                         return render(request, 'bioinformatic/alignments/omega.html',
                                       {'bre': 'Omega Multiple Sekans Alignment Sonuçları', 'results': results})

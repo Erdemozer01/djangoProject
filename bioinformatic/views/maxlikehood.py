@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 
 import Bio.Phylo.PAML._paml
@@ -33,6 +34,7 @@ def maxlikehood(request):
     form = MaximumLikeHoodForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
+
             handle_uploaded_file(request.FILES['file'])
             molecule_type = form.cleaned_data['molecule_type']
             tree_type = form.cleaned_data['tree_type']
@@ -44,10 +46,14 @@ def maxlikehood(request):
                 try:
 
                     user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
+
+
                     if Path(user_path).exists():
                         pass
                     else:
                         os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+
+
 
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
@@ -179,6 +185,20 @@ def maxlikehood(request):
                         doc.save()
 
                     results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
+
+                    os.remove(input_file)
+                    os.remove(output_file)
+                    os.remove(stats)
+                    os.remove(scores_path)
+                    os.remove(align_file)
+                    os.remove(dnd_file)
+                    os.remove(tree_file)
+                    os.remove(max_likelihood_results)
+                    os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl"))
+                    os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst"))
+                    os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rub"))
+                    os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst1"))
+
 
                     return render(request, "bioinformatic/alignments/palm_results.html",
                                   {'results': results, 'bre': "Maximum Likelihood Sonuçları"})
