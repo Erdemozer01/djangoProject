@@ -1,10 +1,9 @@
 import os
 import sys
-
-import Bio.Application
+from django.contrib import messages
 from Bio.Application import ApplicationError
 from pathlib import Path
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, redirect
 from bioinformatic.models import MultipleSequenceAlignment
 from Bio import SeqIO, Phylo
 from Bio.Align.Applications import ClustalwCommandline
@@ -14,6 +13,7 @@ from Bio import AlignIO
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculator
 from bioinformatic.forms.alignments import MaximumLikeHoodForm
 from Bio.Phylo.PAML import codeml
+from django.contrib.auth.decorators import login_required
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
@@ -25,9 +25,11 @@ def handle_uploaded_file(f):
             destination.write(chunk)
 
 
+@login_required
 def maxlikehood(request):
     global clustalw2_exe, cml_exe
     form = MaximumLikeHoodForm(request.POST or None, request.FILES or None)
+
     if request.method == "POST":
         if form.is_valid():
             handle_uploaded_file(request.FILES['file'])
@@ -37,6 +39,7 @@ def maxlikehood(request):
             palm_tools = form.cleaned_data['palm_tools']
 
             if palm_tools == "codeml":
+
                 try:
                     user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
                     if Path(user_path).exists():
@@ -196,4 +199,4 @@ def maxlikehood(request):
                         'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
                         'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
-    return render(request, "bioinformatic/alignments/palm.html", {'form': form})
+    return render(request, "bioinformatic/alignments/palm.html", {'form': form, 'bre': 'Maximum Likelihood '})
