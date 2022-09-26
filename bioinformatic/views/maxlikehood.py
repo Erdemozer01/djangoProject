@@ -168,7 +168,7 @@ def maxlikehood(request):
                         cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
                         cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
                         cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-                        cml.run(verbose=True, command=cml_exe)
+                        cml.run(verbose=True, command="codeml")
 
                     except PamlError:
                         pass
