@@ -1,4 +1,5 @@
 import os
+import subprocess
 import sys
 from Bio.Application import ApplicationError
 from pathlib import Path
@@ -151,7 +152,8 @@ def maxlikehood(request):
                                 results = cml.run(verbose=True, command=cml_exe, parse=True)
                             elif sys.platform.startswith('linux'):
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm_linux/codeml")
-                                results = cml.run(verbose=True, command=cml_exe, parse=True)
+                                from Bio.Phylo import PAML
+                                PAML._paml.Paml.run(command=cml_exe, verbose=True)
 
 
                         except PamlError:
