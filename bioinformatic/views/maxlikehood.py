@@ -153,8 +153,8 @@ def maxlikehood(request):
                             elif sys.platform.startswith('linux'):
 
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm_linux/codeml")
-                                results = cml.run(verbose=True, command=cml_exe, parse=True)
-                                subprocess.call(results)
+                                results = cml.run()
+
 
 
 
