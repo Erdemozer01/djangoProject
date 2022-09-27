@@ -47,13 +47,10 @@ def maxlikehood(request):
 
                     user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
 
-
                     if Path(user_path).exists():
                         pass
                     else:
                         os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
-
-
 
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
@@ -76,8 +73,8 @@ def maxlikehood(request):
 
                     max_likelihood_path = Path(max_likelihood_results)
 
-                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
-                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
+                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id, palm_tools=palm_tools).exists():
+                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id, palm_tools=palm_tools).all().delete()
 
                     records = SeqIO.parse(input_file, "fasta")
 
@@ -123,9 +120,9 @@ def maxlikehood(request):
                     plt.ylabel('Taksonomi')
 
                     if tree_type == "nj":
-                        plt.title('Neighbor Joining Ağacı')
+                        plt.title('Neighbor Joining')
                     elif tree_type == "upgma":
-                        plt.title('UPGMA Ağacı')
+                        plt.title('UPGMA')
 
                     plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                              "{}_filogenetik_ağaç.jpg".format(request.user)))
@@ -199,7 +196,6 @@ def maxlikehood(request):
                     os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rub"))
                     os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst1"))
 
-
                     return render(request, "bioinformatic/alignments/palm_results.html",
                                   {'results': results, 'bre': "Maximum Likelihood Sonuçları"})
 
@@ -218,13 +214,10 @@ def maxlikehood(request):
 
                     user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
 
-
                     if Path(user_path).exists():
                         pass
                     else:
                         os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
-
-
 
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
@@ -294,9 +287,9 @@ def maxlikehood(request):
                     plt.ylabel('Taksonomi')
 
                     if tree_type == "nj":
-                        plt.title('Neighbor Joining Ağacı')
+                        plt.title('Neighbor Joining')
                     elif tree_type == "upgma":
-                        plt.title('UPGMA Ağacı')
+                        plt.title('UPGMA')
 
                     plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                              "{}_filogenetik_ağaç.jpg".format(request.user)))
@@ -371,7 +364,6 @@ def maxlikehood(request):
                     os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst1"))
                     os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "2base.t"))
 
-
                     return render(request, "bioinformatic/alignments/palm_results.html",
                                   {'results': results, 'bre': "Maximum Likelihood Sonuçları"})
 
@@ -390,13 +382,10 @@ def maxlikehood(request):
 
                     user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
 
-
                     if Path(user_path).exists():
                         pass
                     else:
                         os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
-
-
 
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
@@ -466,9 +455,9 @@ def maxlikehood(request):
                     plt.ylabel('Taksonomi')
 
                     if tree_type == "nj":
-                        plt.title('Neighbor Joining Ağacı')
+                        plt.title('Neighbor Joining')
                     elif tree_type == "upgma":
-                        plt.title('UPGMA Ağacı')
+                        plt.title('UPGMA')
 
                     plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                              "{}_filogenetik_ağaç.jpg".format(request.user)))
@@ -542,7 +531,6 @@ def maxlikehood(request):
                     os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rates"))
                     os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rub"))
                     os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "2base.t"))
-
 
                     return render(request, "bioinformatic/alignments/palm_results.html",
                                   {'results': results, 'bre': "Maximum Likelihood Sonuçları"})

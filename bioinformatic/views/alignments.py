@@ -443,7 +443,7 @@ def MultipleSeqAlignment(request):
                             doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                                     "{}_filogenetik_ağaç.jpg".format(request.user))
                             doc.save()
-                            f.close()
+
 
                         results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method, algoritma=tree_type).latest(
                                 'created')

@@ -59,9 +59,9 @@ ALIGNMENT_FILE_TYPE = (
 
 PALM_TOOLS = (
     ('', '------------'),
-    ('codeml', 'CODEML'),
     ('baseml', 'BASEML'),
     ('basemlg', 'BASEMLG'),
+    ('codeml', 'CODEML'),
 )
 
 class LocalForm(forms.Form):
