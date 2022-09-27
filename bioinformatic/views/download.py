@@ -268,6 +268,42 @@ def maximum_likelihood_download(request):
     finally:
         os.remove(filepath)
 
+
+def PhyloXML_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        from bioinformatic.models import MultipleSequenceAlignment
+        get_file_type = MultipleSequenceAlignment.objects.all().filter(user=request.user.id).latest(
+            'created').palm_tools
+        # Define text file name
+        filename = "{}_tree.xml".format(request.user.username)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
+                                "{}_tree.xml".format(request.user.username))
+        path = open(filepath, 'rb').read()
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:maximum_likelihood")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg})
+    finally:
+        os.remove(filepath)
+
 def clustalomega_alignment_download(request):
     try:
         # Define Django project base directory

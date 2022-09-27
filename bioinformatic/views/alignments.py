@@ -193,6 +193,12 @@ def MultipleSeqAlignment(request):
                                                     "{}_filogenetik_ağaç.jpg".format(request.user))
                             doc.save()
 
+                        tree_path = Path(tree_file)
+
+                        with tree_path.open(mode='rb') as tree_file_obj:
+                            doc.tree_file = File(tree_file_obj, name=tree_path.name)
+                            doc.save()
+
                         results = MultipleSequenceAlignment.objects.all().filter(user=request.user.id).latest('created')
                         os.remove(input_file)
                         os.remove(output_file)

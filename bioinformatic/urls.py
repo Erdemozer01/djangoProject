@@ -42,6 +42,7 @@ urlpatterns = [
     path('clustal_alignment/', views.clustal_alignment_download, name="clustal_alignment_download"),
     path('maximum_likelihood/', views.maxlikehood, name="maximum_likelihood"),
     path('maximum_likelihood_download/', views.maximum_likelihood_download, name="maximum_likelihood_download"),
+    path('PhyloXML_download/', views.PhyloXML_download, name="PhyloXML_download"),
     path('clustalomega_alignment/', views.clustalomega_alignment_download, name="clustalomega_alignment_download"),
     path('swiss_prot/<int:pk><slug:accessions>/', views.SwissProtDetailView.as_view(), name="swiss_prot_detail"),
 ]

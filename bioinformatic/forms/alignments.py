@@ -34,7 +34,6 @@ METHOD = (
     ('MUSCLE', 'MUSCLE'),
     ('clustalw2', 'clustalw2'.upper()),
     ('omega', 'ClustalOmega'),
-    ('PAML', "Maximum Likelihood (PALM) - Codeml"),
 )
 
 ALGORITMA = (

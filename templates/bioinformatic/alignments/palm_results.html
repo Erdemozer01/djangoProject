@@ -15,8 +15,10 @@
                     <div class="card-header pb-0">
                         <div class="d-lg-flex">
                             <div>
-                                <h5 class="mb-0">{{ bre }}</h5>
+                                <h5 class="mb-0">{{ bre }}({{ results.palm_tools.upper }})</h5>
                                 <p class="m-0">Analizi Yapan Laborant: {{ results.user|title }}</p>
+                                 <p><b>Not:</b> İndirdiğiniz dosyalar silinecektir. Analizi Tekrar yapıp
+                                sayfayı yenileyebilir veya görüntüleyebilirsiniz.</p>
                             </div>
                         </div>
                     </div>
@@ -94,6 +96,21 @@
 
                                 <tr>
                                     <td class="text-sm">
+                                        Filogenetik Ağaç Dosyası ( PhyloXML )
+                                        <a href="{% url "bioinformatic:PhyloXML_download" %}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary" title="İndir"></i>
+                                        </a>
+                                        <a href="{{ results.tree_file.url }}"
+                                           class="float-end m-2">
+                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
                                         Maximum Likelihood
                                         <a href="{% url "bioinformatic:maximum_likelihood_download" %}" class="float-end m-2"
                                            data-bs-toggle="tooltip"
@@ -106,10 +123,10 @@
                                         </a>
                                     </td>
                                 </tr>
+
                                 </tbody>
                             </table>
-                            <p class="alert-danger">Not: İndirdiğiniz dosyalar silinecektir. Analizi Tekrar yapıp
-                                sayfayı yenileyebilir veya görüntüleyebilirsiniz.</p>
+
                         </div>
                     </div>
                 </div>

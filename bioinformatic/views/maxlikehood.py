@@ -73,8 +73,8 @@ def maxlikehood(request):
 
                     max_likelihood_path = Path(max_likelihood_results)
 
-                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id, palm_tools=palm_tools).exists():
-                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id, palm_tools=palm_tools).all().delete()
+                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
+                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
 
                     records = SeqIO.parse(input_file, "fasta")
 
@@ -149,6 +149,7 @@ def maxlikehood(request):
                         doc.tree_type = tree_type
                         doc.molecule_type = molecule_type
                         doc.palm_tools = palm_tools
+
                         doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                                 "{}_filogenetik_ağaç.jpg".format(request.user))
                         doc.save()
@@ -159,6 +160,12 @@ def maxlikehood(request):
 
                     with score_path.open(mode='r') as file_obj:
                         doc.scores = File(file_obj, name=score_path.name)
+                        doc.save()
+
+                    tree_path = Path(tree_file)
+
+                    with tree_path.open(mode='rb') as tree_file_obj:
+                        doc.tree_file = File(tree_file_obj, name=tree_path.name)
                         doc.save()
 
                     if sys.platform.startswith('win32'):
@@ -326,6 +333,12 @@ def maxlikehood(request):
 
                     with score_path.open(mode='r') as file_obj:
                         doc.scores = File(file_obj, name=score_path.name)
+                        doc.save()
+
+                    tree_path = Path(tree_file)
+
+                    with tree_path.open(mode='rb') as tree_file_obj:
+                        doc.tree_file = File(tree_file_obj, name=tree_path.name)
                         doc.save()
 
                     if sys.platform.startswith('win32'):
@@ -514,6 +527,12 @@ def maxlikehood(request):
 
                     with max_likelihood_path.open(mode='r') as max_file:
                         doc.ml_file = File(max_file, name=max_likelihood_path.name)
+                        doc.save()
+
+                    tree_path = Path(tree_file)
+
+                    with tree_path.open(mode='rb') as tree_file_obj:
+                        doc.tree_file = File(tree_file_obj, name=tree_path.name)
                         doc.save()
 
                     results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
