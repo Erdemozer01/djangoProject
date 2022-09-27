@@ -1,8 +1,6 @@
 import os
 import shutil
 import sys
-
-import Bio.Phylo.PAML._paml
 from Bio.Application import ApplicationError
 from pathlib import Path
 from django.shortcuts import render, reverse

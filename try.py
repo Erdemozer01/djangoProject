@@ -1,17 +1,33 @@
 import os.path
+from Bio import SeqIO
+from Bio.Seq import Seq
 from pathlib import Path
-
-from Bio.Phylo.PAML import codeml
+from Bio import motifs
 
 BASE_DIR = Path(__file__).resolve().parent
+fasta = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
+fasta_reading = SeqIO.parse(fasta, "fasta")
 
-cml = codeml.Codeml()
-cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
-cml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.xml")
-cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
-cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
-cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
-cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
+instances2 = []
 
+for seq in fasta_reading:
+    instances2.append(seq.seq[:60])
 
-results = cml.run(verbose=True, command=cml_exe)
+print(instances2)
+import pandas as pd
+
+motif = motifs.create(instances2)
+print("counts".title())
+print(motif.counts)
+print("instances".title())
+print(motif.instances)
+print("consensus".title())
+print(motif.consensus)
+print("anticonsensus".title())
+print(motif.anticonsensus)
+print("position specific scoring matrices".title())
+print(motif.pssm)
+print("position weight matrices".title())
+print(motif.pwm)
+print(motif.mask)
+df = pd.DataFrame(motif.pwm).to_excel("k.xlsx")

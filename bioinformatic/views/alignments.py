@@ -15,6 +15,8 @@ from Bio.Align.Applications import ClustalwCommandline, ClustalOmegaCommandline
 from bioinformatic \
     .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm
 from bioinformatic.models import MultipleSequenceAlignment
+from django.contrib.auth.decorators import login_required
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
@@ -96,383 +98,380 @@ def local_alignment(request):
 
     return render(request, "bioinformatic/alignments/local.html", {"form": form, "bre": "Local Alignment"})
 
-
+@login_required
 def MultipleSeqAlignment(request):
     global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2
-    if request.user.is_authenticated:
-        form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
-        if request.method == "POST":
-            if form.is_valid():
 
-                handle_uploaded_file(request.FILES['file'])
-                method = form.cleaned_data['method']
-                tree_type = form.cleaned_data['tree_type']
-                molecule_type = form.cleaned_data['molecule_type']
-                alignment_filetype = form.cleaned_data['alignment_filetype']
+    form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
 
-                if method == "MUSCLE":
-                    try:
-                        user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
-                        if Path(user_path).exists():
-                            pass
-                        else:
-                            os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+            handle_uploaded_file(request.FILES['file'])
+            method = form.cleaned_data['method']
+            tree_type = form.cleaned_data['tree_type']
+            molecule_type = form.cleaned_data['molecule_type']
+            alignment_filetype = form.cleaned_data['alignment_filetype']
 
-                        if sys.platform.startswith('win32'):
-                            muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
-                        elif sys.platform.startswith('linux'):
-                            muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
+            if method == "MUSCLE":
+                try:
+                    user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
+                    if Path(user_path).exists():
+                        pass
+                    else:
+                        os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
 
-                        input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                                  '{}'.format(request.FILES['file']))
+                    if sys.platform.startswith('win32'):
+                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
+                    elif sys.platform.startswith('linux'):
+                        muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
 
-                        output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
+                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                              '{}'.format(request.FILES['file']))
 
-                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
 
-                        if alignment_filetype == "phylip":
-                            align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                                      f'aligned.phy')
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
 
-                        path = Path(align_file)
+                    if alignment_filetype == "phylip":
+                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                                  f'aligned.phy')
 
-                        tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
+                    path = Path(align_file)
 
-                        if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
-                            MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
+                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
-                        records = SeqIO.parse(input_file, "fasta")
+                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
+                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
 
-                        seq_id = []
+                    records = SeqIO.parse(input_file, "fasta")
 
-                        for record in records:
-                            seq_id.append(record.id)
+                    seq_id = []
 
-                        if len(seq_id) < 3:
-                            return render(request, "bioinformatic/fasta/notfound.html",
-                                          {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
-                                           'url': reverse('bioinformatic:multiple_sequence_alignments')})
+                    for record in records:
+                        seq_id.append(record.id)
 
-                        muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
+                    if len(seq_id) < 3:
+                        return render(request, "bioinformatic/fasta/notfound.html",
+                                      {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                       'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
-                        AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
-                                        molecule_type=molecule_type)
-                        alignment = AlignIO.read(align_file, f'{alignment_filetype}')
-                        doc = MultipleSequenceAlignment()
+                    muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
 
-                        calculator = DistanceCalculator('identity')
+                    AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
+                                    molecule_type=molecule_type)
+                    alignment = AlignIO.read(align_file, f'{alignment_filetype}')
+                    doc = MultipleSequenceAlignment()
 
-                        constructor = DistanceTreeConstructor(calculator, method=tree_type)
-                        tree = constructor.build_tree(alignment)
+                    calculator = DistanceCalculator('identity')
 
-                        Phylo.write(tree, tree_file, "phyloxml")
+                    constructor = DistanceTreeConstructor(calculator, method=tree_type)
+                    tree = constructor.build_tree(alignment)
 
-                        Phylo.draw(tree, do_show=False)
-
-                        plt.xlabel('Dal uzunluğu')
-                        plt.ylabel('Taksonomi')
+                    Phylo.write(tree, tree_file, "phyloxml")
 
-                        if tree_type == "nj":
-                            plt.title('Neighbor Joining Ağacı')
-                        elif tree_type == "upgma":
-                            plt.title('UPGMA Ağacı')
-
-                        plt.suptitle(f'{method}')
+                    Phylo.draw(tree, do_show=False)
 
-                        plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                 "{}_filogenetik_ağaç.jpg".format(request.user)))
+                    f = Phylo.to_networkx(tree)
 
-                        with path.open(mode='r') as f:
-                            doc.align_file = File(f, name=path.name)
-                            doc.user = request.user
-                            doc.method = method
-                            doc.tree_type = tree_type
-                            doc.molecule_type = molecule_type
-                            doc.alignment_filetype = alignment_filetype
-                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
-                            doc.save()
+                    plt.xlabel('Dal uzunluğu')
+                    plt.ylabel('Taksonomi')
 
-                        tree_path = Path(tree_file)
+                    if tree_type == "nj":
+                        plt.title('Neighbor Joining Ağacı')
+                    elif tree_type == "upgma":
+                        plt.title('UPGMA Ağacı')
 
-                        with tree_path.open(mode='rb') as tree_file_obj:
-                            doc.tree_file = File(tree_file_obj, name=tree_path.name)
-                            doc.save()
+                    plt.suptitle(f'{method}')
 
-                        results = MultipleSequenceAlignment.objects.all().filter(user=request.user.id).latest('created')
-                        os.remove(input_file)
-                        os.remove(output_file)
-                        os.remove(align_file)
-                        os.remove(tree_file)
-                        return render(request, 'bioinformatic/alignments/muscle.html',
-                                      {'bre': 'Muscle Multiple Sekans Alignment Sonuçları', 'results': results})
+                    plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                             "{}_filogenetik_ağaç.jpg".format(request.user)))
 
-                    except Bio.Application.ApplicationError:
-                        os.remove(
-                            os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
-                        os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+                    with path.open(mode='r') as f:
+                        doc.align_file = File(f, name=path.name)
+                        doc.user = request.user
+                        doc.method = method
+                        doc.tree_type = tree_type
+                        doc.molecule_type = molecule_type
+                        doc.alignment_filetype = alignment_filetype
+                        doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                "{}_filogenetik_ağaç.jpg".format(request.user))
+                        doc.save()
 
-                        return render(request, 'bioinformatic/fasta/notfound.html', {
-                            'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
+                    tree_path = Path(tree_file)
 
-                elif method == "clustalw2":
+                    with tree_path.open(mode='rb') as tree_file_obj:
+                        doc.tree_file = File(tree_file_obj, name=tree_path.name)
+                        doc.save()
 
-                    try:
+                    results = MultipleSequenceAlignment.objects.all().filter(user=request.user.id).latest('created')
 
-                        user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
-                        if Path(user_path).exists():
-                            pass
-                        else:
-                            os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+                    return render(request, 'bioinformatic/alignments/muscle.html',
+                                  {'bre': 'Muscle Multiple Sekans Alignment Sonuçları', 'results': results, 'f': f})
 
-                        if sys.platform.startswith('win32'):
-                            clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
-                        elif sys.platform.startswith('linux'):
-                            clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+                except Bio.Application.ApplicationError:
+                    os.remove(
+                        os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
 
-                        input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                                  '{}'.format(form.cleaned_data['file']))
-                        output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
+                    return render(request, 'bioinformatic/fasta/notfound.html', {
+                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
-                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
-                        aligned_path = Path(align_file)
-                        dnd_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "tree.dnd")
-                        tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
-                        stats = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'stats.txt')
-                        stats_path = Path(stats)
-                        scores_path = os.path.join(BASE_DIR, "bioinformatic", "files", "scores.txt")
-                        score_path = Path(scores_path)
-
-                        if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
-                            MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
-
-                        records = SeqIO.parse(input_file, "fasta")
-
-                        seq_id = []
-
-                        for record in records:
-                            seq_id.append(record.id)
-
-                        if len(seq_id) < 3:
-                            return render(request, "bioinformatic/fasta/notfound.html",
-                                          {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
-                                           'url': reverse('bioinformatic:multiple_sequence_alignments')})
-
-                        clustalw_cline = ClustalwCommandline(
-                            clustalw2_exe,
-                            infile=input_file,
-                            outfile=output_file,
-                            align=True,
-                            outorder="ALIGNED",
-                            convert=True,
-                            output="FASTA",
-                            newtree=dnd_file,
-                            stats=stats
-                        )
-
-                        assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
-                        stdout, stderr = clustalw_cline()
-
-                        AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
-                                        molecule_type=molecule_type)
-                        alignment = AlignIO.read(align_file, f'{alignment_filetype}')
-
-                        doc = MultipleSequenceAlignment()
-
-                        calculator = DistanceCalculator('identity')
-                        constructor = DistanceTreeConstructor(calculator, method=tree_type)
-                        tree = constructor.build_tree(alignment)
-
-                        Phylo.write(tree, tree_file, "phyloxml")
-
-                        Phylo.draw(tree, do_show=False)
-
-                        plt.xlabel('Dal uzunluğu')
-                        plt.ylabel('Taksonomi')
-
-                        if tree_type == "nj":
-                            plt.title('Neighbor Joining Ağacı')
-                        elif tree_type == "upgma":
-                            plt.title('UPGMA Ağacı')
-
-                        plt.suptitle(f'{method.upper()}')
-
-                        plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                 "{}_filogenetik_ağaç.jpg".format(request.user)))
-
-                        read_stats = open(stats, 'r').readlines()[1:16]
-
-                        os.remove(stats)
-
-                        for i in read_stats:
-                            open(stats, 'a').writelines(i)
-
-                        open(scores_path, "w").writelines(stdout)
-
-                        scores = open(scores_path, 'r').readlines()[44:52]
-
-                        os.remove(scores_path)
-
-                        for i in scores:
-                            open(scores_path, 'a').writelines(i)
-
-                        with aligned_path.open(mode='r') as f:
-                            doc.align_file = File(f, name=aligned_path.name)
-                            doc.user = request.user
-                            doc.method = method
-                            doc.tree_type = tree_type
-                            doc.molecule_type = molecule_type
-                            doc.alignment_filetype = alignment_filetype
-                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
-                            doc.save()
-
-                        with stats_path.open(mode='r') as stats_file_obj:
-                            doc.stats = File(stats_file_obj, name=stats_path.name)
-                            doc.save()
-
-                        with score_path.open(mode='r') as file_obj:
-                            doc.scores = File(file_obj, name=score_path.name)
-                            doc.save()
-                        results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
-
-                        os.remove(input_file)
-                        os.remove(output_file)
-                        os.remove(align_file)
-                        os.remove(stats)
-                        os.remove(scores_path)
-                        os.remove(dnd_file)
-                        os.remove(tree_file)
-
-                        return render(request, "bioinformatic/alignments/clustal.html",
-                                      {'results': results, 'bre': "ClustalW2 Multiple Sekans Alignment Sonuçları"})
-
-                    except Bio.Application.ApplicationError:
-                        os.remove(
-                            os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
-                        os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
-
-                        return render(request, 'bioinformatic/fasta/notfound.html', {
-                            'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
-
-                elif method == "omega":
-
-                    try:
-                        user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
-                        if Path(user_path).exists():
-                            pass
-                        else:
-                            os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
-
-                        if sys.platform.startswith('win32'):
-                            clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
-                                                             'clustal-omega-1.2.2-win64/clustalo.exe')
-                        elif sys.platform.startswith('linux'):
-                            clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
-                                                             'clustalo-1.2.4-Ubuntu-32-bit')
-
-                        input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                                  '{}'.format(form.cleaned_data['file']))
-                        output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
-                        output_path = Path(output_file)
-                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
-                        aligned_path = Path(align_file)
-                        tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
-
-                        if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
-                            MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
-
-                        records = SeqIO.parse(input_file, "fasta")
-
-                        doc = MultipleSequenceAlignment()
-
-                        seq_id = []
-
-                        for record in records:
-                            seq_id.append(record.id)
-
-                        if len(seq_id) < 3:
-                            return render(request, "bioinformatic/fasta/notfound.html",
-                                          {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
-                                           'url': reverse('bioinformatic:multiple_sequence_alignments')})
-
-                        clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe,
-                                                                      infile=input_file,
-                                                                      outfile=output_path,
-                                                                      force=True,
-                                                                      verbose=True,
-                                                                      auto=True,
-                                                                      usekimura="yes")
-                        if sys.platform.startswith('win32'):
-                            assert os.path.isfile(clustal_omega_exe)
-                            stdout, stderr = clustal_omega_cline()
-
-                        elif sys.platform.startswith('linux'):
-                            subprocess.Popen(str(clustal_omega_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                             stderr=subprocess.PIPE, universal_newlines=True,
-                                             shell=(sys.platform != "win32"))
-
-                        AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
-                                        molecule_type=molecule_type)
-                        alignment = AlignIO.read(align_file, f'{alignment_filetype}')
-                        calculator = DistanceCalculator('identity')
-
-                        constructor = DistanceTreeConstructor(calculator, method=tree_type)
-                        tree = constructor.build_tree(alignment)
-
-                        Phylo.write(tree, tree_file, "phyloxml")
-
-                        Phylo.draw(tree, do_show=False)
-
-                        plt.xlabel('Dal uzunluğu')
-                        plt.ylabel('Taksonomi')
-
-                        if tree_type == "nj":
-                            plt.title('Neighbor Joining Ağacı')
-                        elif tree_type == "upgma":
-                            plt.title('UPGMA Ağacı')
-
-                        plt.suptitle(f'{method.upper()}')
-
-                        plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                 "{}_filogenetik_ağaç.jpg".format(request.user)))
-
-                        with aligned_path.open(mode='r') as f:
-                            doc.align_file = File(f, name=aligned_path.name)
-                            doc.user = request.user
-                            doc.method = method
-                            doc.tree_type = tree_type
-                            doc.molecule_type = molecule_type
-                            doc.alignment_filetype = alignment_filetype
-                            doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                    "{}_filogenetik_ağaç.jpg".format(request.user))
-                            doc.save()
-
-
-                        results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method, algoritma=tree_type).latest(
-                                'created')
-
-                        os.remove(input_file)
-                        os.remove(output_path)
-                        os.remove(align_file)
-                        os.remove(tree_file)
-
-                        return render(request, 'bioinformatic/alignments/omega.html',
-                                      {'bre': 'Omega Multiple Sekans Alignment Sonuçları', 'results': results})
-
-                    except Bio.Application.ApplicationError:
-                        os.remove(
-                            os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
-                        os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
-
-                        return render(request, 'bioinformatic/fasta/notfound.html', {
-                            'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
-
-        return render(request, 'bioinformatic/alignments/multiple.html',
-                      {'form': form, 'bre': 'Multiple Sekans Alignment'})
-    else:
-        messages.error(request, 'Multiple Sekans Alignment için giriş yapınız')
-        return redirect('login')
+            elif method == "clustalw2":
+
+                try:
+
+                    user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
+                    if Path(user_path).exists():
+                        pass
+                    else:
+                        os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+
+                    if sys.platform.startswith('win32'):
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
+                    elif sys.platform.startswith('linux'):
+                        clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
+
+                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                              '{}'.format(form.cleaned_data['file']))
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
+
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
+                    aligned_path = Path(align_file)
+                    dnd_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "tree.dnd")
+                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
+                    stats = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'stats.txt')
+                    stats_path = Path(stats)
+                    scores_path = os.path.join(BASE_DIR, "bioinformatic", "files", "scores.txt")
+                    score_path = Path(scores_path)
+
+                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
+                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
+
+                    records = SeqIO.parse(input_file, "fasta")
+
+                    seq_id = []
+
+                    for record in records:
+                        seq_id.append(record.id)
+
+                    if len(seq_id) < 3:
+                        return render(request, "bioinformatic/fasta/notfound.html",
+                                      {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                       'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+                    clustalw_cline = ClustalwCommandline(
+                        clustalw2_exe,
+                        infile=input_file,
+                        outfile=output_file,
+                        align=True,
+                        outorder="ALIGNED",
+                        convert=True,
+                        output="FASTA",
+                        newtree=dnd_file,
+                        stats=stats
+                    )
+
+                    assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
+                    stdout, stderr = clustalw_cline()
+
+                    AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
+                                    molecule_type=molecule_type)
+                    alignment = AlignIO.read(align_file, f'{alignment_filetype}')
+
+                    doc = MultipleSequenceAlignment()
+
+                    calculator = DistanceCalculator('identity')
+                    constructor = DistanceTreeConstructor(calculator, method=tree_type)
+                    tree = constructor.build_tree(alignment)
+
+                    Phylo.write(tree, tree_file, "phyloxml")
+
+                    Phylo.draw(tree, do_show=False)
+
+                    plt.xlabel('Dal uzunluğu')
+                    plt.ylabel('Taksonomi')
+
+                    if tree_type == "nj":
+                        plt.title('Neighbor Joining Ağacı')
+                    elif tree_type == "upgma":
+                        plt.title('UPGMA Ağacı')
+
+                    plt.suptitle(f'{method.upper()}')
+
+                    plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                             "{}_filogenetik_ağaç.jpg".format(request.user)))
+
+                    read_stats = open(stats, 'r').readlines()[1:16]
+
+                    os.remove(stats)
+
+                    for i in read_stats:
+                        open(stats, 'a').writelines(i)
+
+                    open(scores_path, "w").writelines(stdout)
+
+                    scores = open(scores_path, 'r').readlines()[44:52]
+
+                    os.remove(scores_path)
+
+                    for i in scores:
+                        open(scores_path, 'a').writelines(i)
+
+                    with aligned_path.open(mode='r') as f:
+                        doc.align_file = File(f, name=aligned_path.name)
+                        doc.user = request.user
+                        doc.method = method
+                        doc.tree_type = tree_type
+                        doc.molecule_type = molecule_type
+                        doc.alignment_filetype = alignment_filetype
+                        doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                "{}_filogenetik_ağaç.jpg".format(request.user))
+                        doc.save()
+
+                    with stats_path.open(mode='r') as stats_file_obj:
+                        doc.stats = File(stats_file_obj, name=stats_path.name)
+                        doc.save()
+
+                    with score_path.open(mode='r') as file_obj:
+                        doc.scores = File(file_obj, name=score_path.name)
+                        doc.save()
+                    results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
+
+                    os.remove(input_file)
+                    os.remove(output_file)
+                    os.remove(align_file)
+                    os.remove(stats)
+                    os.remove(scores_path)
+                    os.remove(dnd_file)
+                    os.remove(tree_file)
+
+                    return render(request, "bioinformatic/alignments/clustal.html",
+                                  {'results': results, 'bre': "ClustalW2 Multiple Sekans Alignment Sonuçları"})
+
+                except Bio.Application.ApplicationError:
+                    os.remove(
+                        os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+
+                    return render(request, 'bioinformatic/fasta/notfound.html', {
+                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+            elif method == "omega":
+
+                try:
+                    user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
+                    if Path(user_path).exists():
+                        pass
+                    else:
+                        os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
+
+                    if sys.platform.startswith('win32'):
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
+                                                         'clustal-omega-1.2.2-win64/clustalo.exe')
+                    elif sys.platform.startswith('linux'):
+                        clustal_omega_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps',
+                                                         'clustalo-1.2.4-Ubuntu-32-bit')
+
+                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                              '{}'.format(form.cleaned_data['file']))
+                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
+                    output_path = Path(output_file)
+                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
+                    aligned_path = Path(align_file)
+                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
+
+                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
+                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
+
+                    records = SeqIO.parse(input_file, "fasta")
+
+                    doc = MultipleSequenceAlignment()
+
+                    seq_id = []
+
+                    for record in records:
+                        seq_id.append(record.id)
+
+                    if len(seq_id) < 3:
+                        return render(request, "bioinformatic/fasta/notfound.html",
+                                      {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                       'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+                    clustal_omega_cline = ClustalOmegaCommandline(clustal_omega_exe,
+                                                                  infile=input_file,
+                                                                  outfile=output_path,
+                                                                  force=True,
+                                                                  verbose=True,
+                                                                  auto=True,
+                                                                  usekimura="yes")
+                    if sys.platform.startswith('win32'):
+                        assert os.path.isfile(clustal_omega_exe)
+                        stdout, stderr = clustal_omega_cline()
+
+                    elif sys.platform.startswith('linux'):
+                        subprocess.Popen(str(clustal_omega_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE, universal_newlines=True,
+                                         shell=(sys.platform != "win32"))
+
+                    AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
+                                    molecule_type=molecule_type)
+                    alignment = AlignIO.read(align_file, f'{alignment_filetype}')
+                    calculator = DistanceCalculator('identity')
+
+                    constructor = DistanceTreeConstructor(calculator, method=tree_type)
+                    tree = constructor.build_tree(alignment)
+
+                    Phylo.write(tree, tree_file, "phyloxml")
+
+                    Phylo.draw(tree, do_show=False)
+
+                    plt.xlabel('Dal uzunluğu')
+                    plt.ylabel('Taksonomi')
+
+                    if tree_type == "nj":
+                        plt.title('Neighbor Joining Ağacı')
+                    elif tree_type == "upgma":
+                        plt.title('UPGMA Ağacı')
+
+                    plt.suptitle(f'{method.upper()}')
+
+                    plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                             "{}_filogenetik_ağaç.jpg".format(request.user)))
+
+                    with aligned_path.open(mode='r') as f:
+                        doc.align_file = File(f, name=aligned_path.name)
+                        doc.user = request.user
+                        doc.method = method
+                        doc.tree_type = tree_type
+                        doc.molecule_type = molecule_type
+                        doc.alignment_filetype = alignment_filetype
+                        doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
+                                                "{}_filogenetik_ağaç.jpg".format(request.user))
+                        doc.save()
+
+                    results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method,
+                                                                             algoritma=tree_type).latest(
+                        'created')
+
+                    os.remove(input_file)
+                    os.remove(output_path)
+                    os.remove(align_file)
+                    os.remove(tree_file)
+
+                    return render(request, 'bioinformatic/alignments/omega.html',
+                                  {'bre': 'Omega Multiple Sekans Alignment Sonuçları', 'results': results})
+
+                except Bio.Application.ApplicationError:
+                    os.remove(
+                        os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+
+                    return render(request, 'bioinformatic/fasta/notfound.html', {
+                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+    return render(request, 'bioinformatic/alignments/multiple.html',
+                  {'form': form, 'bre': 'Multiple Sekans Alignment'})
+
