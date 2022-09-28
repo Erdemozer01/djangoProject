@@ -169,7 +169,7 @@ def maxlikehood(request):
                     if sys.platform.startswith('win32'):
                         cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
                     elif sys.platform.startswith('linux'):
-                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm", "bin", "codeml")
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "codeml")
                     try:
                         cml = codeml.Codeml()
                         cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
@@ -342,7 +342,7 @@ def maxlikehood(request):
                     if sys.platform.startswith('win32'):
                         cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "baseml.exe")
                     elif sys.platform.startswith('linux'):
-                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm", "bin", "baseml")
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "baseml")
                     try:
                         cml = codeml.Codeml()
                         cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
@@ -510,7 +510,7 @@ def maxlikehood(request):
                     if sys.platform.startswith('win32'):
                         cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "basemlg.exe")
                     elif sys.platform.startswith('linux'):
-                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "palm", "bin", "basemlg")
+                        cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "basemlg")
                     try:
                         cml = codeml.Codeml()
                         cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
