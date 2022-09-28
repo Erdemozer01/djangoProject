@@ -22,9 +22,28 @@ def blog_dashboard(request):
         'about': About.objects.all(),
         'terms': Terms.objects.all(),
         'contact': Contact.objects.all(),
-        'title': Titles.objects.all()
+        'title': Titles.objects.all(),
+        'social': Social.objects.all()
     })
 
+
+class AddSocialView(CreateView):
+    template_name = 'accounts/socialmedia.html'
+    model = Social
+    fields = '__all__'
+    success_url = reverse_lazy('blog_dashboard')
+
+    def get_context_data(self, **kwargs):
+        context = super(AddSocialView, self).get_context_data(**kwargs)
+        context['bre'] = 'Site Başlığı'
+        return context
+
+
+def delete_social(request):
+    Social.objects.all().delete()
+    if Social.DoesNotExist:
+        return redirect('blog_dashboard')
+    return redirect('blog_dashboard')
 
 class AddTitlesView(CreateView):
     template_name = 'accounts/title.html'

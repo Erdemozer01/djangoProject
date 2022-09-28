@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    {% if not user.is_anonymous %}
+    {% if request.user.is_superuser %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-9 col-12 mx-auto">
@@ -33,15 +33,14 @@
             </div>
         </div>
     {% else %}
-        <section class="my-10">
+        <section class="my-5">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 my-auto">
-                        <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
+                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız Gerekmekte</h1>
                         <a href="{% url "blog:home" %}">
                             <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
                         </a>
-
                     </div>
                     <div class="col-lg-6 my-auto position-relative">
                         <img class="w-100 position-relative"
