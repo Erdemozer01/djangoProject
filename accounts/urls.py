@@ -1,7 +1,8 @@
 from django.urls import path, include
 from .views import UsersView, MessageDetail, MessageDeleteView, UserEditView, UserAddView, UserDeleteView, \
     ProfileView, UserUpdateView, ProfileUpdateView, PasswordChance, blog_dashboard, ProfileDetailView, AddBottomView, \
-    delete_bottom, AddAboutView, delete_about, AddTermsView, delete_terms, AddTitlesView, delete_titles, PostsDashBoardView
+    delete_bottom, AddAboutView, delete_about, AddTermsView, delete_terms, AddTitlesView, delete_titles, PostsDashBoardView, \
+    AddSocialView, delete_social, AddCoverView, delete_cover, AddContactView, delete_contact
 from accounts.views import UserRegister
 
 urlpatterns = [
@@ -11,13 +12,19 @@ urlpatterns = [
     path('dashboard/posts/', PostsDashBoardView.as_view(), name="posts_dashboard"),
     path('blog/models/', blog_dashboard, name="blog_dashboard"),
     path('bottom/models/', AddBottomView.as_view(), name="add_bottom_dashboard"),
+    path('contact/models/', AddContactView.as_view(), name="add_contact_dashboard"),
     path('bottom/delete/', delete_bottom, name="delete_bottom_dashboard"),
     path('about/delete/', delete_about, name="delete_about_dashboard"),
     path('about/models/', AddAboutView.as_view(), name="add_about_dashboard"),
     path('terms/models/', AddTermsView.as_view(), name="add_terms_dashboard"),
     path('title/models/', AddTitlesView.as_view(), name="add_title_dashboard"),
+    path('social-models/', AddSocialView.as_view(), name="add_social_dashboard"),
+    path('top-cover-models/', AddCoverView.as_view(), name="add_top_cover_dashboard"),
     path('terms/delete/', delete_terms, name="delete_terms_dashboard"),
+    path('social/delete/', delete_social, name="delete_social_dashboard"),
     path('title/delete/', delete_titles, name="delete_title_dashboard"),
+    path('contact/delete/', delete_contact, name="delete_contact_dashboard"),
+    path('top_cover/delete/', delete_cover, name="delete_top_cover_dashboard"),
     path('profile/detail/<int:pk>/<slug:user>/', ProfileDetailView.as_view(), name="profile_detay"),
     path('edit/<int:pk>/<slug:username>/', UserEditView.as_view(), name="useredit"),
     path('profile/<int:pk>/<slug:username>/', ProfileView.as_view(), name="profile"),

@@ -6,7 +6,7 @@
 {% block body %}bg-light{% endblock %}
 
 {% block content %}
-    {% if user.is_superuser or user.is_staff %}
+    {% if request.user.is_superuser or request.user.is_staff %}
         <section class="pt-3 pt-md-5 pb-md-5 pt-lg-9 mt-8 mt-md-7 mt-lg-0">
             <div class="container">
                 <div class="col-12 mx-auto pb-5">

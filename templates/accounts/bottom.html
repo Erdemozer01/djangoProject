@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    {% if request.user.is_superuser %}
+    {% if request.user.is_superuser or request.user.is_staff %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-9 col-12 mx-auto">

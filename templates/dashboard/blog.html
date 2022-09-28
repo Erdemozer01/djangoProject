@@ -6,10 +6,10 @@
 {% block stylesheets %}{% endblock %}
 
 {% block content %}
-    {% if request.user.is_superuser %}
+    {% if request.user.is_superuser or request.user.is_staff %}
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 col-lg-12 col-sm-12">
                     <div class="card">
                         <!-- Card header -->
                         <div class="card-header pb-0">
@@ -25,70 +25,29 @@
                                     <tbody class="mx-auto">
 
                                     <tr>
-                                        <td class="text-sm">
-                                            Alt Kapak Yazısı
-                                            {% if bottom %}
-                                                {% for foo in bottom %}
-                                                    <span class="mx-3">{{ foo.title }}</span>
+                                        <td class="text-sm">Üst Kapak
+                                            {% if cover %}
+                                                {% for foo in cover %}
+                                                    <span class="mx-3">{{ foo.name }}</span>
                                                     <span class="mx-3">{{ foo.created }}</span>
                                                 {% endfor %}
                                             {% else %}
                                                 <span class="mx-3">Bulunamadı</span>
                                             {% endif %}
-                                            <a href="{% url "delete_bottom_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Sil">
-                                                    <i class="fas fa-trash text-danger"> Sil</i>
-                                            <a href="{% url "add_bottom_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Ekle" style="margin-right: 20px">
-                                                    <i class="fas fa-plus text-success"></i>
+                                            <a href="{% url "delete_top_cover_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-trash text-danger"> Sil</i>
+                                            </a>
+                                            <a href="{% url "add_top_cover_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-plus text-success"></i>
                                                 <span class="text-info"> Ekle</span>
+                                            </a>
                                         </td>
                                     </tr>
 
-                                    <tr>
-                                        <td class="text-sm">Hakkımızda
-                                             {% if about %}
-                                                {% for foo in about %}
-                                                    <span class="mx-3">{{ foo.name }}</span>
-                                                    <span class="mx-3">{{ foo.created }}</span>
-                                                {% endfor %}
-                                            {% else %}
-                                                <span class="mx-3">Bulunamadı</span>
-                                            {% endif %}
-                                           <a href="{% url "delete_about_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Sil">
-                                                    <i class="fas fa-trash text-danger"> Sil</i>
-                                            <a href="{% url "add_about_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Ekle" style="margin-right: 20px">
-                                                    <i class="fas fa-plus text-success"></i>
-                                                <span class="text-info"> Ekle</span>
-                                        </td>
-                                    </tr>
-                                     <tr>
-                                        <td class="text-sm">Koşul Ve Şartlar
-                                            {% if terms %}
-                                                {% for foo in terms %}
-                                                    <span class="mx-3">{{ foo.name }}</span>
-                                                    <span class="mx-3">{{ foo.created }}</span>
-                                                {% endfor %}
-                                            {% else %}
-                                                <span class="mx-3">Bulunamadı</span>
-                                            {% endif %}
-                                           <a href="{% url "delete_terms_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Sil">
-                                                    <i class="fas fa-trash text-danger"> Sil</i>
-                                            <a href="{% url "add_terms_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Ekle" style="margin-right: 20px">
-                                                    <i class="fas fa-plus text-success"></i>
-                                                <span class="text-info"> Ekle</span>
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td class="text-sm">Site Başlığı
                                             {% if title %}
@@ -100,46 +59,138 @@
                                                 <span class="mx-3">Bulunamadı</span>
                                             {% endif %}
                                             <a href="{% url "delete_title_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Sil">
-                                                    <i class="fas fa-trash text-danger"> Sil</i>
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-trash text-danger"> Sil</i>
+                                            </a>
                                             <a href="{% url "add_title_dashboard" %}" class="float-end"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Ekle" style="margin-right: 20px">
-                                                    <i class="fas fa-plus text-success"></i>
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-plus text-success"></i>
                                                 <span class="text-info"> Ekle</span>
+                                            </a>
                                         </td>
                                     </tr>
+
+                                    <tr>
+                                        <td class="text-sm">
+                                            Alt Kapak Yazısı
+                                            {% if bottom %}
+                                                {% for foo in bottom %}
+                                                    <span class="mx-3">{{ foo.title }}</span>
+                                                    <span class="mx-3">{{ foo.created }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="mx-3">Bulunamadı</span>
+                                            {% endif %}
+                                            <a href="{% url "delete_bottom_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-trash text-danger"> Sil</i>
+                                            </a>
+                                            <a href="{% url "add_bottom_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-plus text-success"></i>
+                                                <span class="text-info"> Ekle</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="text-sm">Hakkımızda
+                                            {% if about %}
+                                                {% for foo in about %}
+                                                    <span class="mx-3">{{ foo.name }}</span>
+                                                    <span class="mx-3">{{ foo.created }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="mx-3">Bulunamadı</span>
+                                            {% endif %}
+                                            <a href="{% url "delete_about_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-trash text-danger"> Sil</i>
+                                            </a>
+                                            <a href="{% url "add_about_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-plus text-success"></i>
+                                                <span class="text-info"> Ekle</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="text-sm">Koşul ve Şartlar
+                                            {% if terms %}
+                                                {% for foo in terms %}
+                                                    <span class="mx-3">{{ foo.name }}</span>
+                                                    <span class="mx-3">{{ foo.created }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="mx-3">Bulunamadı</span>
+                                            {% endif %}
+                                            <a href="{% url "delete_terms_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-trash text-danger"> Sil</i>
+                                            </a>
+                                            <a href="{% url "add_terms_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-plus text-success"></i>
+                                                <span class="text-info"> Ekle</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+
                                     <tr>
                                         <td class="text-sm">Sosyal Medya
-
-                                            <a href="#" class="btn bg-gradient-dark btn-sm mb-0 float-end">-&nbsp;
-                                                Sil</a>
-                                            <a href="#" class="btn bg-gradient-dark btn-sm mb-0 float-end mx-3">+&nbsp;
-                                                Ekle</a>
+                                            {% if social %}
+                                                {% for foo in social %}
+                                                    <span class="mx-3">{{ foo.name }}</span>
+                                                    <span class="mx-3">{{ foo.created }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="mx-3">Bulunamadı</span>
+                                            {% endif %}
+                                            <a href="{% url "delete_social_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-trash text-danger"> Sil</i>
+                                            </a>
+                                            <a href="{% url "add_social_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-plus text-success"></i>
+                                                <span class="text-info"> Ekle</span>
+                                            </a>
                                         </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="text-sm">Üst Kapak
-
-                                            <a href="#" class="btn bg-gradient-dark btn-sm mb-0 float-end">-&nbsp;
-                                                Sil</a>
-                                            <a href="#" class="btn bg-gradient-dark btn-sm mb-0 float-end mx-3">+&nbsp;
-                                                Ekle</a>
-                                        </td>
-
                                     </tr>
 
                                     <tr>
                                         <td class="text-sm">İletişim
-
-                                            <a href="#" class="btn bg-gradient-dark btn-sm mb-0 float-end">-&nbsp;
-                                                Sil</a>
-                                            <a href="#" class="btn bg-gradient-dark btn-sm mb-0 float-end mx-3">+&nbsp;
-                                                Ekle</a>
+                                            {% if contact %}
+                                                {% for foo in social %}
+                                                    <span class="mx-3">{{ foo.name }}</span>
+                                                    <span class="mx-3">{{ foo.created }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="mx-3">Bulunamadı</span>
+                                            {% endif %}
+                                            <a href="{% url "delete_contact_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-trash text-danger"> Sil </i>
+                                            </a>
+                                            <a href="{% url "add_contact_dashboard" %}" class="float-end"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Ekle" style="margin-right: 20px">
+                                                <i class="fas fa-plus text-success"></i>
+                                                <span class="text-info"> Ekle</span>
+                                            </a>
                                         </td>
-
                                     </tr>
 
                                     </tbody>
@@ -151,11 +202,12 @@
             </div>
         </div>
     {% else %}
-       <section class="my-5">
+        <section class="my-5">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 my-auto">
-                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız Gerekmekte</h1>
+                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız
+                            Gerekmekte</h1>
                         <a href="{% url "blog:home" %}">
                             <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
                         </a>

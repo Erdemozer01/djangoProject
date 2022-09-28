@@ -7,7 +7,7 @@
 {% block stylesheets %}{% endblock %}
 
 {% block content %}
-    {% if request.user.is_superuser %}
+    {% if request.user.is_superuser or request.user.is_staff %}
         <div class="container-fluid py-4">
             <div class="row">
                 <div class="col-12">

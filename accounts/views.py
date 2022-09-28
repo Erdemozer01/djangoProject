@@ -10,7 +10,7 @@ from .forms import UserRegistrationForm, UserEditForm, UserCreationForm, Profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Profile
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import PasswordChangeView, LogoutView
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.views.generic import DetailView, CreateView
 
@@ -23,8 +23,46 @@ def blog_dashboard(request):
         'terms': Terms.objects.all(),
         'contact': Contact.objects.all(),
         'title': Titles.objects.all(),
-        'social': Social.objects.all()
+        'social': Social.objects.all(),
+        'cover': Cover.objects.all()
     })
+
+class AddContactView(CreateView):
+    template_name = 'accounts/contact.html'
+    model = Contact
+    fields = '__all__'
+    success_url = reverse_lazy('blog_dashboard')
+
+    def get_context_data(self, **kwargs):
+        context = super(AddContactView, self).get_context_data(**kwargs)
+        context['bre'] = 'Site Başlığı'
+        return context
+
+
+def delete_contact(request):
+    Contact.objects.all().delete()
+    if Contact.DoesNotExist:
+        return redirect('blog_dashboard')
+    return redirect('blog_dashboard')
+
+
+class AddCoverView(CreateView):
+    template_name = 'accounts/topcover.html'
+    model = Cover
+    fields = '__all__'
+    success_url = reverse_lazy('blog_dashboard')
+
+    def get_context_data(self, **kwargs):
+        context = super(AddCoverView, self).get_context_data(**kwargs)
+        context['bre'] = 'Site Başlığı'
+        return context
+
+
+def delete_cover(request):
+    Cover.objects.all().delete()
+    if Cover.DoesNotExist:
+        return redirect('blog_dashboard')
+    return redirect('blog_dashboard')
 
 
 class AddSocialView(CreateView):
@@ -44,6 +82,7 @@ def delete_social(request):
     if Social.DoesNotExist:
         return redirect('blog_dashboard')
     return redirect('blog_dashboard')
+
 
 class AddTitlesView(CreateView):
     template_name = 'accounts/title.html'
@@ -106,10 +145,11 @@ def delete_bottom(request):
     return redirect('blog_dashboard')
 
 
-class PostsDashBoardView(ListView, LoginRequiredMixin):
+class PostsDashBoardView(ListView, LoginRequiredMixin, User):
     template_name = 'accounts/posts.html'
     model = Posts
     queryset = Posts.objects.all().order_by("-id")
+    login_url = reverse_lazy('login')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(PostsDashBoardView, self).get_context_data(**kwargs)

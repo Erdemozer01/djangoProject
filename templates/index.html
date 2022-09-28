@@ -20,7 +20,7 @@
 
                                 <div class="ms-auto my-auto mt-lg-0 mt-4">
                                     <div class="ms-auto my-auto">
-                                        <a href="{% url "account:user_add" %}" class="btn bg-gradient-dark btn-sm mb-0"
+                                        <a href="{% url "user_add" %}" class="btn bg-gradient-dark btn-sm mb-0"
                                            target="_blank">+&nbsp; Kullanıcı Ekle</a>
                                     </div>
                                 </div>
@@ -53,13 +53,13 @@
                                             <td class="text-sm">{{ user.last_login }}</td>
                                             <td class="text-sm">{{ user.date_joined }}</td>
                                             <td class="text-sm">
-                                                <a href="{% url "account:useredit" user.pk user.username|slugify %}"
+                                                <a href="{% url "useredit" user.pk user.username|slugify %}"
                                                    class="mx-3"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-original-title="Düzenle">
                                                     <i class="fas fa-user-edit text-secondary"></i>
                                                 </a>
-                                                <a href="{% url "account:user_del" user.id %}"
+                                                <a href="{% url "user_del" user.id %}"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-original-title="Sil">
                                                     <i class="fas fa-trash text-secondary"></i>
@@ -75,20 +75,15 @@
                 </div>
             </div>
         </div>
-
-
-
-
     {% else %}
-        <section class="my-10">
+        <section class="my-5">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 my-auto">
-                        <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
+                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız Gerekmekte</h1>
                         <a href="{% url "blog:home" %}">
                             <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
                         </a>
-
                     </div>
                     <div class="col-lg-6 my-auto position-relative">
                         <img class="w-100 position-relative"
@@ -99,4 +94,4 @@
             </div>
         </section>
     {% endif %}
-{% endblock content %}
+{% endblock %}
