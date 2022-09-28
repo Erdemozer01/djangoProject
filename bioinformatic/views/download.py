@@ -184,7 +184,7 @@ def tree_download(request):
         # Return the response value
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        url = reverse("bioinformatic:multiplesequence_alignments")
+        url = reverse("bioinformatic:multiple_sequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg, 'url': url})
     try:
@@ -220,7 +220,7 @@ def clustal_alignment_download(request):
         # Return the response value
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
-        url = reverse("bioinformatic:multiplesequence_alignments")
+        url = reverse("bioinformatic:multiple_sequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
                       {"msg": msg, 'url': url})
     try:
