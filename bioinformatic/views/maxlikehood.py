@@ -146,6 +146,7 @@ def maxlikehood(request):
                         doc.user = request.user
                         doc.tree_type = tree_type
                         doc.molecule_type = molecule_type
+                        doc.alignment_filetype = "txt"
                         doc.palm_tools = palm_tools
 
                         doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
@@ -321,6 +322,7 @@ def maxlikehood(request):
                         doc.tree_type = tree_type
                         doc.molecule_type = molecule_type
                         doc.palm_tools = palm_tools
+                        doc.alignment_filetype = "txt"
                         doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                                 "{}_filogenetik_ağaç.jpg".format(request.user))
                         doc.save()
@@ -495,6 +497,7 @@ def maxlikehood(request):
                         doc.tree_type = tree_type
                         doc.molecule_type = molecule_type
                         doc.palm_tools = palm_tools
+                        doc.alignment_filetype = "txt"
                         doc.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
                                                 "{}_filogenetik_ağaç.jpg".format(request.user))
                         doc.save()
