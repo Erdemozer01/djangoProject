@@ -145,7 +145,7 @@ def delete_bottom(request):
     return redirect('blog_dashboard')
 
 
-class PostsDashBoardView(ListView, LoginRequiredMixin, User):
+class PostsDashBoardView(ListView, LoginRequiredMixin):
     template_name = 'accounts/posts.html'
     model = Posts
     queryset = Posts.objects.all().order_by("-id")

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, BlastQuery, PubMedArticle, MedlineArticle, \
-    SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment
+    SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment, BiologicalResourcesDatabases
 
 # Register your models here.
 admin.site.register(BlastQuery)
