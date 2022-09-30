@@ -14,12 +14,46 @@ class AddFastaData(forms.Form):
         )
     )
 
+    name = forms.CharField(
+        label="NAME",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': "NAME"
+            }
+        )
+    )
+
     description = forms.CharField(
         label="Description",
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Tanım'
+            }
+        )
+    )
+
+    dbxrefs = forms.CharField(
+        label="Dbxrefs",
+        required=False,
+        help_text="Boş Olabilir",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Dbxrefs'
+            }
+        )
+    )
+
+    annotations = forms.CharField(
+        label="Annotations",
+        required=False,
+        help_text="Boş Olabilir",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Annotations'
             }
         )
     )

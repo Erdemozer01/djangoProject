@@ -6,6 +6,11 @@ from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, BlastQue
 admin.site.register(BlastQuery)
 admin.site.register(MedlineArticle)
 
+@admin.register(BiologicalResourcesDatabases)
+class BiologicalResourcesDatabases(admin.ModelAdmin):
+    list_display = ['name', 'created']
+    search_fields = ['name', 'created']
+
 @admin.register(MultipleSequenceAlignment)
 class LabSlideModelAdmin(admin.ModelAdmin):
     list_display = ['user', 'method', 'tree_type', 'molecule_type', 'created']

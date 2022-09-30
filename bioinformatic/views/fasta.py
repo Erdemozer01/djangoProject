@@ -22,66 +22,6 @@ def handle_uploaded_file(f):
             destination.write(chunk)
 
 
-def fasta_read(request):
-    form = FileReadForm(request.POST or None, request.FILES or None)
-    if request.method == "POST":
-
-        if form.is_valid():
-
-            file = os.path.join(BASE_DIR, 'files\\{}'.format(form.cleaned_data['file']))
-            handle_uploaded_file(request.FILES['file'])
-
-            try:
-
-                with open(file, 'r') as f:
-                    f.read()
-
-            except UnicodeDecodeError:
-                os.remove(file)
-                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya Seçtiniz'})
-
-            records = SeqIO.parse(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), "fasta")
-
-            if FastaRead.objects.exists():
-                FastaRead.objects.all().delete()
-                for record in records:
-                    FastaRead.objects.create(gene=record.id, sequence=record.seq)
-            else:
-                for record in records:
-                    FastaRead.objects.create(gene=record.id, sequence=record.seq)
-
-            open(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])), 'r').close()
-            os.remove(os.path.join(BASE_DIR, 'files\\{}'.format(request.FILES['file'])))
-
-            if FastaRead.objects.exists():
-                return redirect('bioinformatic:lokus_find')
-            else:
-                return render(request, 'bioinformatic/fasta/notfound.html', {'msg': 'Hatalı Dosya'})
-
-        else:
-
-            form = FileReadForm(request.POST or None, request.FILES or None)
-
-    return render(request, 'bioinformatic/fasta/read.html', {'form': form, 'bre': 'Fasta Dosyası Okuması'})
-
-
-def delete_fasta(request):
-    FastaRead.objects.all().delete()
-    return redirect('bioinformatic:fasta_read')
-
-
-def GeneRegionView(request):
-    form = FastaIdForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            region = form.cleaned_data['gene']
-
-            return render(request, 'bioinformatic/fasta/sequence.html', {'object': region, 'bre': 'Analiz Sonuçları'})
-
-    return render(request, 'bioinformatic/fasta/id.html',
-                  {'form': form, 'len': FastaRead.objects.all().count(), 'bre': 'Gen Bölgeleri'})
-
-
 def fasta_writing(request):
     fastaform = FastaWritingForm(request.POST or None)
     if request.method == "POST":
@@ -137,34 +77,22 @@ def append_new_line(file_name, text_to_append):
 
 
 def fasta_add(request):
-    form = AddFastaData(request.POST or None, request.FILES)
+    form = AddFastaData(request.POST or None, request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
             try:
-
                 handle_uploaded_file(request.FILES["file"])
-
+                input_file = form.cleaned_data['file']
                 id = form.cleaned_data["id"]
+                name = form.cleaned_data['name']
                 descriptions = form.cleaned_data["description"]
+                dbxrefs = form.cleaned_data['dbxrefs']
+                annotations = form.cleaned_data['annotations']
                 sequence = form.cleaned_data["sequence"]
                 sequence = Seq(sequence)
 
-                bad_chars = [';', ':', '!', "*", "\n", '"', "\r"]
-
-                for i in bad_chars:
-                    sequence = sequence.replace(i, '')
-
-                rec1 = SeqRecord(sequence, id=id, description=descriptions)
-
-                file_path = path + "{}".format(request.FILES['file'])
-
-                print(file_path)
-
-                app = open(file_path, 'a+')
-                app.write(SeqIO.write(rec1, file_path, 'fasta'))
-                app.close()
-
-                return redirect("bioinformatic:download")
+                record = SeqRecord(sequence, id=id, name=name, description=descriptions, dbxrefs=dbxrefs, annotations=annotations)
+                print(record)
 
             except:
                 pass
