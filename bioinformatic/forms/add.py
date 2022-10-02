@@ -4,22 +4,12 @@ from django import forms
 class AddFastaData(forms.Form):
     file = forms.FileField(label='Dosya Seçiniz')
 
-    id = forms.CharField(
+    fasta_id = forms.CharField(
         label="İD",
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'id numarası'
-            }
-        )
-    )
-
-    name = forms.CharField(
-        label="NAME",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': "NAME"
             }
         )
     )
@@ -34,29 +24,7 @@ class AddFastaData(forms.Form):
         )
     )
 
-    dbxrefs = forms.CharField(
-        label="Dbxrefs",
-        required=False,
-        help_text="Boş Olabilir",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Dbxrefs'
-            }
-        )
-    )
 
-    annotations = forms.CharField(
-        label="Annotations",
-        required=False,
-        help_text="Boş Olabilir",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Annotations'
-            }
-        )
-    )
 
     sequence = forms.CharField(
         label="Sequence",

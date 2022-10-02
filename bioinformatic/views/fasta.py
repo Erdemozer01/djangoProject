@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect
-from django import forms
-from bioinformatic.forms.file import FileReadForm, FastaIdForm
 from bioinformatic.forms.writing import FastaWritingForm
 from bioinformatic.forms.add import AddFastaData
 from django.views import generic
 from Bio import SeqIO
-from bioinformatic.models import FastaRead
 from pathlib import Path
 import os
 
@@ -69,7 +66,7 @@ def append_new_line(file_name, text_to_append):
         # Move read cursor to the start of file.
         file_object.seek(0)
         # If file is not empty then append '\n'
-        data = file_object.read(100)
+        data = file_object.read(100000)
         if len(data) > 0:
             file_object.write("\n")
         # Append text at the end of file
@@ -83,19 +80,42 @@ def fasta_add(request):
             try:
                 handle_uploaded_file(request.FILES["file"])
                 input_file = form.cleaned_data['file']
-                id = form.cleaned_data["id"]
-                name = form.cleaned_data['name']
-                descriptions = form.cleaned_data["description"]
-                dbxrefs = form.cleaned_data['dbxrefs']
-                annotations = form.cleaned_data['annotations']
+                fasta_id = form.cleaned_data["fasta_id"]
+                description = form.cleaned_data['description']
                 sequence = form.cleaned_data["sequence"]
-                sequence = Seq(sequence)
+                file_fasta = os.path.join(BASE_DIR, "files", f"{input_file}")
 
-                record = SeqRecord(sequence, id=id, name=name, description=descriptions, dbxrefs=dbxrefs, annotations=annotations)
-                print(record)
+                record = SeqRecord(
+                    seq=Seq(sequence),
+                    id=fasta_id.encode().decode(encoding="utf-8", errors="ignore"),
+                    description=description
+                ).format("fasta")
 
-            except:
-                pass
+                read_input = open(file_fasta, "r").read()
+
+                if "LOCUS" in read_input:
+                    os.remove(file_fasta)
+                    msg = "Lütfen Fasta Dosyası Seçiniz"
+                    return render(request, "bioinformatic/fasta/notfound.html", {
+                        "msg": msg
+                    })
+                if "#NEXUS" in read_input:
+                    os.remove(file_fasta)
+                    msg = "Lütfen Fasta Dosyası Seçiniz."
+                    return render(request, "bioinformatic/fasta/notfound.html", {
+                        "msg": msg
+                    })
+                append_new_line(file_fasta, str(record))
+                os.rename(file_fasta, os.path.join(BASE_DIR, "files", "file.fasta"))
+                return redirect("bioinformatic:fasta_download")
+
+            except UnicodeDecodeError:
+                os.remove(file_fasta)
+                msg = "Lütfen Fasta Dosyası Seçiniz."
+                return render(request, "bioinformatic/fasta/notfound.html", {
+                    "msg": msg
+                })
+
         else:
 
             msg = "Bir hata meydana geldi"
@@ -108,3 +128,5 @@ def fasta_add(request):
         "form": form,
         "bre": "Fasta Dosyası Veri Ekleme"
     })
+
+
