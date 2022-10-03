@@ -218,3 +218,41 @@ class BiologicalResourcesDatabases(models.Model):
     class Meta:
         verbose_name = "Biyolojik Kaynaklar ve Veri Tabanları"
         verbose_name_plural = "Biyolojik Kaynaklar ve Veri Tabanları"
+
+
+BLAST_PROGRAM = (
+    ('', '------------'),
+    ('blastn', 'BLASTN'),
+    ('blastp', 'BLASTP'),
+    ('blastx', 'BLASTX'),
+    ('tblastn', 'TBLASTN'),
+    ('tblastn', 'TBLASTN'),
+)
+
+BLAST_DATABASE = (
+    ('', '------------'),
+    ('nr', 'BLASTN'),
+    ('nt', 'BLASTP'),
+
+)
+
+def upload_to_blast(instance, filename):
+    return 'blast/{username}/{username}_{filename}'.format(
+        username=instance.user.username, filename=filename)
+
+
+class BlastQueryResults(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
+    program = models.CharField(choices=BLAST_PROGRAM, verbose_name="Blast Programı Seçiniz", max_length=1000)
+    database = models.CharField(choices=BLAST_DATABASE, verbose_name="Blast Programı Seçiniz", max_length=1000)
+    input_file = models.FileField(verbose_name="Fasta Dosyası", upload_to=upload_to_blast)
+    output_file = models.FileField(verbose_name="BlastXML Dosyası", upload_to=upload_to_blast, blank=True, null=True)
+    hsp_file = models.FileField(verbose_name="HSP Dosyası", upload_to=upload_to_blast, blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name = "Blast Metodu"
+        verbose_name_plural = "Blast Metodu"

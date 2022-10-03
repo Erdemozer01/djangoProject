@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from django.http import HttpResponse
 from django.shortcuts import render, reverse
-
+from bioinformatic.models import MultipleSequenceAlignment
 
 def swiss_download(request):
     # Define Django project base directory
@@ -459,6 +459,8 @@ def local_alignments_download(request):
         os.remove(filepath)
 
 
+
+
 def muscle_aligned_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -470,6 +472,60 @@ def muscle_aligned_download(request):
     # Define the full file path
     filepath = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user.username),
                             "{}_aligned.{}".format(request.user.username, get_file_type))
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg})
+    finally:
+        os.remove(filepath)
+
+
+def blast_xml_download(request):
+    # Define Django project base directory
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    # Define text file name
+    filename = "{}_my_blast.xml".format(request.user.username)
+    # Define the full file path
+    filepath = os.path.join(BASE_DIR, "media", 'blast', '{}'.format(request.user.username),
+                            "{}_my_blast.xml".format(request.user.username))
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg})
+    finally:
+        os.remove(filepath)
+
+
+def blast_hsp_download(request):
+    # Define Django project base directory
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    # Define text file name
+    filename = "{}_hsp.txt".format(request.user.username)
+    # Define the full file path
+    filepath = os.path.join(BASE_DIR, "media", 'blast', '{}'.format(request.user.username),
+                            "{}_hsp.txt".format(request.user.username))
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type

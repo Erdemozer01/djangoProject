@@ -1,50 +1,29 @@
 import os.path
-from Bio import SeqIO
-from Bio.Seq import Seq
+
+from Bio.Blast import NCBIWWW, NCBIXML
 from pathlib import Path
-from Bio import motifs
+from Bio import SeqIO
 
 BASE_DIR = Path(__file__).resolve().parent
-fasta = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
-fasta_reading = SeqIO.parse(fasta, "fasta")
 
-instances2 = []
+input_fasta_path = os.path.join(BASE_DIR, "bioinformatic", "files", "turtles.fasta.txt")
 
-for seq in fasta_reading:
-    instances2.append(seq.seq[:60])
+record = next(SeqIO.parse(input_fasta_path, format="fasta"))
 
-print(instances2)
-import pandas as pd
+result_handle = NCBIWWW.qblast("blastn", "nt", record.format("fasta"))
 
-motif = motifs.create(instances2)
-print("counts".title())
-print(motif.counts)
-print("instances".title())
-print(motif.instances)
-print("consensus".title())
-print(motif.consensus)
-print("anticonsensus".title())
-with open("consensus.txt", "w") as cons_file:
-    cons_file.write("Consensus: ")
-    cons_file.write(str(motif.consensus) + "\n")
+save_file = open("my_blast.xml", "w")
 
-with open("consensus.txt", "a") as cons_file:
-    cons_file.write("Anticonsensus: ")
-    cons_file.write(str(motif.anticonsensus))
+save_file.write(result_handle.read())
 
-with open("consensus.txt", "a") as cons_file:
-    cons_file.write("Anticonsensus: ")
-    cons_file.write(str(motif.anticonsensus))
+save_file.close()
 
-print(motif.anticonsensus)
-print("position specific scoring matrices".title())
-print(motif.pssm)
-print("position weight matrices".title())
-print(motif.pwm)
-print(motif.mask)
+result_handle = open("my_blast.xml")
 
-df = pd.DataFrame(motif.pwm).to_excel("pwm.xlsx")
+blast_records = NCBIXML.read(result_handle)
 
-df2 = pd.DataFrame(motif.pssm).to_excel("pssm.xlsx")
 
-df3 = pd.DataFrame(motif.counts).to_excel("counts.xlsx")
+for blast_record in blast_records:
+    print(blast_record.hits)
+
+

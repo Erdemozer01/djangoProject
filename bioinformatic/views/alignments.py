@@ -1,4 +1,3 @@
-from django.contrib import messages
 import os.path
 import sys
 from django.core.files import File
