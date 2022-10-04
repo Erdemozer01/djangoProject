@@ -17,6 +17,7 @@ BLAST_DATABASE = (
 
 
 class BlastXMLForm(forms.Form):
+    input_file = forms.FileField(label="Fasta Dosyası")
     program = forms.ChoiceField(choices=BLAST_PROGRAM, label="Blast Programı Seçiniz")
     database = forms.ChoiceField(choices=BLAST_DATABASE, label="Blast Veritabanı Seçiniz")
-    input_file = forms.FileField(label="Fasta Dosyası")
+
