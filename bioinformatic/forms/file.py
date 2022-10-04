@@ -1,24 +1,9 @@
 from django import forms
-from bioinformatic.models import FastaRead, GenbankRead, FileUploadModel, BlastQueryResults
+from bioinformatic.models import FastaRead, GenbankRead, FileUploadModel
 
 FILE_TYPE = (
     ("fasta", "fasta"),
     ("genbank", "genbank"),
-)
-
-BLAST_PROGRAM = (
-    ('', '------------'),
-    ('blastn', 'BLASTN'),
-    ('blastp', 'BLASTP'),
-    ('blastx', 'BLASTX'),
-    ('tblastn', 'TBLASTN'),
-    ('tblastn', 'TBLASTN'),
-)
-
-BLAST_DATABASE = (
-    ('', '------------'),
-    ('nr', 'nr'),
-    ('nt', 'nt'),
 )
 
 
@@ -42,12 +27,6 @@ class GenbankIdForm(forms.Form):
 
 class XmlIdForm(forms.Form):
     hit_id = forms.Textarea()
-
-
-class BlastXMLForm(forms.Form):
-    program = forms.ChoiceField(choices=BLAST_PROGRAM, label="Blast Programı Seçiniz")
-    database = forms.ChoiceField(choices=BLAST_DATABASE, label="Blast Veritabanı Seçiniz")
-    input_file = forms.FileField(label="Fasta Dosyası")
 
 
 class FileUploadModelForm(forms.ModelForm):

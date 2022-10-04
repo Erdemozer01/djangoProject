@@ -6,7 +6,7 @@ from Bio import SeqIO
 
 BASE_DIR = Path(__file__).resolve().parent
 
-input_fasta_path = os.path.join(BASE_DIR, "bioinformatic", "files", "turtles.fasta.txt")
+input_fasta_path = os.path.join(BASE_DIR, "bioinformatic", "files", "opuntia.fasta.txt")
 
 record = next(SeqIO.parse(input_fasta_path, format="fasta"))
 
@@ -20,10 +20,24 @@ save_file.close()
 
 result_handle = open("my_blast.xml")
 
-blast_records = NCBIXML.read(result_handle)
+from Bio import SearchIO
 
+blast_qresults = SearchIO.read("my_blast.xml", "blast-xml")
+
+blast_records = NCBIXML.parse(result_handle)
 
 for blast_record in blast_records:
-    print(blast_record.hits)
+    for alignment in blast_record.alignments:
+        for hsp in alignment.hsps:
+            print("\n")
+            print("e value:", hsp.expect)
+            print("\n")
+            print(hsp)
 
+from pydot import call_graphviz
 
+from Bio import Phylo
+
+tree = Phylo.parse("my_blast.xml", "phyloxml")
+
+Phylo.draw(tree)

@@ -1,14 +1,22 @@
 from django import forms
-from bioinformatic.models import BlastQuery
+
+BLAST_PROGRAM = (
+    ('', '------------'),
+    ('blastn', 'BLASTN'),
+    ('blastp', 'BLASTP'),
+    ('blastx', 'BLASTX'),
+    ('tblastn', 'TBLASTN'),
+    ('tblastn', 'TBLASTN'),
+)
+
+BLAST_DATABASE = (
+    ('', '------------'),
+    ('nr', 'nr'),
+    ('nt', 'nt'),
+)
 
 
-class BlastResultForm(forms.ModelForm):
-    class Meta:
-        model = BlastQuery
-        fields = ['blast']
-
-
-
-
-
-
+class BlastXMLForm(forms.Form):
+    program = forms.ChoiceField(choices=BLAST_PROGRAM, label="Blast Programı Seçiniz")
+    database = forms.ChoiceField(choices=BLAST_DATABASE, label="Blast Veritabanı Seçiniz")
+    input_file = forms.FileField(label="Fasta Dosyası")

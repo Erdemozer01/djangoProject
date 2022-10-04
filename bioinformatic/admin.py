@@ -1,21 +1,23 @@
 from django.contrib import admin
-from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, BlastQuery, PubMedArticle, MedlineArticle, \
+from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, PubMedArticle, MedlineArticle, \
     SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment, BiologicalResourcesDatabases
 
 # Register your models here.
-admin.site.register(BlastQuery)
 admin.site.register(MedlineArticle)
+
 
 @admin.register(BiologicalResourcesDatabases)
 class BiologicalResourcesDatabases(admin.ModelAdmin):
     list_display = ['name', 'created']
     search_fields = ['name', 'created']
 
+
 @admin.register(MultipleSequenceAlignment)
 class LabSlideModelAdmin(admin.ModelAdmin):
     list_display = ['user', 'method', 'tree_type', 'molecule_type', 'created']
     list_filter = ['user', 'method', 'tree_type', 'molecule_type', 'created']
     search_fields = ['user', 'method', 'tree_type', 'created']
+
 
 @admin.register(LabSlideModel)
 class LabSlideModelAdmin(admin.ModelAdmin):
@@ -49,4 +51,3 @@ class SwissProtModelAdmin(admin.ModelAdmin):
 @admin.register(BigFileUploadModel)
 class BigFileUploadModelAdmin(admin.ModelAdmin):
     list_display = ['big_file', 'created']
-

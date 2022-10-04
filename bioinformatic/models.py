@@ -54,15 +54,6 @@ class GenbankRead(models.Model):
         verbose_name_plural = "Genbank Okumaları"
 
 
-class BlastQuery(models.Model):
-    blast = models.TextField()
-
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
-
-    class Meta:
-        ordering = ['-created']
-
-
 class PubMedArticle(models.Model):
     email = models.EmailField()
 

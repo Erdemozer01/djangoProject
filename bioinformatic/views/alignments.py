@@ -335,6 +335,7 @@ def MultipleSeqAlignment(request):
                     with score_path.open(mode='r') as file_obj:
                         doc.scores = File(file_obj, name=score_path.name)
                         doc.save()
+
                     results = MultipleSequenceAlignment.objects.all().filter(user=request.user).latest('created')
 
                     os.remove(input_file)

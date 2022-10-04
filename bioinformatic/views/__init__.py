@@ -8,7 +8,7 @@ from .download import fasta_download, local_alignments_download, global_alignmen
     PhyloXML_download, blast_xml_download, blast_hsp_download
 from .genbank import genbank_read, delete_genbank, genbank_writing, GenBankResultView, GenbankDetailView
 from .alignments import global_alignment, local_alignment, MultipleSeqAlignment
-from .blast import xml_file, blast_result_delete
+from .blast import fasta_blast_tools
 from .entrez import entrez
 from .pubmed import pubmed
 from .medline import medline_article

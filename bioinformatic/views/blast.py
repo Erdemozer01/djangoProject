@@ -2,57 +2,17 @@ import os
 from pathlib import Path
 from django.contrib.auth.decorators import login_required
 from Bio import SearchIO, SeqIO
-from django.shortcuts import render, redirect, get_object_or_404
-from bioinformatic.forms.file import BlastXMLForm
-from bioinformatic.forms.blast import BlastResultForm
+from django.shortcuts import render, redirect
+from bioinformatic.forms.blast import BlastXMLForm
 from bioinformatic.views.genbank import handle_uploaded_file
-from bioinformatic.models import BlastQuery, BlastQueryResults
+from bioinformatic.models import BlastQueryResults
 from Bio.Blast import NCBIWWW, NCBIXML
 from django.core.files import File
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-path = os.path.join(BASE_DIR, 'files\\')
-
-blast_query = None
-hit_id_result = None
-form = BlastResultForm(instance=blast_query)
-
-BLAST_PROGRAM = (
-    ('', '------------'),
-    ('blastn', 'BLASTN'),
-    ('blastp', 'BLASTP'),
-    ('blastx', 'BLASTX'),
-    ('tblastn', 'TBLASTN'),
-    ('tblastn', 'TBLASTN'),
-)
-
-BLAST_DATABASE = (
-    ('', '------------'),
-    ('nr', 'BLASTN'),
-    ('nt', 'BLASTP'),
-)
-
-
-def upload_to(instance, filename):
-    return 'msa/{username}/{username}_{filename}'.format(
-        username=instance.user.username, filename=filename)
-
-
-def append_new_line(file_name, text_to_append):
-    """Append given text as a new line at the end of file"""
-    # Open the file in append & read mode ('a+')
-    with open(file_name, "a+") as file_object:
-        # Move read cursor to the start of file.
-        file_object.seek(0)
-        # If file is not empty then append '\n'
-        data = file_object.read(100)
-        if len(data) > 0:
-            file_object.write("\n")
-        # Append text at the end of file
-        file_object.write(text_to_append)
 
 @login_required
-def xml_file(request):
+def fasta_blast_tools(request):
     global hit_id_result
     form = BlastXMLForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
@@ -60,12 +20,12 @@ def xml_file(request):
             handle_uploaded_file(request.FILES['input_file'])
             input_file_path = os.path.join(BASE_DIR, 'files', '{}'.format(form.cleaned_data['input_file']))
             blastxml_file_path = os.path.join(BASE_DIR, 'files', 'my_blast.xml')
-            hsp_file_path = os.path.join(BASE_DIR, 'files', 'hsp.txt')
             program = form.cleaned_data['program']
+            database = form.cleaned_data['database']
 
             record = next(SeqIO.parse(input_file_path, format="fasta"))
 
-            result_handle = NCBIWWW.qblast(f"{program}", "nt", record.format("fasta"))
+            result_handle = NCBIWWW.qblast(f"{program}", f"{database}", record.format("fasta"))
 
             save_file = open(blastxml_file_path, "w")
 
@@ -75,12 +35,18 @@ def xml_file(request):
 
             blast_qresult = SearchIO.read(blastxml_file_path, "blast-xml")
 
+            blast_records = NCBIXML.parse(open(blastxml_file_path))
+
             hsp_file_path = os.path.join(BASE_DIR, 'files', 'hsp.txt')
 
             file_obj = open(hsp_file_path, "w")
 
             for hsp in blast_qresult:
-                file_obj.writelines(f"{hsp}" + 3 * "\n")
+                for blast_record in blast_records:
+                    for alignment in blast_record.alignments:
+                        for hsp2 in alignment.hsps:
+                            file_obj.writelines(f"{hsp}" + 3 * "\n")
+                            file_obj.writelines(f"{hsp2}" + 3 * "\n")
 
             file_obj.close()
 
@@ -101,16 +67,17 @@ def xml_file(request):
                 blast_obj.program = program
                 blast_obj.save()
 
-            results = BlastQueryResults.objects.all().filter(user=request.user.id).latest('created')
 
+
+            os.remove(input_file_path)
+            os.remove(blastxml_file_path)
+            os.remove(hsp_file_path)
+
+            results = BlastQueryResults.objects.all().filter(user=request.user.id).latest('created')
             return render(request, 'bioinformatic/xml/result.html', {'bre': 'Blast Sonuçları', 'results':results})
 
         else:
             form = BlastXMLForm()
 
-    return render(request, 'bioinformatic/xml/read.html', {'form': form, 'bre': 'BlastXML Dosyası'})
+    return render(request, 'bioinformatic/xml/read.html', {'form': form, 'bre': 'Blast Araçları'})
 
-
-def blast_result_delete(request):
-    BlastQuery.objects.all().delete()
-    return redirect("bioinformatic:xml_file")
