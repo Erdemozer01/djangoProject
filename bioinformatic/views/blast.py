@@ -21,7 +21,7 @@ def fasta_blast_tools(request):
             input_file_path = os.path.join(BASE_DIR, 'files', '{}'.format(form.cleaned_data['input_file']))
             program = form.cleaned_data['program']
             database = form.cleaned_data['database']
-            blast_xml_file_path = os.path.join(BASE_DIR, 'files', '{}_blast.xml'.format(program))
+            blast_xml_file_path = os.path.join(BASE_DIR, 'files', '{}.xml'.format(program))
 
             record = next(SeqIO.parse(input_file_path, format="fasta"))
 
