@@ -494,11 +494,14 @@ def muscle_aligned_download(request):
 def blast_xml_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    from bioinformatic.models import BlastQueryResults
+    blast_type = BlastQueryResults.objects.all().filter(user=request.user.id).latest(
+        'created').program
     # Define text file name
-    filename = "{}_my_blast.xml".format(request.user.username)
+    filename = "{}_{}.xml".format(request.user.username, blast_type)
     # Define the full file path
     filepath = os.path.join(BASE_DIR, "media", 'blast', '{}'.format(request.user.username),
-                            "{}_my_blast.xml".format(request.user.username))
+                            "{}_{}.xml".format(request.user.username, blast_type))
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
