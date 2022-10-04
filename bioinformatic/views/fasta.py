@@ -1,3 +1,4 @@
+import Bio
 from django.shortcuts import render, redirect
 from bioinformatic.forms.writing import FastaWritingForm
 from bioinformatic.forms.add import AddFastaData
@@ -5,16 +6,16 @@ from django.views import generic
 from Bio import SeqIO
 from pathlib import Path
 import os
-
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from bioinformatic.forms.translation import DNAFastaFileTranslateForm
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
 
 
 def handle_uploaded_file(f):
-    with open(path + f.name, 'wb+') as destination:
+    with open(os.path.join(BASE_DIR, "files", f"{f.name}"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
@@ -130,3 +131,33 @@ def fasta_add(request):
     })
 
 
+def fasta_file_translate(request):
+    form = DNAFastaFileTranslateForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            try:
+                handle_uploaded_file(request.FILES['file'])
+                input_fasta_path = os.path.join(BASE_DIR, "files", f"{form.cleaned_data['file']}")
+                protein_fasta_path = os.path.join(BASE_DIR, "files", "protein.txt")
+                records = SeqIO.parse(input_fasta_path, format="fasta")
+                table = form.cleaned_data['translate_table']
+
+                protein_file = open(protein_fasta_path, "w")
+
+                for record in records:
+                    protein_file.write(f"{record.description}")
+                    protein_file.write("\n")
+                    protein_file.write("Sekans Uzunlugu: " + f"{len(record.translate().seq)}")
+                    protein_file.write("\n")
+                    protein_file.write(f"{record.translate(table=table).seq}")
+                    protein_file.write(2 * "\n")
+
+                os.remove(input_fasta_path)
+
+            except Bio.BiopythonWarning:
+                pass
+
+
+        return redirect('bioinformatic:fasta_protein_download')
+
+    return render(request, "bioinformatic/fasta/translate.html", {'form': form})

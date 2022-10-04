@@ -6,7 +6,6 @@ FILE_TYPE = (
     ("genbank", "genbank"),
 )
 
-
 # creating a form
 
 class FileTypeSelect(forms.Form):

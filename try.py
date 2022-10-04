@@ -8,36 +8,16 @@ BASE_DIR = Path(__file__).resolve().parent
 
 input_fasta_path = os.path.join(BASE_DIR, "bioinformatic", "files", "opuntia.fasta.txt")
 
-record = next(SeqIO.parse(input_fasta_path, format="fasta"))
+records = SeqIO.parse(input_fasta_path, format="fasta")
 
-result_handle = NCBIWWW.qblast("blastn", "nt", record.format("fasta"))
+protein = None
 
-save_file = open("my_blast.xml", "w")
+protein_file = open("protein.txt", "w")
 
-save_file.write(result_handle.read())
-
-save_file.close()
-
-result_handle = open("my_blast.xml")
-
-from Bio import SearchIO
-
-blast_qresults = SearchIO.read("my_blast.xml", "blast-xml")
-
-blast_records = NCBIXML.parse(result_handle)
-
-for blast_record in blast_records:
-    for alignment in blast_record.alignments:
-        for hsp in alignment.hsps:
-            print("\n")
-            print("e value:", hsp.expect)
-            print("\n")
-            print(hsp)
-
-from pydot import call_graphviz
-
-from Bio import Phylo
-
-tree = Phylo.parse("my_blast.xml", "phyloxml")
-
-Phylo.draw(tree)
+for record in records:
+    protein_file.write(f"{record.description}")
+    protein_file.write("\n")
+    protein_file.write("Sekans Uzunlugu: " + f"{len(record.translate().seq)}")
+    protein_file.write("\n")
+    protein_file.write(f"{record.translate().seq}")
+    protein_file.write(2*"\n")

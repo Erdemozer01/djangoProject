@@ -30,6 +30,11 @@ TABLE = (
 )
 
 
+class DNAFastaFileTranslateForm(forms.Form):
+    file = forms.FileField(label="DNA Fasta Dosyası Giriniz")
+    translate_table = forms.ChoiceField(choices=TABLE, label="Dönüşüm Tablosu Seçiniz")
+
+
 class GenbankTranslationForm(forms.Form):
     table = forms.ChoiceField(
         label='Dönüşüm Tablosu',
