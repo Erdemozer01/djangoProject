@@ -4,12 +4,19 @@ from django.contrib.auth.decorators import login_required
 from Bio import SearchIO, SeqIO
 from django.shortcuts import render, redirect
 from bioinformatic.forms.blast import BlastXMLForm
-from bioinformatic.views.genbank import handle_uploaded_file
+
 from bioinformatic.models import BlastQueryResults
 from Bio.Blast import NCBIWWW, NCBIXML
 from django.core.files import File
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+path = os.path.join(BASE_DIR, 'files\\')
+
+
+def handle_uploaded_file(f):
+    with open(path + f.name, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
 
 
 @login_required
