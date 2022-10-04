@@ -50,7 +50,7 @@
                                         <a href="{% url "bioinformatic:blast_xml_download" %}" class="float-end m-2">
                                             <i class="fas fa-download text-secondary"></i>
                                         </a>
-                                        <a href="/media/blast/{{ request.user.username }}/{{ request.user.username }}_my_blast.xml"
+                                        <a href="{{ results.output_file.url }}"
                                            class="float-end m-2">
                                             <i class="fas fa-eye text-info"></i>
                                         </a>
