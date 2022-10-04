@@ -14,7 +14,7 @@ path = os.path.join(BASE_DIR, 'files\\')
 
 
 def handle_uploaded_file(f):
-    with open(path + f.name, 'wb+') as destination:
+    with open(os.path.join(BASE_DIR, "files", f"{f.name}"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
