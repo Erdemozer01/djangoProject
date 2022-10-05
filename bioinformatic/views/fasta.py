@@ -9,6 +9,7 @@ import os
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from bioinformatic.forms.translation import DNAFastaFileTranslateForm
+from bioinformatic.forms.file import MultipleUploadFileForm
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
@@ -157,7 +158,44 @@ def fasta_file_translate(request):
             except Bio.BiopythonWarning:
                 pass
 
-
         return redirect('bioinformatic:fasta_protein_download')
 
     return render(request, "bioinformatic/fasta/translate.html", {'form': form})
+
+
+files_names = []
+
+
+def fasta_file_combine(request):
+    global writing_fasta
+    form = MultipleUploadFileForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            files = request.FILES.getlist('file_field')
+            combine_fasta = os.path.join(BASE_DIR, "files", "combined.fasta")
+            combined_fasta_path = Path(combine_fasta)
+
+            if combined_fasta_path.exists():
+                os.remove(combine_fasta)
+
+            for fasta in files:
+                handle_uploaded_file(fasta)
+                files_names.append(fasta.name)
+
+            path = os.path.join(BASE_DIR, "files", f"{files_names[0]}")
+
+            with open(path, "a") as combine_file:
+                for i in files_names[1:]:
+                    with open(os.path.join(BASE_DIR, "files", f"{i}"), 'r') as read_fasta:
+                        combine_file.write(f"{read_fasta.read()}")
+                        read_fasta.close()
+                        os.remove(os.path.join(BASE_DIR, "files", f"{i}"))
+
+            os.rename(path, os.path.join(BASE_DIR, "files", "combined.fasta"))
+
+            return redirect('bioinformatic:combine_fasta_download')
+
+        else:
+            form = MultipleUploadFileForm()
+
+    return render(request, "bioinformatic/fasta/multifile.html", {'form': form})

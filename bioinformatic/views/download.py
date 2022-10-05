@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, reverse
 from bioinformatic.models import MultipleSequenceAlignment
 
+
 def swiss_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
@@ -304,6 +305,7 @@ def PhyloXML_download(request):
     finally:
         os.remove(filepath)
 
+
 def clustalomega_alignment_download(request):
     try:
         # Define Django project base directory
@@ -459,8 +461,6 @@ def local_alignments_download(request):
         os.remove(filepath)
 
 
-
-
 def muscle_aligned_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -555,6 +555,32 @@ def fasta_protein_download(request):
     filename = "protein.txt"
     # Define the full file path
     filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'protein.txt')
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg})
+    finally:
+        os.remove(filepath)
+
+
+def combine_fasta_download(request):
+    # Define Django project base directory
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    # Define text file name
+    filename = "combined.fasta"
+    # Define the full file path
+    filepath = os.path.join(BASE_DIR, "bioinformatic", 'files', 'combined.fasta')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type

@@ -6,6 +6,7 @@ FILE_TYPE = (
     ("genbank", "genbank"),
 )
 
+
 # creating a form
 
 class FileTypeSelect(forms.Form):
@@ -32,3 +33,9 @@ class FileUploadModelForm(forms.ModelForm):
     class Meta:
         model = FileUploadModel
         fields = ['file']
+
+
+class MultipleUploadFileForm(forms.Form):
+    file_field = forms.FileField(widget=forms.ClearableFileInput(
+        attrs={'multiple': True}),
+        label="Fasta Dosyaları")

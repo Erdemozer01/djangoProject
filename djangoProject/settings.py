@@ -59,7 +59,6 @@ MIDDLEWARE = [
     'django_auto_logout.middleware.auto_logout',
 ]
 
-
 AUTO_LOGOUT = {
     'IDLE_TIME': timedelta(minutes=1000),
     'SESSION_TIME': timedelta(minutes=1000),
@@ -158,3 +157,5 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.MemoryFileUploadHandler",
+                        "django.core.files.uploadhandler.TemporaryFileUploadHandler"]
