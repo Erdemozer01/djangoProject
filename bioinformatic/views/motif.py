@@ -87,6 +87,12 @@ def fasta_motif(request):
                 doc.pwm = File(pwm_file_obj, name=position_weight_matrices_path.name)
                 doc.save()
 
+            os.remove(input_file)
+            os.remove(motif_file)
+            os.remove(matrix_position_file_path)
+            os.remove(specific_scoring_matrices_path)
+            os.remove(position_weight_matrices_path)
+
             results = FastaDNAMotifModel.objects.all().filter(user=request.user.id).latest('created')
 
             return render(request, "bioinformatic/motif/results.html", {'results': results, 'bre': "Fasta DNA Motif"})
