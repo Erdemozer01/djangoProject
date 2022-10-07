@@ -16,7 +16,6 @@ from bioinformatic \
 from bioinformatic.models import MultipleSequenceAlignment
 from django.contrib.auth.decorators import login_required
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
 msa_path = os.path.join(BASE_DIR, 'media', 'msa')
@@ -96,6 +95,7 @@ def local_alignment(request):
             form = LocalForm()
 
     return render(request, "bioinformatic/alignments/local.html", {"form": form, "bre": "Local Alignment"})
+
 
 @login_required
 def MultipleSeqAlignment(request):
@@ -451,7 +451,8 @@ def MultipleSeqAlignment(request):
                                                 "{}_filogenetik_ağaç.jpg".format(request.user))
                         doc.save()
 
-                    results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method).latest('created')
+                    results = MultipleSequenceAlignment.objects.all().filter(user=request.user, method=method).latest(
+                        'created')
 
                     os.remove(input_file)
                     os.remove(output_path)
@@ -472,4 +473,3 @@ def MultipleSeqAlignment(request):
 
     return render(request, 'bioinformatic/alignments/multiple.html',
                   {'form': form, 'bre': 'Multiple Sekans Alignment'})
-

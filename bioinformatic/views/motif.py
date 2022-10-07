@@ -26,8 +26,15 @@ def fasta_motif(request):
     if request.method == "POST":
         if form.is_valid():
 
-            handle_uploaded_file(request.FILES['file'])
-            input_file = os.path.join(BASE_DIR, "files", f"{form.cleaned_data['file']}")
+            handle_uploaded_file(form.cleaned_data['file'])
+
+            if Path(os.path.join(BASE_DIR, "files", f"{request.user.username}" + "_" + f"{form.cleaned_data['file']}")).exists():
+                os.remove(os.path.join(BASE_DIR, "files", f"{request.user.username}" + "_" + f"{form.cleaned_data['file']}"))
+
+            os.rename(os.path.join(BASE_DIR, "files", f"{form.cleaned_data['file']}"), os.path.join(BASE_DIR, "files", f"{request.user.username}" + "_" + f"{form.cleaned_data['file']}"))
+
+            input_file = os.path.join(BASE_DIR, "files",
+                                      f"{request.user.username}" + "_" + f"{form.cleaned_data['file']}")
             motif_file = os.path.join(BASE_DIR, "files", "motif.txt")
             motif_file_path = Path(motif_file)
             matrix_position_file = os.path.join(BASE_DIR, "files", "nmp.xlsx")
@@ -95,9 +102,9 @@ def fasta_motif(request):
 
             results = FastaDNAMotifModel.objects.all().filter(user=request.user.id).latest('created')
 
-            return render(request, "bioinformatic/motif/results.html", {'results': results, 'bre': "Fasta DNA Motif"})
+            return render(request, "bioinformatic/motif/results.html", {'results': results, 'bre': "Fasta Dosyası DNA Motif"})
 
         else:
             form = FastaDNASeqMotifForm()
 
-    return render(request, "bioinformatic/motif/dna_seq_motif.html", {'form': form, 'bre': "Fasta DNA Motif"})
+    return render(request, "bioinformatic/motif/dna_seq_motif.html", {'form': form, 'bre': "Fasta Dosyası DNA Motif"})
