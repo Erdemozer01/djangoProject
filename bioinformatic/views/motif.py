@@ -10,6 +10,7 @@ from bioinformatic.models import FastaDNAMotifModel
 from bioinformatic.forms.motif import FastaDNASeqMotifForm
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -17,6 +18,7 @@ def handle_uploaded_file(f):
     with open(os.path.join(BASE_DIR, "files", f"{f.name}"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
 
 @login_required
 def fasta_motif(request):
