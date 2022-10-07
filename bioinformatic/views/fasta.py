@@ -187,7 +187,7 @@ def fasta_file_combine(request):
             with open(path, "a") as combine_file:
                 for i in files_names[1:]:
                     with open(os.path.join(BASE_DIR, "files", f"{i}"), 'r') as read_fasta:
-                        combine_file.write(f"{read_fasta.read()}")
+                        combine_file.write(f"{read_fasta.read()}".replace("\n", ""))
                         read_fasta.close()
                         os.remove(os.path.join(BASE_DIR, "files", f"{i}"))
 

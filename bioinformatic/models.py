@@ -227,6 +227,7 @@ BLAST_DATABASE = (
 
 )
 
+
 def upload_to_blast(instance, filename):
     return 'blast/{username}/{username}_{filename}'.format(
         username=instance.user.username, filename=filename)
@@ -247,3 +248,28 @@ class BlastQueryResults(models.Model):
     class Meta:
         verbose_name = "Blast Metodu"
         verbose_name_plural = "Blast Metodu"
+
+
+def upload_to_motif(instance, filename):
+    return 'motif/{username}/{username}_{filename}'.format(
+        username=instance.user.username, filename=filename)
+
+
+class FastaDNAMotifModel(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
+    motif_file = models.FileField(verbose_name="Motif Nucleotit Sekans Dosyası", upload_to=upload_to_motif)
+    mpf = models.FileField(verbose_name="Nucleotide matrix position", upload_to=upload_to_motif, blank=True,
+                                            null=True)
+    pwm = models.FileField(verbose_name="Compute position weight matrices", upload_to=upload_to_motif, blank=True,
+                                                null=True)
+
+    pssm = models.FileField(verbose_name="Compute position weight matrices", upload_to=upload_to_motif, blank=True,
+                                                null=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    def __str__(self):
+        return str(self.user)
+
+    class Meta:
+        verbose_name = "Fasta DNA Sekans Motif"
+        verbose_name_plural = "Fasta DNA Sekans Motif"

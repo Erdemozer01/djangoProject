@@ -218,6 +218,30 @@
                         </li>
 
                         <li class="nav-item ">
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false"
+                               href="#Motif">
+                                <span class="sidenav-mini-icon"> M </span>
+                                <span class="sidenav-normal"> Motif <b class="caret"></b></span>
+                            </a>
+                            <div class="collapse " id="Motif">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item ">
+                                        <a class="nav-link " href="{% url "bioinformatic:fasta_motif" %}">
+                                            <span class="sidenav-mini-icon text-xs"> N </span>
+                                            <span class="sidenav-normal"> Fasta DNA Motif </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ">
+                                        <a class="nav-link " href="{% url "bioinformatic:translation" %}">
+                                            <span class="sidenav-mini-icon text-xs"> E </span>
+                                            <span class="sidenav-normal"> Translasyon </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="nav-item ">
                             <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#ordersExample">
                                 <span class="sidenav-mini-icon"> O </span>
                                 <span class="sidenav-normal"> Fasta Dosyası <b class="caret"></b></span>

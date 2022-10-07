@@ -32,7 +32,7 @@ def swiss_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
 
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -63,7 +63,7 @@ def fasta_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
 
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -93,7 +93,7 @@ def genbank_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
 
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -117,17 +117,17 @@ def hsp_download(request):
         response['Content-Disposition'] = "attachment; filename=%s" % filename
         # Return the response value
     except FileNotFoundError:
-        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        msg = "İndirmeye çalıştığınız dosya bulunamadı",
         url = reverse \
             ("bioinformatic:xml_file")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -154,13 +154,13 @@ def entrez_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:entrez_file_search")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -187,13 +187,13 @@ def tree_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:multiple_sequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -223,13 +223,13 @@ def clustal_alignment_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:multiple_sequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -259,13 +259,13 @@ def maximum_likelihood_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:maximum_likelihood")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -295,13 +295,13 @@ def PhyloXML_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:maximum_likelihood")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -331,13 +331,13 @@ def clustalomega_alignment_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:multiple_sequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -364,13 +364,13 @@ def clustal_stats_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:multiple_sequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -397,13 +397,144 @@ def clustal_scores_download(request):
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         url = reverse("bioinformatic:multiple_sequence_alignments")
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg, 'url': url})
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
     try:
         return response
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+
+def nucleotid_matrix_positions_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_nmp.xlsx".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'motif', '{}'.format(request.user),
+                                "{}_nmp.xlsx".format(request.user.username))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+
+def motif_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_motif.txt".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'motif', '{}'.format(request.user),
+                                "{}_motif.txt".format(request.user.username))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+
+def pssm_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_pssm.xlsx".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'motif', '{}'.format(request.user),
+                                "{}_pssm.xlsx".format(request.user))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+def pwm_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_pwm.xlsx".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'motif', '{}'.format(request.user),
+                                "{}_pwm.xlsx".format(request.user))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -429,7 +560,7 @@ def global_alignments_download(request):
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -437,7 +568,6 @@ def global_alignments_download(request):
 def local_alignments_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
-
     # Define text file name
     filename = 'local_alignment.txt'
     # Define the full file path
@@ -456,7 +586,7 @@ def local_alignments_download(request):
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -486,7 +616,7 @@ def muscle_aligned_download(request):
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -516,7 +646,7 @@ def blast_xml_download(request):
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -543,7 +673,7 @@ def blast_hsp_download(request):
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -569,7 +699,7 @@ def fasta_protein_download(request):
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
 
@@ -595,6 +725,6 @@ def combine_fasta_download(request):
     except FileNotFoundError:
         msg = "İndirmeye çalıştığınız dosya bulunamadı"
         return render(request, 'bioinformatic/fasta/notfound.html',
-                      {"msg": msg})
+                      {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
