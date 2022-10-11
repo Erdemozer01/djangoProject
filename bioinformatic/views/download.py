@@ -474,6 +474,39 @@ def motif_download(request):
         os.remove(filepath)
 
 
+def jaspar_motif_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_jaspar_motif.txt".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'motif', '{}'.format(request.user),
+                                "{}_jaspar_motif.txt".format(request.user.username))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+
 def pssm_download(request):
     try:
         # Define Django project base directory

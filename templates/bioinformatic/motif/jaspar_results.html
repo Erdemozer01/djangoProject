@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} {{ bre }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid py-4 mt-3 col-sm-10 shadow-md">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">{{ bre }}</h5>
+                                <p class="m-0">Analizi Yapan Laborant: {{ results.user|title }}</p>
+                                 <p><b>Not:</b> İndirdiğiniz dosyalar silinecektir. Analizi Tekrar yapıp
+                                sayfayı yenileyebilir veya görüntüleyebilirsiniz.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-0">
+                        <div class="table-responsive">
+                            <table class="table table-flush" id="products-list">
+                                <tbody class="mx-auto">
+
+                                <tr>
+                                    <td class="text-sm">
+                                        Motif Sekans Dosyası
+                                        <a href="{% url "bioinformatic:jaspar_motif_download" %}"
+                                           class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary" title="İndir"></i>
+                                        </a>
+                                        <a href="{{ results.motif_file.url }}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-eye text-eye text-info" title="Görüntüle"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
+                                        Nucleotit Pozisyon Matrix
+                                        <a href="{% url "bioinformatic:nucleotid_matrix_positions_download" %}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary" title="İndir"></i>
+                                        </a>
+                                        <a href="{{ results.mpf.url }}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                        </a>
+
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
+                                        Nukleotid Ağırlıklı Pozisyon Matrix
+                                        <a href="{% url "bioinformatic:pwm_download" %}"
+                                           class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary" title="İndir"></i>
+                                        </a>
+                                        <a href="{{ results.pwm.url }}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                        </a>
+
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text-sm">
+                                        Nucleotid Spesifik Pozisyon Score Matrix
+                                        <a href="{% url "bioinformatic:pssm_download" %}" class="float-end m-2"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-original-title="Sil">
+                                            <i class="fas fa-download text-secondary" title="İndir"></i>
+                                        </a>
+                                        <a href="{{ results.pssm.url }}"
+                                           class="float-end m-2">
+                                            <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
