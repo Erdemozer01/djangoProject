@@ -43,6 +43,21 @@ print("background".title())
 print(motif.mask)
 print("\n")
 
+print("normalize".title())
+print(motif.counts.normalize(pseudocounts=0.4))
+print("\n")
+pwm = motif.counts.normalize(pseudocounts={"A":0.6, "C": 0.4, "G": 0.4, "T": 0.6})
+print(pwm)
+print("pwd:")
+print(pwm.consensus)
+print("pssm max")
+print(motif.pssm.max)
+print("pssm min")
+print(motif.pssm.min)
+print(motif.pssm)
+rpssm = motif.pssm
+print(rpssm.calculate(Seq("TACACTGCATTACAACCCAAGCATTA")))
+
 excel = pd.DataFrame(motif.pwm).to_excel('pwm.xlsx')
 
 from Bio.motifs import jaspar
@@ -54,3 +69,7 @@ jaspar_motif.pseudocounts = jaspar.calculate_pseudocounts(jaspar_motif)
 print(jaspar_motif)
 
 print(jaspar_motif.pseudocounts)
+
+from numpy import array
+
+from Bio.Cluster import distancematrix

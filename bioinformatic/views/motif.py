@@ -225,7 +225,7 @@ def jaspar_motif_create(request):
             results = FastaDNAMotifModel.objects.all().filter(user=request.user.id).latest('created')
 
             return render(request, "bioinformatic/motif/jaspar_results.html",
-                          {'results': results, 'bre': "Jaspar Motif"})
+                          {'results': results, 'bre': "Jaspar Motif Sonuçları"})
 
         else:
             form = JasparMotifCreateForm()
