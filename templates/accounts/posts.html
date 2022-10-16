@@ -47,7 +47,7 @@
                                             <td class="text-sm">{{ object.title }}</td>
                                             <td class="text-sm">{{ object.tags }}</td>
                                             <td class="text-sm">
-                                                <a href="{% url "post:post_detail" object.category.title.lower object.slug object.pk %}"
+                                                <a href="{% url 'post:post_detail' post.category.title.lower|slugify post.title.lower|slugify post.pk %}"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-original-title="Ayrıntılar">
                                                     <i class="fas fa-eye text-secondary"></i>
