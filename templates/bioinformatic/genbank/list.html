@@ -34,17 +34,19 @@
                                 </tr>
                                 </thead>
                                 <tbody class="text-center">
+                                {% for object in object_list %}
+                                    <tr>
+                                        <td class="text-sm">
+                                            <a href="{% url "bioinformatic:genbank_detail" object.pk object.organism|slugify|lower %}">
+                                                {{ object.organism }}
+                                            </a>
+                                        </td>
+                                        <td class="text-sm">{{ object.protein_id }}</td>
+                                        <td class="text-sm">{{ object.dna_sequence_len }}</td>
+                                        <td class="text-sm">{{ object.protein_sequence_len }}</td>
+                                    </tr>
 
-                                <tr>
-                                    <td class="text-sm">
-                                        <a href="{% url "bioinformatic:genbank_detail" object.pk object.organism|slugify|lower %}">
-                                            {{ object.organism }}
-                                        </a>
-                                    </td>
-                                    <td class="text-sm">{{ object.protein_id }}</td>
-                                    <td class="text-sm">{{ object.dna_sequence_len }}</td>
-                                    <td class="text-sm">{{ object.protein_sequence_len }}</td>
-                                </tr>
+                                {% endfor %}
 
                                 </tbody>
                             </table>

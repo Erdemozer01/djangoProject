@@ -49,6 +49,7 @@ def genbank_read(request):
 
                 if GenbankRead.objects.exists():
                     GenbankRead.objects.all().delete()
+
                     for record in records:
                         for feature in record.features:
                             if feature.type == "CDS":
@@ -72,7 +73,6 @@ def genbank_read(request):
                                     dna_sequence=record.seq,
                                     dna_sequence_len=len(record.seq),
                                 )
-
 
                 else:
                     for record in records:
@@ -169,7 +169,7 @@ class GenBankResultView(generic.ListView):
             protein_seq_len.append(protein_seq.protein_sequence_len)
 
         fig = px.bar(x=organism, y=dna_sequence_len, category_orders={'organism': organism}, color=organism,
-                      title="GenBank Dosyası")
+                     title="GenBank Dosyası")
 
         context['count'] = GenbankRead.objects.all().count()
         context['bre'] = "Genbank Dosya Okuması Sonuçları"
