@@ -76,43 +76,61 @@ from Bio.Cluster import distancematrix
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 from Bio.Graphics import GenomeDiagram
+from Bio.Graphics.GenomeDiagram import GraphSet
 from Bio import SeqIO
 
-records = SeqIO.parse(os.path.join(BASE_DIR, "bioinformatic", "files", "opuntia.fasta.txt"), "genbank")
+records = SeqIO.read(os.path.join(BASE_DIR, "bioinformatic", "files", "NC_005816.gb.txt"), "genbank")
 
-name = []
-
-for record in records:
-    name.append(record)
-
-print(name)
-record = name[0]
-
-gd_diagram = GenomeDiagram.Diagram(record.description)
+gd_diagram = GenomeDiagram.Diagram(records.description)
 gd_track_for_features = gd_diagram.new_track(1, name="Annotated Features")
 gd_feature_set = gd_track_for_features.new_set()
 
-for feature in record.features:
+for feature in records.features:
     if feature.type != "gene":
         # Exclude this feature
         continue
     if len(gd_feature_set) % 2 == 0:
-        color = colors.blue
+        color = colors.tomato
     else:
         color = colors.lightblue
-    gd_feature_set.add_feature(feature, color=color, label=True)
+    gd_feature_set.add_feature(feature, color=color, label=True, sigil="ARROW")
+
+
+from Bio.SeqFeature import SeqFeature, FeatureLocation
+
+for site, name, color in [
+    ("GAATTC", "EcoRI", colors.green),
+    ("CCCGGG", "SmaI", colors.orange),
+    ("AAGCTT", "HindIII", colors.red),
+    ("GGATCC", "BamHI", colors.purple),
+]:
+    index = 0
+    while True:
+        index = records.seq.find(site, start=index)
+        if index == -1:
+            break
+        feature = SeqFeature(FeatureLocation(index, index + len(site)))
+        gd_feature_set.add_feature(
+            feature,
+            color=color,
+            name=name,
+            label=True,
+            label_size=10,
+            label_color=color,
+        )
+        index += len(site)
 
 gd_diagram.draw(
-    format="linear",
+    format="circular",
     orientation="landscape",
     pagesize="A4",
     fragments=4,
     start=0,
-    end=len(record),
+    end=len(records),
+    circle_core=0.5
 )
+
+print(colors.blue)
+
 gd_diagram.write("plasmid_circular_nice.pdf", "PDF")
 gd_diagram.write("plasmid_linear.png", "png")
-from Bio import SeqRecord
-for i in name:
-    print(i)
-    print("\n")

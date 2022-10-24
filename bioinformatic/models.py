@@ -259,12 +259,12 @@ class FastaDNAMotifModel(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
     motif_file = models.FileField(verbose_name="Motif Nucleotit Sekans Dosyası", upload_to=upload_to_motif)
     mpf = models.FileField(verbose_name="Nucleotide matrix position", upload_to=upload_to_motif, blank=True,
-                                            null=True)
+                           null=True)
     pwm = models.FileField(verbose_name="Compute position weight matrices", upload_to=upload_to_motif, blank=True,
-                                                null=True)
+                           null=True)
 
     pssm = models.FileField(verbose_name="Compute position weight matrices", upload_to=upload_to_motif, blank=True,
-                                                null=True)
+                            null=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
 
     def __str__(self):
@@ -273,3 +273,38 @@ class FastaDNAMotifModel(models.Model):
     class Meta:
         verbose_name = "Fasta DNA Sekans Motif"
         verbose_name_plural = "Fasta DNA Sekans Motif"
+
+
+from reportlab.lib import colors
+
+COLORS = (
+    ('', '------------'),
+    (colors.blue, 'Mavi'),
+    (colors.black, 'SİYAH'),
+    (colors.red, 'KIRMIZI'),
+    (colors.green, 'YEŞİL'),
+)
+
+
+def upload_to_diagram(instance, filename):
+    return 'diagram/{username}/{username}_{filename}'.format(
+        username=instance.user.username, filename=filename)
+
+
+from django.contrib.auth.models import User
+
+
+class RestrictionUserModel(models.Model):
+    name = models.CharField(max_length=1000, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class RestrictionModel(models.Model):
+    laborant = models.ForeignKey(RestrictionUserModel, on_delete=models.CASCADE, verbose_name='Laborant')
+    enzymes = models.CharField(max_length=1000, verbose_name="Enzim Adı", blank=True, null=True)
+    site = models.CharField(max_length=1000, verbose_name="Bölge Adı", blank=True, null=True)
+
+    def __str__(self):
+        return self.enzymes
