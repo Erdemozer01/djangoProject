@@ -1,10 +1,19 @@
 from django.contrib import admin
 from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, PubMedArticle, MedlineArticle, \
-    SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment, BiologicalResourcesDatabases, FastaDNAMotifModel
-
+    SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment, BiologicalResourcesDatabases, \
+    FastaDNAMotifModel, RestrictionModel, RestrictionUserModel
+from django.contrib.auth.models import User
 # Register your models here.
 admin.site.register(MedlineArticle)
 admin.site.register(FastaDNAMotifModel)
+
+
+class RestrictionInline(admin.TabularInline):
+    model = RestrictionModel
+
+@admin.register(RestrictionUserModel)
+class RestrictionAdmin(admin.ModelAdmin):
+    inlines = (RestrictionInline, )
 
 
 @admin.register(BiologicalResourcesDatabases)

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- CSS Files -->
+    <link id="pagestyle" href="{% static "assets/css/soft-ui-dashboard.css" %}?{% now "U" %}" rel="stylesheet"/>
+    <script src="https://unpkg.com/htmx.org@1.8.2"></script>
+</head>
+<body>
+<div class="form-group">
+    {{ form }}
+    <i class="fas fa-plus text-success"
+       hx-get="{% url "bioinformatic:add_extra_enzim" %}" hx-swap="beforeend"
+       hx-target="#EnzimEkle"></i>
+    <span class="text-info"> Enzim Ekle </span>
+</div>
+
+</body>
+</html>
