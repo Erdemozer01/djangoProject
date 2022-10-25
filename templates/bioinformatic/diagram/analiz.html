@@ -17,14 +17,12 @@
                                 <form method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     {% bootstrap_form diagram_form %}
-
                                     <div id="EnzimEkle">
                                         {% for form in restric_form %}
                                             {{ form }}
                                             <i class="fas fa-plus text-success"
                                                hx-get="{% url "bioinformatic:add_extra_enzim" %}" hx-swap="beforeend"
                                                hx-target="#EnzimEkle"></i>
-                                            <span class="text-info"> Enzim Ekle </span>
                                         {% endfor %}
                                     </div>
                                     <div class="d-flex justify-content-end mt-4">

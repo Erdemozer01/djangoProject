@@ -10,11 +10,14 @@
 </head>
 <body>
 <div class="form-group">
-    {{ form }}
-    <i class="fas fa-plus text-success"
-       hx-get="{% url "bioinformatic:add_extra_enzim" %}" hx-swap="beforeend"
-       hx-target="#EnzimEkle"></i>
-    <span class="text-info"> Enzim Ekle </span>
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <i class="fas fa-plus text-success"
+           hx-get="{% url "bioinformatic:add_extra_enzim" %}" hx-swap="beforeend"
+           hx-target="#EnzimEkle"></i>
+    </form>
+
 </div>
 
 </body>
