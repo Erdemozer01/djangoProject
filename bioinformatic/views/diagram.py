@@ -9,7 +9,7 @@ from bioinformatic.forms.diagram import GenomeDiagramForm, RestrictionModelForms
     RestrictionModelFormFactory, RestrictionModelFormFactory2
 from bioinformatic.models import RestrictionUserModel, RestrictionModel, DiagramModel
 from django.urls import reverse_lazy
-
+from django.contrib.auth.decorators import login_required
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
@@ -18,7 +18,7 @@ def handle_uploaded_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
 
-
+@login_required
 def genome_diagram(request):
     global file_path, input_file, diagram
     form = GenomeDiagramForm()
@@ -138,7 +138,7 @@ def genome_diagram(request):
     return render(request, "bioinformatic/diagram/analiz.html",
                   {'form': form, 'restric': restric, 'obj': enzyme_obj, 'bre': "Genom Diagram Oluşturma"})
 
-
+@login_required
 def add_enzyme(request, pk):
     if DiagramModel.objects.filter(user=request.user).exists():
         pass
@@ -153,7 +153,7 @@ def add_enzyme(request, pk):
             return redirect('bioinformatic:genome_diagram')
     return render(request, "bioinformatic/diagram/add_enzym.html", {'form': form, 'bre': "Enzim Ekleme"})
 
-
+@login_required
 def update_enzyme(request, pk):
     user = DiagramModel.objects.get(user=request.user)
     form = RestrictionModelFormFactory()
@@ -165,7 +165,7 @@ def update_enzyme(request, pk):
             return redirect('bioinformatic:genome_diagram')
     return render(request, "bioinformatic/diagram/enzyme_update.html", {'form': form, 'bre': 'Enzim Düzenleme'})
 
-
+@login_required
 def delete_enzyme(request, pk):
     enzymes = RestrictionModel.objects.get(pk=pk)
     enzymes.delete()
