@@ -96,11 +96,11 @@ def genome_diagram(request):
                     circle_core=0.5
                 )
 
-                gd_diagram.write("plasmid_circular_nice.pdf", "PDF")
-                gd_diagram.write("plasmid_linear.png", "png")
-
                 output = os.path.join(BASE_DIR, 'plasmid_circular_nice.pdf')
                 image = os.path.join(BASE_DIR, 'plasmid_linear.png')
+
+                gd_diagram.write(output, "PDF")
+                gd_diagram.write(image, "png")
 
                 if diagram.out_file:
                     diagram.out_file.delete()
