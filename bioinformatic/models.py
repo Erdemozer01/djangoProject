@@ -279,10 +279,12 @@ from reportlab.lib import colors
 
 COLORS = (
     ('', '------------'),
-    (colors.blue, 'Mavi'),
-    (colors.black, 'SİYAH'),
-    (colors.red, 'KIRMIZI'),
-    (colors.green, 'YEŞİL'),
+    ((colors.blue), 'Mavi'),
+    ("black", 'SİYAH'),
+    ("red", 'KIRMIZI'),
+    ("green", 'YEŞİL'),
+    ("gold", 'SARI'),
+    ("orange", 'TURUNCU'),
 )
 
 
@@ -301,10 +303,32 @@ class RestrictionUserModel(models.Model):
         return self.name
 
 
+DIAGRAM_SHAPE = (
+    ('', '------------'),
+    ('ARROW', 'OK'),
+    ('BOX', 'KUTU'),
+)
+
+DIAGRAM_FORMAT = (
+    ('', '------------'),
+    ('linear', 'DÜZ'),
+    ('circular', 'DAİRESEL'),
+)
+
+
+class DiagramModel(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
+    out_file = models.FileField(blank=True, null=True, upload_to=upload_to_diagram)
+    image = models.ImageField(upload_to=upload_to_diagram)
+
+    def __str__(self):
+        return str(self.user)
+
+
 class RestrictionModel(models.Model):
-    laborant = models.ForeignKey(RestrictionUserModel, on_delete=models.CASCADE, verbose_name='Laborant')
-    enzymes = models.CharField(max_length=1000, verbose_name="Enzim Adı", blank=True, null=True)
-    site = models.CharField(max_length=1000, verbose_name="Bölge Adı", blank=True, null=True)
+    user = models.ForeignKey(DiagramModel, on_delete=models.CASCADE, verbose_name='Laborant')
+    enzymes = models.CharField(max_length=1000, verbose_name="Enzim Adı:", blank=True, null=True)
+    site = models.CharField(max_length=1000, verbose_name="Bölge:", blank=True, null=True)
 
     def __str__(self):
         return self.enzymes

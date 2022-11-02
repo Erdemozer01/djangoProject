@@ -539,6 +539,7 @@ def pssm_download(request):
     finally:
         os.remove(filepath)
 
+
 def pwm_download(request):
     try:
         # Define Django project base directory
@@ -571,6 +572,70 @@ def pwm_download(request):
     finally:
         os.remove(filepath)
 
+
+def genome_diagram_pdf_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_genome_diagram.pdf".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'diagram', '{}'.format(request.user),
+                                "{}_genome_diagram.pdf".format(request.user))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+def genome_diagram_image_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_genome_diagram.png".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'diagram', '{}'.format(request.user),
+                                "{}_genome_diagram.png".format(request.user))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
 
 def global_alignments_download(request):
     # Define Django project base directory

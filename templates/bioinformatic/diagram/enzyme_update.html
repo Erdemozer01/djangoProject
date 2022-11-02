@@ -1,13 +1,13 @@
 {% extends "index.html" %}
 {% load static bootstrap5 %}
-{% block title %} Enzim Ekleme {% endblock %}
+{% block title %} Enzim Düzenleme {% endblock %}
 
 {% block content %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-10 col-12 mx-auto col-sm-10">
                 <div class="card card-body mt-3">
-                    <h6 class="mb-0">Enzim Ekleme</h6>
+                    <h6 class="mb-0">Enzim Düzenleme</h6>
                     <div class="row mt-4">
                         <div class="col-12 col-md-12 mx-auto">
                             <div class="form-group ">
@@ -18,27 +18,22 @@
                                         <div class="inline">
                                             {{ foo }}
                                         </div>
+                                    {% empty %}
+                                        <p>Enzim Bulunamadı</p>
                                     {% endfor %}
-                                    {% for foo in restric %}
-                                        <div class="inline">
-                                            {{ foo }}
-                                        </div>
-                                    {% endfor %}
-
                                     <div id="EnzimEkle">
-                                        <a href="{% url "bioinformatic:update_enzyme" pk=request.user.pk %}">
-                                            <i class="fas fa-plus text-success"></i>
-                                            <i class="fas fa-minus text-danger"></i>
-                                            <span class="text-bg-warning">Enzim Düzenle</span>
+                                        <a href="{% url "bioinformatic:add_enzyme" request.user.pk %}">
+                                            <i class="fas fa-plus text-success">
+                                                <span class="text-info">Başka bir enzim ekle</span>
+                                            </i>
                                         </a>
                                     </div>
-
                                     <div class="d-flex justify-content-end mt-4">
                                         <button type="button" name="button" class="btn btn-light m-0">
                                             <a href="{% url "bioinformatic:genome_diagram" %}">Vazgeç</a>
                                         </button>
                                         <button type="submit" name="button" class="btn bg-gradient-dark m-0 ms-2">
-                                            Ekle
+                                            Onayla
                                         </button>
                                     </div>
                                 </form>

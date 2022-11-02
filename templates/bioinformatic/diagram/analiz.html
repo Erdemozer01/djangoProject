@@ -1,9 +1,6 @@
 {% extends "index.html" %}
 {% load static bootstrap5 %}
 {% block title %} Genom Diagram Oluşturma {% endblock %}
-{% block stylesheets %}
-    <script src="https://unpkg.com/htmx.org@1.8.2"></script>
-{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
@@ -16,15 +13,71 @@
                             <div class="form-group ">
                                 <form method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    {% bootstrap_form diagram_form %}
-                                    <div id="EnzimEkle">
-                                        {% for form in restric_form %}
-                                            {{ form }}
-                                            <i class="fas fa-plus text-success"
-                                               hx-get="{% url "bioinformatic:add_extra_enzim" %}" hx-swap="beforeend"
-                                               hx-target="#EnzimEkle"></i>
-                                        {% endfor %}
+                                    {% bootstrap_form form %}
+
+                                    {% if obj %}
+                                        <div class="card">
+                                        <div class="table-responsive">
+                                            <table class="table align-items-center mb-0">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                        Enzim
+                                                    </th>
+                                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                                        Bölge
+                                                    </th>
+                                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                        Silinsin Mi ?
+                                                    </th>
+
+                                                    <th class="text-secondary opacity-7"></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for foo in obj %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex px-2 py-1">
+
+                                                                <div class="d-flex flex-column justify-content-center">
+                                                                    <h6 class="mb-0 text-xs">{{ foo.enzymes }}</h6>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <p class="text-xs font-weight-bold mb-0">{{ foo.site.upper }}</p>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <a href="{% url "bioinformatic:delete_enzyme" foo.pk %}"
+                                                               data-bs-toggle="tooltip"
+                                                               data-bs-original-title="Sil">
+                                                                <i class="fas fa-trash text-danger fa-xs"> Sil</i>
+                                                            </a>
+                                                        </td>
+
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
+                                        <div id="EnzimEkle">
+                                            <a href="{% url "bioinformatic:update_enzyme" pk=request.user.pk %}">
+                                                <i class="fas fa-plus text-success"></i>
+                                                <i class="fas fa-minus text-danger"></i>
+                                                <span class="text-bg-warning">Enzim Düzenle</span>
+                                            </a>
+                                        </div>
+                                    {% else %}
+                                        <div id="EnzimEkle">
+                                            <a href="{% url "bioinformatic:add_enzyme" request.user.pk %}">
+                                                <i class="fas fa-plus text-success">
+                                                    <span class="text-info">Enzim Ekle</span>
+                                                </i>
+                                            </a>
+                                        </div>
+                                    {% endif %}
                                     <div class="d-flex justify-content-end mt-4">
                                         <button type="button" name="button" class="btn btn-light m-0">
                                             <a href="{% url "bioinformatic:home" %}">Vazgeç</a>

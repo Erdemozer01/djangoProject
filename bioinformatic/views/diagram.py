@@ -1,12 +1,14 @@
 import os
-import stat
-
 from django.shortcuts import *
+from django.core.files import File
 from reportlab.lib import colors
 from pathlib import Path
 from Bio.Graphics import GenomeDiagram
 from Bio import SeqIO
-from bioinformatic.forms.diagram import GenomeDiagramForm, RestrictionModelForms, RestrictionModelFormset
+from bioinformatic.forms.diagram import GenomeDiagramForm, RestrictionModelForms, RestrictionModelFormset, \
+    RestrictionModelFormFactory, RestrictionModelFormFactory2
+from bioinformatic.models import RestrictionUserModel, RestrictionModel, DiagramModel
+from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -18,23 +20,35 @@ def handle_uploaded_file(f):
 
 
 def genome_diagram(request):
-    global file_path
-    diagram_form = GenomeDiagramForm(request.POST or None, request.FILES or None)
-    restric_form = RestrictionModelFormset(request.POST or None)
+    global file_path, input_file, diagram
+    form = GenomeDiagramForm()
+    restric = RestrictionModelFormFactory2()
+    enzyme_obj = RestrictionModel.objects.filter(user_id=request.user.pk)
     if request.method == "POST":
-        if diagram_form.is_valid():
+        form = GenomeDiagramForm(request.POST or None, request.FILES or None)
+
+        if form.is_valid():
 
             try:
 
+                if DiagramModel.objects.filter(user=request.user.pk).exists():
+                    pass
+                else:
+                    DiagramModel.objects.create(user=request.user)
+
                 handle_uploaded_file(request.FILES['file'])
-                file = diagram_form.cleaned_data['file']
-                sigil = diagram_form.cleaned_data['diagram_shape']
-                format = diagram_form.cleaned_data['diagram_format']
-                fragments = diagram_form.cleaned_data['fragment']
+                file = form.cleaned_data['file']
+                sigil = form.cleaned_data['diagram_shape']
+                format = form.cleaned_data['diagram_format']
+                fragments = form.cleaned_data['fragment']
 
-                file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{file}")
+                diagram = DiagramModel.objects.get(user=request.user)
 
-                records = SeqIO.read(file_path, "genbank")
+                input_file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{file}")
+
+                handle = open(input_file_path)
+
+                records = SeqIO.read(handle, "genbank")
 
                 gd_diagram = GenomeDiagram.Diagram(records.description)
                 gd_track_for_features = gd_diagram.new_track(1, name="Annotated Features")
@@ -50,6 +64,28 @@ def genome_diagram(request):
                         color = colors.lightblue
                     gd_feature_set.add_feature(feature, color=color, label=True, sigil=sigil)
 
+                if enzyme_obj:
+                    from Bio.SeqFeature import SeqFeature, FeatureLocation
+                    enzymes = []
+                    for enzyme in enzyme_obj:
+                        enzymes.append((enzyme.site, enzyme.enzymes, colors.red))
+                    for site, name, color in enzymes:
+                        index = 0
+                        while True:
+                            index = records.seq.find(site, start=index)
+                            if index == -1:
+                                break
+                            feature = SeqFeature(FeatureLocation(index, index + len(site)))
+                            gd_feature_set.add_feature(
+                                feature,
+                                color=color,
+                                name=name,
+                                label=True,
+                                label_size=10,
+                                label_color=color,
+                            )
+                            index += len(site)
+
                 gd_diagram.draw(
                     format=format,
                     orientation="landscape",
@@ -63,15 +99,74 @@ def genome_diagram(request):
                 gd_diagram.write("plasmid_circular_nice.pdf", "PDF")
                 gd_diagram.write("plasmid_linear.png", "png")
 
+                output = os.path.join(BASE_DIR, 'plasmid_circular_nice.pdf')
+                image = os.path.join(BASE_DIR, 'plasmid_linear.png')
+
+                if diagram.out_file:
+                    diagram.out_file.delete()
+
+                with Path(output).open('rb') as out_obj:
+                    diagram.out_file = File(out_obj, name='genome_diagram.pdf')
+                    diagram.save()
+                    out_obj.close()
+
+                if diagram.image:
+                    diagram.image.delete()
+
+                with Path(image).open('rb') as img_obj:
+                    diagram.image = File(img_obj, name='genome_diagram.png')
+                    diagram.save()
+                    img_obj.close()
+
+                handle.close()
+                os.remove(input_file_path)
+                os.remove(output)
+                os.remove(image)
+
+                return render(request, "bioinformatic/diagram/result.html", {'object': DiagramModel.objects.filter(user=request.user)})
+
             except ValueError:
-                os.remove(file_path)
+                handle.close()
+                os.remove(input_file_path)
                 msg = "Çoklu Genbank Kaydı"
                 return render(request, 'bioinformatic/fasta/notfound.html',
                               {"msg": msg, 'bre': 'Hata', 'url': reverse('bioinformatic:genome_diagram')})
 
+        else:
+            form = GenomeDiagramForm(request.POST or None, request.FILES or None)
+
     return render(request, "bioinformatic/diagram/analiz.html",
-                  {'diagram_form': diagram_form, 'restric_form': restric_form})
+                  {'form': form, 'restric': restric, 'obj': enzyme_obj, 'bre': "Genom Diagram Oluşturma"})
 
 
-def add_extra_enzim(request):
-    return render(request, "bioinformatic/diagram/add_enzym.html", {'form': RestrictionModelFormset()})
+def add_enzyme(request, pk):
+    if DiagramModel.objects.filter(user=request.user).exists():
+        pass
+    else:
+        DiagramModel.objects.create(user=request.user)
+    form = RestrictionModelFormset()
+    if request.method == "POST":
+        form = RestrictionModelFormset(request.POST)
+        if form.is_valid():
+            form.instance = DiagramModel.objects.get(user=request.user)
+            form.save()
+            return redirect('bioinformatic:genome_diagram')
+    return render(request, "bioinformatic/diagram/add_enzym.html", {'form': form, 'bre': "Enzim Ekleme"})
+
+
+def update_enzyme(request, pk):
+    user = DiagramModel.objects.get(user=request.user)
+    form = RestrictionModelFormFactory()
+    if request.method == "POST":
+        form = RestrictionModelFormFactory(request.POST)
+        if form.is_valid():
+            form.instance = user
+            form.save()
+            return redirect('bioinformatic:genome_diagram')
+    return render(request, "bioinformatic/diagram/enzyme_update.html", {'form': form, 'bre': 'Enzim Düzenleme'})
+
+
+def delete_enzyme(request, pk):
+    enzymes = RestrictionModel.objects.get(pk=pk)
+    enzymes.delete()
+    return redirect('bioinformatic:genome_diagram')

@@ -1,0 +1,77 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} {{ bre }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid py-4 mt-3 col-sm-10 shadow-md">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">Genom Diagram Sonuçları</h5>
+                                {% for foo in object %}
+                                    <p class="m-0">Analizi Yapan Laborant: {{ foo.user|title }}</p>
+                                {% endfor %}
+                                <p><b>Not:</b> İndirdiğiniz dosyalar silinecektir. Analizi Tekrar yapıp
+                                    sayfayı yenileyebilir veya görüntüleyebilirsiniz.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-0">
+                        <div class="table-responsive">
+                            <table class="table table-flush" id="products-list">
+                                <tbody class="mx-auto">
+                                {% for foo in object %}
+                                    <tr>
+                                        <td class="text-sm">
+                                            Diagram Dosyası
+                                            <a href="{% url "bioinformatic:genome_diagram_pdf_download" %}"
+                                               class="float-end m-2"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-download text-secondary" title="İndir"></i>
+                                            </a>
+                                            <a href="{{ foo.out_file.url }}" class="float-end m-2"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-eye text-eye text-info" title="Görüntüle"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="text-sm">
+                                            Diagram Fotosu
+                                            <a href="{% url "bioinformatic:genome_diagram_image_download" %}"
+                                               class="float-end m-2"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-download text-secondary" title="İndir"></i>
+                                            </a>
+                                            <a href="{{ foo.image.url }}" class="float-end m-2"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-original-title="Sil">
+                                                <i class="fas fa-eye text-info" title="Görüntüle"></i>
+                                            </a>
+
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
