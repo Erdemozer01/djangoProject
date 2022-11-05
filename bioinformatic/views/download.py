@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from django.http import HttpResponse
 from django.shortcuts import render, reverse
-from bioinformatic.models import MultipleSequenceAlignment
 
 
 def swiss_download(request):
@@ -407,7 +406,6 @@ def clustal_scores_download(request):
     finally:
         os.remove(filepath)
 
-
 def nucleotid_matrix_positions_download(request):
     try:
         # Define Django project base directory
@@ -439,7 +437,6 @@ def nucleotid_matrix_positions_download(request):
                       {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
-
 
 def motif_download(request):
     try:
@@ -473,7 +470,6 @@ def motif_download(request):
     finally:
         os.remove(filepath)
 
-
 def jaspar_motif_download(request):
     try:
         # Define Django project base directory
@@ -505,7 +501,6 @@ def jaspar_motif_download(request):
                       {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
-
 
 def pssm_download(request):
     try:
@@ -539,7 +534,6 @@ def pssm_download(request):
     finally:
         os.remove(filepath)
 
-
 def pwm_download(request):
     try:
         # Define Django project base directory
@@ -572,6 +566,101 @@ def pwm_download(request):
     finally:
         os.remove(filepath)
 
+def fasta_sequence_hist_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_fasta_sekans_hist.png".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'graphic', '{}'.format(request.user),
+                                "{}_fasta_sekans_hist.png".format(request.user))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+def fasta_gc_plot_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_fasta_gc_plot.png".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'graphic', '{}'.format(request.user),
+                                "{}_fasta_gc_plot.png".format(request.user))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
+
+def fasta_dot_plot_download(request):
+    try:
+        # Define Django project base directory
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        # Define text file name
+        filename = "{}_fasta_dot_plot.png".format(request.user)
+        # Define the full file path
+        filepath = os.path.join(BASE_DIR, "media", 'graphic', '{}'.format(request.user),
+                                "{}_fasta_dot_plot.png".format(request.user))
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        url = reverse("bioinformatic:multiple_sequence_alignments")
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'url': url, 'bre': 'Hata'})
+    try:
+        return response
+    except FileNotFoundError:
+        msg = "İndirmeye çalıştığınız dosya bulunamadı"
+        return render(request, 'bioinformatic/fasta/notfound.html',
+                      {"msg": msg, 'bre': 'Hata'})
+    finally:
+        os.remove(filepath)
 
 def genome_diagram_pdf_download(request):
     try:
@@ -662,7 +751,6 @@ def global_alignments_download(request):
     finally:
         os.remove(filepath)
 
-
 def local_alignments_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
@@ -687,7 +775,6 @@ def local_alignments_download(request):
                       {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
-
 
 def muscle_aligned_download(request):
     # Define Django project base directory
@@ -717,7 +804,6 @@ def muscle_aligned_download(request):
                       {"msg": msg, 'bre': 'Hata'})
     finally:
         os.remove(filepath)
-
 
 def blast_xml_download(request):
     # Define Django project base directory

@@ -249,6 +249,24 @@
                             <div class="collapse " id="ordersExample">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item ">
+                                        <a class="nav-link " href="{% url "bioinformatic:fasta_gc_plot" %}">
+                                            <span class="sidenav-mini-icon text-xs"> O </span>
+                                            <span class="sidenav-normal"> Fasta GC Plot </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ">
+                                        <a class="nav-link " href="{% url "bioinformatic:fasta_histogram_plot" %}">
+                                            <span class="sidenav-mini-icon text-xs"> FH </span>
+                                            <span class="sidenav-normal"> Fasta Seq Histogram </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ">
+                                        <a class="nav-link " href="{% url "bioinformatic:fasta_dot_plot" %}">
+                                            <span class="sidenav-mini-icon text-xs"> FDP </span>
+                                            <span class="sidenav-normal"> Fasta Dot Plot </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ">
                                         <a class="nav-link " href="{% url "bioinformatic:fasta_writing" %}">
                                             <span class="sidenav-mini-icon text-xs"> O </span>
                                             <span class="sidenav-normal"> Yazma </span>
@@ -400,9 +418,6 @@
                                 <span class="sidenav-normal"> Genom Diagram </span>
                             </a>
                         </li>
-
-
-
 
                     </ul>
                 </div>

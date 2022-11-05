@@ -1,7 +1,7 @@
 from .home import BioinformaticHomeView
 from .sekans import sekans
 from .translation import translation
-from .fasta import fasta_writing, fasta_add, fasta_file_translate, fasta_file_combine
+from .fasta import *
 from .download import *
 
 from .genbank import genbank_read, delete_genbank, genbank_writing, GenBankResultView, GenbankDetailView

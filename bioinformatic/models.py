@@ -332,3 +332,21 @@ class RestrictionModel(models.Model):
 
     def __str__(self):
         return self.enzymes
+
+
+def upload_to_graphic(instance, filename):
+    return 'graphic/{username}/{username}_{filename}'.format(
+        username=instance.user.username, filename=filename)
+
+
+class GraphicModels(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
+    graph_type = models.CharField(max_length=1000, verbose_name="Grafik Türü")
+    fasta_hist = models.ImageField(upload_to=upload_to_graphic, verbose_name="Fasta Histogram", blank=True, null=True)
+    fasta_gc_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Fasta %GC Plot", blank=True, null=True)
+    fasta_dot_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Fasta Dot Plot", blank=True,
+                                       null=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    def __str__(self):
+        return str(self.user)

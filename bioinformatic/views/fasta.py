@@ -1,24 +1,210 @@
 import Bio
-from django.shortcuts import render, redirect
+import pandas as pd
+import plotly.graph_objs
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from bioinformatic.forms.writing import FastaWritingForm
 from bioinformatic.forms.add import AddFastaData
-from django.views import generic
 from Bio import SeqIO
 from pathlib import Path
 import os
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from bioinformatic.forms.translation import DNAFastaFileTranslateForm
-from bioinformatic.forms.file import MultipleUploadFileForm
+from bioinformatic.forms.file import MultipleUploadFileForm, FileReadForm
+from Bio.SeqUtils import GC
+import pylab
+from bioinformatic.models import GraphicModels
+from django.core.files import File
+from django.contrib.auth.decorators import login_required
+from django.views import generic
+import plotly.express as px
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
 
 
 def handle_uploaded_file(f):
-    with open(os.path.join(BASE_DIR, "files", f"{f.name}"), 'wb+') as destination:
+    with open(os.path.join(BASE_DIR, "files", f"{f}"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
+
+@login_required
+def fasta_histogram_plot(request):
+    form = FileReadForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            try:
+
+                handle_uploaded_file(request.FILES['file'])
+                file_path = os.path.join(BASE_DIR, "files", f"{request.FILES['file']}")
+                image_path = os.path.join(BASE_DIR, "files", "{}_fasta_seq_hist.png".format(request.user))
+                handle = open(file_path)
+                read = SeqIO.parse(handle, 'fasta')
+                sizes = [len(rec) for rec in read]
+                pylab.hist(sizes, bins=20)
+
+                pylab.title(
+                    "Sekans Uzunluk Histogram"
+                )
+
+                pylab.xlabel("Sekans Uzunluğu (bp)")
+                pylab.ylabel("Sayı")
+                pylab.savefig(image_path)
+
+                obj = GraphicModels()
+                if GraphicModels.objects.filter(user=request.user, graph_type="Histogram").exists():
+                    GraphicModels.objects.filter(user=request.user, graph_type="Histogram").delete()
+
+                with Path(image_path).open('rb') as image_obj:
+                    obj.user = request.user
+                    obj.graph_type = "Histogram"
+                    obj.fasta_hist = File(image_obj, name="fasta_sekans_hist.png")
+                    obj.save()
+
+                handle.close()
+                os.remove(file_path)
+                image_handle = open(image_path)
+                image_handle.close()
+                os.remove(image_path)
+
+                return HttpResponseRedirect(
+                    reverse('bioinformatic:fasta_histogram_plot_result',
+                            args=(obj.user, obj.pk, obj.graph_type.lower(), obj.created.date())))
+
+            except RuntimeError:
+                return redirect('bioinformatic:fasta_histogram_plot')
+
+    return render(request, "bioinformatic/fasta/read.html", {'form': form, 'bre': "Fasta Sekans Histogram"})
+
+
+class HistogramDetailView(generic.DetailView):
+    template_name = "bioinformatic/fasta/hist_result.html"
+    model = GraphicModels
+
+    def get_context_data(self, **kwargs):
+        context = super(HistogramDetailView, self).get_context_data(**kwargs)
+        context['bre'] = "Fasta Histogram Sonuçları"
+        return context
+
+
+@login_required
+def fasta_gc_plot(request):
+    form = FileReadForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            file_path = os.path.join(BASE_DIR, "files", f"{request.FILES['file']}")
+            image_path = os.path.join(BASE_DIR, "files", "{}_fasta_gc_plot.png".format(request.user))
+            handle = open(file_path)
+            read = SeqIO.parse(handle, 'fasta')
+            gc_values = sorted(GC(rec.seq) for rec in read)
+            pylab.plot(gc_values)
+            pylab.title(
+                "%GC Plot"
+            )
+            pylab.xlabel("Gen Sayısı")
+            pylab.ylabel("%GC")
+            pylab.savefig(image_path)
+
+            obj = GraphicModels()
+            if GraphicModels.objects.filter(user=request.user, graph_type="GC-PLOT").exists():
+                GraphicModels.objects.filter(user=request.user, graph_type="GC-PLOT").delete()
+
+            with Path(image_path).open('rb') as image_obj:
+                obj.user = request.user
+                obj.graph_type = "GC-PLOT"
+                obj.fasta_gc_plot = File(image_obj, name="fasta_gc_plot.png")
+                obj.save()
+
+            handle.close()
+            os.remove(file_path)
+            image_handle = open(image_path)
+            image_handle.close()
+            os.remove(image_path)
+
+            return HttpResponseRedirect(
+                reverse('bioinformatic:fasta_gc_plot_result',
+                        args=(obj.user, obj.pk, obj.graph_type.lower(), obj.created.date())))
+
+    return render(request, "bioinformatic/fasta/read.html", {'form': form})
+
+
+class GCPlotDetailView(generic.DetailView):
+    template_name = "bioinformatic/fasta/gc_plot_result.html"
+    model = GraphicModels
+
+    def get_context_data(self, **kwargs):
+        context = super(GCPlotDetailView, self).get_context_data(**kwargs)
+        context['bre'] = "%GC Plot Sonuçları"
+        return context
+
+
+@login_required
+def fasta_dot_plot(request):
+    form = FileReadForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            try:
+                handle_uploaded_file(request.FILES['file'])
+                file_path = os.path.join(BASE_DIR, "files", f"{request.FILES['file']}")
+                image_path = os.path.join(BASE_DIR, "files", "{}_fasta_dot_plot.png".format(request.user))
+                handle = open(file_path)
+                record = SeqIO.parse(handle, 'fasta')
+
+                rec_one = next(record)
+                rec_two = next(record)
+                window = 7
+                seq_one = rec_one.seq.upper()
+                seq_two = rec_two.seq.upper()
+                data = [
+                    [
+                        (seq_one[i: i + window] != seq_two[j: j + window])
+                        for j in range(len(seq_one) - window)
+                    ]
+                    for i in range(len(seq_two) - window)
+                ]
+
+                pylab.gray()
+                pylab.imshow(data)
+                pylab.xlabel("%s (length %i bp)" % (rec_one.id, len(rec_one)))
+                pylab.ylabel("%s (length %i bp)" % (rec_two.id, len(rec_two)))
+                pylab.title("Dot plot")
+                pylab.savefig(image_path)
+                obj = GraphicModels()
+                if GraphicModels.objects.filter(user=request.user, graph_type="Dot Plot").exists():
+                    GraphicModels.objects.filter(user=request.user, graph_type="Dot Plot").delete()
+
+                with Path(image_path).open('rb') as file_obj:
+                    obj.user = request.user
+                    obj.graph_type = "Dot Plot"
+                    obj.fasta_dot_plot = File(file_obj, name="fasta_dot_plot.png")
+                    obj.save()
+
+                handle.close()
+                os.remove(file_path)
+                image_handle = open(image_path)
+                image_handle.close()
+                os.remove(image_path)
+
+                return HttpResponseRedirect(
+                    reverse('bioinformatic:fasta_dot_plot_result',
+                            args=(obj.user, obj.pk, obj.graph_type.lower(), obj.created.date())))
+
+            except RuntimeError:
+                return redirect('bioinformatic:fasta_dot_plot')
+
+    return render(request, "bioinformatic/fasta/read.html", {'form': form, "bre": "Fasta Dot Plot"})
+
+class DotPlotDetailView(generic.DetailView):
+    template_name = "bioinformatic/fasta/dot_plot_result.html"
+    model = GraphicModels
+
+    def get_context_data(self, **kwargs):
+        context = super(DotPlotDetailView, self).get_context_data(**kwargs)
+        context['bre'] = "Dot Plot Sonuçları"
+        return context
 
 
 def fasta_writing(request):

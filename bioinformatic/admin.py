@@ -1,19 +1,28 @@
 from django.contrib import admin
 from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, PubMedArticle, MedlineArticle, \
     SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment, BiologicalResourcesDatabases, \
-    FastaDNAMotifModel, RestrictionModel, RestrictionUserModel, DiagramModel
+    FastaDNAMotifModel, RestrictionModel, RestrictionUserModel, DiagramModel, GraphicModels
 from django.contrib.auth.models import User
+
 # Register your models here.
 admin.site.register(MedlineArticle)
 admin.site.register(FastaDNAMotifModel)
 
 
+@admin.register(GraphicModels)
+class GraphicModelModelAdmin(admin.ModelAdmin):
+    list_display = ['user', 'graph_type', 'created']
+    list_filter = ['user', 'graph_type', 'created']
+
+
 class RestrictionInline(admin.TabularInline):
     model = RestrictionModel
 
+
 @admin.register(DiagramModel)
 class RestrictionAdmin(admin.ModelAdmin):
-    inlines = (RestrictionInline, )
+    inlines = (RestrictionInline,)
+
 
 @admin.register(BiologicalResourcesDatabases)
 class BiologicalResourcesDatabases(admin.ModelAdmin):

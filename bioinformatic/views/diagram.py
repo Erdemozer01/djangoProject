@@ -10,6 +10,8 @@ from bioinformatic.forms.diagram import GenomeDiagramForm, RestrictionModelForms
 from bioinformatic.models import RestrictionUserModel, RestrictionModel, DiagramModel
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
