@@ -1,6 +1,6 @@
 from django import forms
 
-FILE_TYPE = (
+FILE_FORMAT = (
     ('fasta', 'FASTA'),
     ('genbank', 'GENBANK'),
 )
@@ -13,5 +13,5 @@ PLOT = (
 
 class PlotForm(forms.Form):
     file = forms.FileField(label="Dosya")
-    file_type = forms.ChoiceField(label="Dosya Türü", choices=FILE_TYPE)
+    file_format = forms.ChoiceField(label="Dosya Formatı", choices=FILE_FORMAT)
     plot_type = forms.ChoiceField(label="Plot Türü", choices=PLOT)

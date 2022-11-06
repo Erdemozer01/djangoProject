@@ -28,12 +28,12 @@ def plot(request):
         if form.is_valid():
             try:
                 handle_uploaded_file(request.FILES['file'])
-                file_type = form.cleaned_data['file_type']
+                file_format = form.cleaned_data['file_format']
                 plot_type = form.cleaned_data['plot_type']
                 file_path = os.path.join(BASE_DIR, "files", f"{request.FILES['file']}")
                 image_path = os.path.join(BASE_DIR, "files", "{}_{}.png".format(request.user, plot_type))
                 handle = open(file_path)
-                records = SeqIO.parse(handle, format=file_type)
+                records = SeqIO.parse(handle, format=file_format)
 
                 if plot_type == "histogram":
 
@@ -51,6 +51,7 @@ def plot(request):
                 elif plot_type == "gc":
 
                     gc_values = sorted(GC(record.seq) for record in records)
+
                     if gc_values == []:
                         return render(request, "bioinformatic/fasta/notfound.html",
                                       {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
@@ -62,7 +63,6 @@ def plot(request):
                     pylab.xlabel("Gen Sayısı")
                     pylab.ylabel("%GC")
                     pylab.savefig(image_path)
-
 
                 elif plot_type == "dot":
                     rec_one = next(records)
@@ -109,7 +109,10 @@ def plot(request):
                     reverse('bioinformatic:plot_results',
                             args=(obj.graph_type.lower(), obj.user, obj.created.date(), obj.pk)))
             except StopIteration:
-                return render(request, "bioinformatic/fasta/notfound.html", {'msg': "Hatalı Dosya Türü", 'url':reverse('bioinformatic:plot')})
+                return render(request, "bioinformatic/fasta/notfound.html",
+                              {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
+        else:
+            form = form = PlotForm()
 
     return render(request, "bioinformatic/plot/input.html", {'form': form})
 
