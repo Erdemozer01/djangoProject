@@ -34,8 +34,7 @@ def plot(request):
                 handle = open(file_path)
                 records = SeqIO.parse(handle, format=file_format)
 
-                if GraphicModels.objects.filter(user=request.user).exists():
-                    GraphicModels.objects.filter(user=request.user).delete()
+
 
                 if plot_type == "histogram":
                     sizes = [len(rec) for rec in records]
@@ -84,6 +83,9 @@ def plot(request):
                     pylab.ylabel("%s (length %i bp)" % (rec_two.id, len(rec_two)))
                     pylab.title("Dot Plot")
                     pylab.savefig(image_path)
+
+                if GraphicModels.objects.filter(user=request.user).exists():
+                    GraphicModels.objects.filter(user=request.user).delete()
 
                 with Path(image_path).open('rb') as image_obj:
                     obj.user = request.user
