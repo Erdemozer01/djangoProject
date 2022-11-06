@@ -14,3 +14,4 @@ from .swiss_prot import swiss_prot_file, swiss_prot_url, swiss_list_view, SwissP
 from .maxlikehood import maxlikehood
 from .motif import fasta_motif, jaspar_motif_create
 from .diagram import genome_diagram, add_enzyme, update_enzyme, delete_enzyme
+from .plot import *

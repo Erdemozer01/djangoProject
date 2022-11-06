@@ -1,6 +1,4 @@
 import Bio
-import pandas as pd
-import plotly.graph_objs
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from bioinformatic.forms.writing import FastaWritingForm
@@ -30,63 +28,7 @@ def handle_uploaded_file(f):
             destination.write(chunk)
 
 
-@login_required
-def fasta_histogram_plot(request):
-    form = FileReadForm(request.POST or None, request.FILES or None)
-    if request.method == "POST":
-        if form.is_valid():
-            try:
 
-                handle_uploaded_file(request.FILES['file'])
-                file_path = os.path.join(BASE_DIR, "files", f"{request.FILES['file']}")
-                image_path = os.path.join(BASE_DIR, "files", "{}_fasta_seq_hist.png".format(request.user))
-                handle = open(file_path)
-                read = SeqIO.parse(handle, 'fasta')
-                sizes = [len(rec) for rec in read]
-                pylab.hist(sizes, bins=20)
-
-                pylab.title(
-                    "Sekans Uzunluk Histogram"
-                )
-
-                pylab.xlabel("Sekans Uzunluğu (bp)")
-                pylab.ylabel("Sayı")
-                pylab.savefig(image_path)
-
-                obj = GraphicModels()
-                if GraphicModels.objects.filter(user=request.user, graph_type="Histogram").exists():
-                    GraphicModels.objects.filter(user=request.user, graph_type="Histogram").delete()
-
-                with Path(image_path).open('rb') as image_obj:
-                    obj.user = request.user
-                    obj.graph_type = "Histogram"
-                    obj.fasta_hist = File(image_obj, name="fasta_sekans_hist.png")
-                    obj.save()
-
-                handle.close()
-                os.remove(file_path)
-                image_handle = open(image_path)
-                image_handle.close()
-                os.remove(image_path)
-
-                return HttpResponseRedirect(
-                    reverse('bioinformatic:fasta_histogram_plot_result',
-                            args=(obj.user, obj.pk, obj.graph_type.lower(), obj.created.date())))
-
-            except RuntimeError:
-                return redirect('bioinformatic:fasta_histogram_plot')
-
-    return render(request, "bioinformatic/fasta/read.html", {'form': form, 'bre': "Fasta Sekans Histogram"})
-
-
-class HistogramDetailView(generic.DetailView):
-    template_name = "bioinformatic/fasta/hist_result.html"
-    model = GraphicModels
-
-    def get_context_data(self, **kwargs):
-        context = super(HistogramDetailView, self).get_context_data(**kwargs)
-        context['bre'] = "Fasta Histogram Sonuçları"
-        return context
 
 
 @login_required

@@ -566,15 +566,15 @@ def pwm_download(request):
     finally:
         os.remove(filepath)
 
-def fasta_sequence_hist_download(request):
+def histogram_download(request):
     try:
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "{}_fasta_sekans_hist.png".format(request.user)
+        filename = "{}_histogram_plot.png".format(request.user)
         # Define the full file path
         filepath = os.path.join(BASE_DIR, "media", 'graphic', '{}'.format(request.user),
-                                "{}_fasta_sekans_hist.png".format(request.user))
+                                "{}_histogram_plot.png".format(request.user))
         # Open the file for reading content
         path = open(filepath, 'rb')
         # Set the mime type
@@ -598,15 +598,15 @@ def fasta_sequence_hist_download(request):
     finally:
         os.remove(filepath)
 
-def fasta_gc_plot_download(request):
+def gc_plot_download(request):
     try:
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "{}_fasta_gc_plot.png".format(request.user)
+        filename = "{}_gc_plot.png".format(request.user)
         # Define the full file path
         filepath = os.path.join(BASE_DIR, "media", 'graphic', '{}'.format(request.user),
-                                "{}_fasta_gc_plot.png".format(request.user))
+                                "{}_gc_plot.png".format(request.user))
         # Open the file for reading content
         path = open(filepath, 'rb')
         # Set the mime type
@@ -630,15 +630,15 @@ def fasta_gc_plot_download(request):
     finally:
         os.remove(filepath)
 
-def fasta_dot_plot_download(request):
+def dot_plot_download(request):
     try:
         # Define Django project base directory
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         # Define text file name
-        filename = "{}_fasta_dot_plot.png".format(request.user)
+        filename = "{}_dot_plot.png".format(request.user)
         # Define the full file path
         filepath = os.path.join(BASE_DIR, "media", 'graphic', '{}'.format(request.user),
-                                "{}_fasta_dot_plot.png".format(request.user))
+                                "{}_dot_plot.png".format(request.user))
         # Open the file for reading content
         path = open(filepath, 'rb')
         # Set the mime type

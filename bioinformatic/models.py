@@ -342,10 +342,9 @@ def upload_to_graphic(instance, filename):
 class GraphicModels(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
     graph_type = models.CharField(max_length=1000, verbose_name="Grafik Türü")
-    fasta_hist = models.ImageField(upload_to=upload_to_graphic, verbose_name="Fasta Histogram", blank=True, null=True)
-    fasta_gc_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Fasta %GC Plot", blank=True, null=True)
-    fasta_dot_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Fasta Dot Plot", blank=True,
-                                       null=True)
+    histogram_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Histogram", blank=True, null=True)
+    gc_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="%GC Plot", blank=True, null=True)
+    dot_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Dot Plot", blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
 
     def __str__(self):
