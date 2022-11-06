@@ -342,6 +342,7 @@ def upload_to_graphic(instance, filename):
 class GraphicModels(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
     graph_type = models.CharField(max_length=1000, verbose_name="Grafik Türü")
+    format = models.CharField(max_length=1000, verbose_name="Dosya Formatı")
     histogram_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Histogram", blank=True, null=True)
     gc_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="%GC Plot", blank=True, null=True)
     dot_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Dot Plot", blank=True, null=True)

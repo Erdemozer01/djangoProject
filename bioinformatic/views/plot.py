@@ -21,7 +21,6 @@ def handle_uploaded_file(f):
 
 @login_required
 def plot(request):
-    global fig
     form = PlotForm(request.POST or None, request.FILES or None)
     obj = GraphicModels()
     if request.method == "POST":
@@ -35,11 +34,12 @@ def plot(request):
                 handle = open(file_path)
                 records = SeqIO.parse(handle, format=file_format)
 
-                if plot_type == "histogram":
+                if GraphicModels.objects.filter(user=request.user).exists():
+                    GraphicModels.objects.filter(user=request.user).delete()
 
+                if plot_type == "histogram":
                     sizes = [len(rec) for rec in records]
                     pylab.hist(sizes, bins=20)
-
                     pylab.title(
                         "Sekans Uzunluk Histogram"
                     )
@@ -82,15 +82,13 @@ def plot(request):
                     pylab.imshow(data)
                     pylab.xlabel("%s (length %i bp)" % (rec_one.id, len(rec_one)))
                     pylab.ylabel("%s (length %i bp)" % (rec_two.id, len(rec_two)))
-                    pylab.title("Dot plot")
+                    pylab.title("Dot Plot")
                     pylab.savefig(image_path)
-
-                if GraphicModels.objects.filter(user=request.user).exists():
-                    GraphicModels.objects.filter(user=request.user).delete()
 
                 with Path(image_path).open('rb') as image_obj:
                     obj.user = request.user
                     obj.graph_type = plot_type
+                    obj.format = file_format
                     if plot_type == "histogram":
                         obj.histogram_plot = File(image_obj, name="{}_plot.png".format(plot_type))
                     elif plot_type == "gc":
@@ -111,8 +109,11 @@ def plot(request):
             except StopIteration:
                 return render(request, "bioinformatic/fasta/notfound.html",
                               {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
+            except RuntimeError:
+                return render(request, "bioinformatic/fasta/notfound.html",
+                              {'msg': "Beklenmedik hata meydana geldi", 'url': reverse('bioinformatic:plot')})
         else:
-            form = form = PlotForm()
+            return redirect('bioinformatic:plot')
 
     return render(request, "bioinformatic/plot/input.html", {'form': form})
 

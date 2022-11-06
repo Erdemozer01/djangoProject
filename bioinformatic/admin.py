@@ -11,8 +11,9 @@ admin.site.register(FastaDNAMotifModel)
 
 @admin.register(GraphicModels)
 class GraphicModelModelAdmin(admin.ModelAdmin):
-    list_display = ['user', 'graph_type', 'created']
-    list_filter = ['user', 'graph_type', 'created']
+    list_display = ['user', 'graph_type', 'format', 'created']
+    list_filter = ['user', 'graph_type', 'format', 'created']
+    search_fields = ['user', 'graph_type', 'format']
 
 
 class RestrictionInline(admin.TabularInline):
