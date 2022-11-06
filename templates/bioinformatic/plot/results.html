@@ -32,8 +32,8 @@
                                          class="img-fluid">
                                     <div class="d-flex justify-content-end mt-4">
                                         <a href="{% url "bioinformatic:plot" %}">
-                                            <button type="button" name="button" class="btn btn-dark m-2">
-                                                <i class="fas fa-arrow text-" title="İndir"></i>
+                                            <button type="button" name="button" class="btn btn-outline-danger m-2">
+                                                <i class="fas fa-arrow-left text-secondary" title="İndir"></i>
                                                 Geri
                                             </button>
                                         </a>
@@ -66,6 +66,12 @@
                                     <img src="{{ object.dot_plot.url }}" alt="{{ object.user }}"
                                          class="img-fluid">
                                     <div class="d-flex justify-content-end mt-4">
+                                        <a href="{% url "bioinformatic:plot" %}">
+                                            <button type="button" name="button" class="btn btn-outline-danger m-2">
+                                                <i class="fas fa-arrow-left text-secondary" title="İndir"></i>
+                                                Geri
+                                            </button>
+                                        </a>
                                         <a href="{% url "bioinformatic:dot_plot_download" %}">
                                             <button type="button" name="button" class="btn btn-light m-0">
                                                 <i class="fas fa-download text-secondary" title="İndir"></i>
