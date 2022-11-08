@@ -26,6 +26,7 @@ urlpatterns = [
     path('histogram_download/', views.histogram_download, name="histogram_download"),
     path('gc-plot-download/', views.gc_plot_download, name="gc_plot_download"),
     path('dot-plot-download/', views.dot_plot_download, name="dot_plot_download"),
+    path('file-convert/', views.file_convert, name="file_convert"),
     path('plot/<graph_type>/<user>/<created>/<pk>/', views.PlotDetailView.as_view(), name="plot_results"),
     path('fasta_dot_plot/', views.fasta_dot_plot, name="fasta_dot_plot"),
     path('genome-diagram-download-image/', views.genome_diagram_image_download, name="genome_diagram_image_download"),
@@ -66,4 +67,5 @@ urlpatterns = [
     path('PhyloXML-download/', views.PhyloXML_download, name="PhyloXML_download"),
     path('clustal-omega-alignment/', views.clustalomega_alignment_download, name="clustalomega_alignment_download"),
     path('swiss_prot/<int:pk>/<slug:accessions>/', views.SwissProtDetailView.as_view(), name="swiss_prot_detail"),
+    path('add-file-format/', views.add_file_format, name="add_file_format"),
 ]

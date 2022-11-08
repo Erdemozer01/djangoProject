@@ -7,7 +7,7 @@ from Bio.Graphics import GenomeDiagram
 from Bio import SeqIO
 from bioinformatic.forms.diagram import GenomeDiagramForm, RestrictionModelForms, RestrictionModelFormset, \
     RestrictionModelFormFactory, RestrictionModelFormFactory2
-from bioinformatic.models import RestrictionUserModel, RestrictionModel, DiagramModel
+from bioinformatic.models import RestrictionModel, DiagramModel
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 

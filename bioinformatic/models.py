@@ -296,15 +296,15 @@ def upload_to_diagram(instance, filename):
 from django.contrib.auth.models import User
 
 
-class RestrictionUserModel(models.Model):
-    name = models.CharField(max_length=1000, blank=True, null=True)
+class FileFormat(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Dosya Formatı")
 
     def __str__(self):
         return self.name
 
 
 DIAGRAM_SHAPE = (
-    ('', '------------'),
+    ('', '-' * 30),
     ('ARROW', 'OK'),
     ('BOX', 'KUTU'),
 )

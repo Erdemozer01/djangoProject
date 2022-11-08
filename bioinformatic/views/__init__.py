@@ -15,3 +15,5 @@ from .maxlikehood import maxlikehood
 from .motif import fasta_motif, jaspar_motif_create
 from .diagram import genome_diagram, add_enzyme, update_enzyme, delete_enzyme
 from .plot import *
+from .convert import file_convert, add_file_format
+

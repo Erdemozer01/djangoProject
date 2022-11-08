@@ -13,7 +13,7 @@ DIAGRAM_FORMAT = (
     ('circular', 'DAİRESEL'),
 )
 
-from bioinformatic.models import RestrictionModel, RestrictionUserModel, DiagramModel
+from bioinformatic.models import RestrictionModel, DiagramModel
 
 
 class GenomeDiagramForm(forms.Form):
