@@ -33,6 +33,7 @@ METHOD = (
     ('', '------------'),
     ('MUSCLE', 'MUSCLE'),
     ('clustalw2', 'clustalw2'.upper()),
+    ('clustalx', 'clustalx'.upper()),
     ('omega', 'ClustalOmega'),
 )
 
@@ -122,11 +123,12 @@ class GlobalForm(forms.Form):
 
 
 class MultipleSequenceAlignmentForm(forms.Form):
+    file = forms.FileField(label="Fasta Dosyası Giriniz")
     method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Aracı")
     molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
     tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
     alignment_filetype = forms.ChoiceField(choices=ALIGNMENT_FILE_TYPE, label="Alignment Dosya Tipi")
-    file = forms.FileField(label="Fasta Dosyası Giriniz")
+
 
 
 class MaximumLikeHoodForm(forms.Form):
