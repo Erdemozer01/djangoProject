@@ -712,7 +712,7 @@ class PhyloTreeDetailView(generic.DetailView):
                           line=dict(color='rgb(20,20,20)', width=1, shape='spline'),
                           hoverinfo='none')
 
-        layout = dict(title='Filogenetik Ağaç',
+        layout = dict(title='{}_Filogenetik Ağaç'.format(self.model.tree_type.title()),
                       font=dict(family='Balto', size=14),
                       width=700,
                       height=750,
