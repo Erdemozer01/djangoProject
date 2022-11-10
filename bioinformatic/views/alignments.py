@@ -16,9 +16,7 @@ from bioinformatic \
     .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm
 from bioinformatic.models import MultipleSequenceAlignment, MaximumFileSize
 from django.contrib.auth.decorators import login_required
-import dash_cytoscape as cyto
-from dash import Dash, html, Input, Output
-from django.urls import reverse_lazy
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
