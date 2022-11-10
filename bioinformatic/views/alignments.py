@@ -727,6 +727,7 @@ class PhyloTreeDetailView(generic.DetailView):
 
         fig = go.FigureWidget(data=[trace_radial_lines, trace_arcs, trace_nodes], layout=layout)
         context['fig'] = fig
+
         return context
 
 
