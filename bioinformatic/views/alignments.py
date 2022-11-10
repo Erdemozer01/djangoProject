@@ -428,8 +428,14 @@ def MultipleSeqAlignment(request):
                         stats=stats,
                     )
 
-                    assert os.path.isfile(clustalx_exe), "Clustal W executable missing"
-                    stdout, stderr = clustalx_cline()
+                    if sys.platform.startswith('win32'):
+                        assert os.path.isfile(clustal_omega_exe)
+                        stdout, stderr = clustalx_cline()
+
+                    elif sys.platform.startswith('linux'):
+                        subprocess.Popen(str(clustalx_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE, universal_newlines=True,
+                                         shell=(sys.platform != "win32"))
 
                     AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
                                     molecule_type=molecule_type)
