@@ -50,7 +50,7 @@
                                         <a href="{% url "bioinformatic:tree_download" %}" class="float-end m-2">
                                             <i class="fas fa-download text-secondary"></i>
                                         </a>
-                                        <a href="{% url "bioinformatic:phylogenetic_tree" object.user object.method object.molecule_type object.pk %}"
+                                        <a href="{% url "bioinformatic:phylogenetic_tree" object.user object.method.lower object.molecule_type.lower object.pk %}"
                                            class="float-end m-2">
                                             <i class="fas fa-eye text-info"></i>
                                         </a>
