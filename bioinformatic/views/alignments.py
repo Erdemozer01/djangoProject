@@ -17,7 +17,6 @@ from bioinformatic \
 from bioinformatic.models import MultipleSequenceAlignment, MaximumFileSize
 from django.contrib.auth.decorators import login_required
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
 msa_path = os.path.join(BASE_DIR, 'media', 'msa')
@@ -164,7 +163,6 @@ def MultipleSeqAlignment(request):
                     AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
                                     molecule_type=molecule_type)
                     alignment = AlignIO.read(align_file, f'{alignment_filetype}')
-
 
                     calculator = DistanceCalculator('identity')
 
@@ -492,9 +490,16 @@ import numpy as np
 import plotly.graph_objs as go
 from django.views import generic
 
+
 class MultipleSeqDetailView(generic.DetailView):
     template_name = "bioinformatic/alignments/msa_results.html"
     model = MultipleSequenceAlignment
+
+    def get_context_data(self, **kwargs):
+        context = super(MultipleSeqDetailView, self).get_context_data(**kwargs)
+        context['bre'] = "Multiple Sekans Alignment Sonuçları"
+        return context
+
 
 def phylogenetic_tree(request):
     xml_file = os.path.join(BASE_DIR, "media", "msa", f"{request.user}", f"{request.user}_tree.xml")
@@ -717,5 +722,4 @@ def phylogenetic_tree(request):
 
     fig = go.FigureWidget(data=[trace_radial_lines, trace_arcs, trace_nodes], layout=layout)
 
-    return render(request, "bioinformatic/alignments/tree.html", {'fig':fig})
-
+    return render(request, "bioinformatic/alignments/tree.html", {'fig': fig})

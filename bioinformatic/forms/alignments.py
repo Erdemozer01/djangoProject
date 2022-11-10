@@ -63,6 +63,7 @@ PALM_TOOLS = (
     ('codeml', 'CODEML'),
 )
 
+
 class LocalForm(forms.Form):
     algo = forms.ChoiceField(
         label='Dizileme Matrisi Seçiniz',
@@ -97,7 +98,6 @@ class LocalForm(forms.Form):
     )
 
 
-
 class GlobalForm(forms.Form):
     seq1 = forms.CharField(
         label="Sekans1 Giriniz",
@@ -127,7 +127,6 @@ class MultipleSequenceAlignmentForm(forms.Form):
     molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
     tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
     alignment_filetype = forms.ChoiceField(choices=ALIGNMENT_FILE_TYPE, label="Alignment Dosya Tipi")
-
 
 
 class MaximumLikeHoodForm(forms.Form):
