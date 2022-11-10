@@ -1,12 +1,14 @@
 from django.contrib import admin
-from bioinformatic.models import LabSlideModel, FastaRead, GenbankRead, PubMedArticle, MedlineArticle, \
-    SwissProtModel, BigFileUploadModel, MultipleSequenceAlignment, BiologicalResourcesDatabases, \
-    FastaDNAMotifModel, RestrictionModel, FileFormat, DiagramModel, GraphicModels
-from django.contrib.auth.models import User
+from bioinformatic.models import *
 
-# Register your models here.
 admin.site.register(MedlineArticle)
 admin.site.register(FastaDNAMotifModel)
+
+
+@admin.register(MaximumFileSize)
+class MaximumFileSizeModelAdmin(admin.ModelAdmin):
+    list_display = ['file_size', 'created']
+
 
 @admin.register(FileFormat)
 class FileFormatModelAdmin(admin.ModelAdmin):

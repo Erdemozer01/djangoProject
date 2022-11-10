@@ -293,9 +293,6 @@ def upload_to_diagram(instance, filename):
         username=instance.user.username, filename=filename)
 
 
-from django.contrib.auth.models import User
-
-
 class FileFormat(models.Model):
     name = models.CharField(max_length=255, verbose_name="Dosya Formatı")
 
@@ -350,3 +347,11 @@ class GraphicModels(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class MaximumFileSize(models.Model):
+    file_size = models.BigIntegerField()
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    def __str__(self):
+        return str(self.file_size)
