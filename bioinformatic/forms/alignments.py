@@ -33,7 +33,6 @@ METHOD = (
     ('', '------------'),
     ('MUSCLE', 'MUSCLE'),
     ('clustalw2', 'clustalw2'.upper()),
-    ('clustalx', 'clustalx'.upper()),
     ('omega', 'ClustalOmega'),
 )
 
