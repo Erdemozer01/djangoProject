@@ -70,6 +70,6 @@ urlpatterns = [
     path('add-file-format/', views.add_file_format, name="add_file_format"),
     path('file-formats/', views.file_formats, name="edit_file_format"),
     path('<pk>/delete-file-format/', views.file_format_delete, name="file_format_delete"),
-    path('phylogenetic_tree/', views.phylogenetic_tree, name="phylogenetic_tree"),
     path('<slug:user>/<slug:method>/<molecule_type>/<pk>/', views.MultipleSeqDetailView.as_view(), name="msa_results"),
+    path('<slug:user>/<slug:method>/<molecule_type>/<pk>/', views.PhyloTreeDetailView.as_view(), name="phylogenetic_tree"),
 ]

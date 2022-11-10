@@ -5,7 +5,7 @@ from .fasta import *
 from .download import *
 
 from .genbank import genbank_read, delete_genbank, genbank_writing, GenBankResultView, GenbankDetailView
-from .alignments import global_alignment, local_alignment, MultipleSeqAlignment, phylogenetic_tree, MultipleSeqDetailView
+from .alignments import global_alignment, local_alignment, MultipleSeqAlignment, phylogenetic_tree, MultipleSeqDetailView, PhyloTreeDetailView
 from .blast import fasta_blast_tools
 from .entrez import entrez
 from .pubmed import pubmed
