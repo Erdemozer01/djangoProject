@@ -503,6 +503,10 @@ class PhyloTreeDetailView(generic.DetailView):
     template_name = "bioinformatic/alignments/tree.html"
     model = MultipleSequenceAlignment
 
+
+    def get_queryset(self):
+        return MultipleSequenceAlignment.objects.filter(user=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super(PhyloTreeDetailView, self).get_context_data(**kwargs)
         context['bre'] = "Filogenetik Ağaç"
@@ -712,7 +716,7 @@ class PhyloTreeDetailView(generic.DetailView):
                           line=dict(color='rgb(20,20,20)', width=1, shape='spline'),
                           hoverinfo='none')
 
-        layout = dict(title='{}_Filogenetik Ağaç'.format(self.model.tree_type.title()),
+        layout = dict(title='{}_Filogenetik Ağaç'.format(self.object.tree_type),
                       font=dict(family='Balto', size=14),
                       width=700,
                       height=750,
