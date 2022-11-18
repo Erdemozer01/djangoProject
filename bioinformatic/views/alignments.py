@@ -236,8 +236,7 @@ def MultipleSeqAlignment(request):
                 try:
                     if sys.platform.startswith('win32'):
                         muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
-                        muscle_cline = MuscleCommandline(muscle_exe, input=in_file_path, out=out_file_path,
-                                                         tree1=newick_tree_path)
+                        muscle_cline = MuscleCommandline(muscle_exe, input=in_file_path, out=out_file_path)
                         stdin, stdout = muscle_cline()
                     elif sys.platform.startswith('linux'):
                         muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
@@ -246,6 +245,14 @@ def MultipleSeqAlignment(request):
 
                     AlignIO.convert(out_file_path, 'fasta', align_file_path, f'{alignment_filetype}',
                                     molecule_type=molecule_type)
+                    alignment = AlignIO.read(align_file_path, f'{alignment_filetype}')
+
+                    calculator = DistanceCalculator('identity')
+
+                    constructor = DistanceTreeConstructor(calculator, method=tree_type)
+                    tree = constructor.build_tree(alignment)
+
+                    Phylo.write(tree, xml_tree_path, "phyloxml")
 
                     records = SeqIO.parse(in_file_path, "fasta")
 
@@ -272,9 +279,15 @@ def MultipleSeqAlignment(request):
                     handle = open(in_file_path)
                     handle.close()
                     os.remove(in_file_path)
+                    handle = open(out_file_path)
+                    handle.close()
+                    os.remove(out_file_path)
                     handle = open(align_file_path)
                     handle.close()
                     os.remove(align_file_path)
+                    handle = open(xml_tree_path)
+                    handle.close()
+                    os.remove(xml_tree_path)
 
                 except Bio.Application.ApplicationError:
                     os.remove(
