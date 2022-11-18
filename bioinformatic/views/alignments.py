@@ -225,6 +225,7 @@ def MultipleSeqAlignment(request):
             in_file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{request.FILES['file']}")
             out_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'alignment.fasta')
             align_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
+            stats = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'stats.txt')
             newick_tree_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.txt')
             tree_image_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.png')
             xml_tree_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
@@ -298,39 +299,40 @@ def MultipleSeqAlignment(request):
                         'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
                         'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
-            elif method == "clustalw2":
-
+            if method == "clustalw2":
                 try:
-
-                    user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
-
-                    if Path(user_path).exists():
-                        pass
-                    else:
-                        os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
-
                     if sys.platform.startswith('win32'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2.exe')
+
                     elif sys.platform.startswith('linux'):
                         clustalw2_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'clustalw2')
 
-                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                              '{}'.format(form.cleaned_data['file']))
-                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
+                    clustalw_cline = ClustalwCommandline(
+                        clustalw2_exe,
+                        infile=in_file_path,
+                        outfile=out_file_path,
+                        align=True,
+                        outorder="ALIGNED",
+                        convert=True,
+                        output="FASTA",
+                        stats=stats
+                    )
 
-                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
-                    aligned_path = Path(align_file)
-                    dnd_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', "tree.dnd")
-                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
-                    stats = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'stats.txt')
-                    stats_path = Path(stats)
-                    scores_path = os.path.join(BASE_DIR, "bioinformatic", "files", "scores.txt")
-                    score_path = Path(scores_path)
+                    assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
+                    stdout, stderr = clustalw_cline()
 
-                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
-                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
+                    AlignIO.convert(out_file_path, 'fasta', align_file_path, f'{alignment_filetype}',
+                                    molecule_type=molecule_type)
+                    alignment = AlignIO.read(align_file_path, f'{alignment_filetype}')
 
-                    records = SeqIO.parse(input_file, "fasta")
+                    calculator = DistanceCalculator('identity')
+
+                    constructor = DistanceTreeConstructor(calculator, method=tree_type)
+                    tree = constructor.build_tree(alignment)
+
+                    Phylo.write(tree, xml_tree_path, "phyloxml")
+
+                    records = SeqIO.parse(in_file_path, "fasta")
 
                     seq_id = []
 
@@ -342,94 +344,28 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
-                    clustalw_cline = ClustalwCommandline(
-                        clustalw2_exe,
-                        infile=input_file,
-                        outfile=output_file,
-                        align=True,
-                        outorder="ALIGNED",
-                        convert=True,
-                        output="FASTA",
-                        newtree=dnd_file,
-                        stats=stats
-                    )
+                    obj.user = request.user
+                    obj.method = method
+                    obj.tree_type = tree_type
+                    obj.alignment_filetype = alignment_filetype
+                    obj.molecule_type = molecule_type
+                    obj.align_file = File(Path(align_file_path).open('r'), name="aligned.{}".format(alignment_filetype))
+                    obj.out_file = File(Path(out_file_path).open('r'), name="out_alignment.fasta")
+                    obj.tree_file = File(Path(xml_tree_path).open('r'), name="tree.xml")
+                    obj.save()
 
-                    assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
-                    stdout, stderr = clustalw_cline()
-
-                    AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
-                                    molecule_type=molecule_type)
-                    alignment = AlignIO.read(align_file, f'{alignment_filetype}')
-
-                    calculator = DistanceCalculator('identity')
-                    constructor = DistanceTreeConstructor(calculator, method=tree_type)
-                    tree = constructor.build_tree(alignment)
-
-                    Phylo.write(tree, tree_file, "phyloxml")
-
-                    Phylo.draw(tree, do_show=False)
-
-                    plt.xlabel('Dal uzunluğu')
-                    plt.ylabel('Taksonomi')
-
-                    if tree_type == "nj":
-                        plt.title('Neighbor Joining Ağacı')
-                    elif tree_type == "upgma":
-                        plt.title('UPGMA Ağacı')
-
-                    plt.suptitle(f'{method.upper()}')
-
-                    plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                             "{}_filogenetik_ağaç.jpg".format(request.user)))
-
-                    read_stats = open(stats, 'r').readlines()[1:16]
-
-                    os.remove(stats)
-
-                    for i in read_stats:
-                        open(stats, 'a').writelines(i)
-
-                    open(scores_path, "w").writelines(stdout)
-
-                    scores = open(scores_path, 'r').readlines()[44:52]
-
-                    os.remove(scores_path)
-
-                    for i in scores:
-                        open(scores_path, 'a').writelines(i)
-
-                    with aligned_path.open(mode='r') as f:
-                        obj.align_file = File(f, name=aligned_path.name)
-                        obj.user = request.user
-                        obj.method = method
-                        obj.tree_type = tree_type
-                        obj.molecule_type = molecule_type
-                        obj.alignment_filetype = alignment_filetype
-                        obj.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                "{}_filogenetik_ağaç.jpg".format(request.user))
-
-                        obj.save()
-
-                    with stats_path.open(mode='r') as stats_file_obj:
-                        obj.stats = File(stats_file_obj, name=stats_path.name)
-                        obj.save()
-
-                    with score_path.open(mode='r') as file_obj:
-                        obj.scores = File(file_obj, name=score_path.name)
-                        obj.save()
-
-                    with Path(tree_file).open(mode='r') as file_obj:
-                        obj.tree_file = File(file_obj, name="tree.xml")
-                        obj.save()
-
-                    os.remove(input_file)
-                    os.remove(output_file)
-                    os.remove(align_file)
-                    os.remove(stats)
-                    os.remove(scores_path)
-                    os.remove(dnd_file)
-                    os.remove(tree_file)
-
+                    handle = open(in_file_path)
+                    handle.close()
+                    os.remove(in_file_path)
+                    handle = open(out_file_path)
+                    handle.close()
+                    os.remove(out_file_path)
+                    handle = open(align_file_path)
+                    handle.close()
+                    os.remove(align_file_path)
+                    handle = open(xml_tree_path)
+                    handle.close()
+                    os.remove(xml_tree_path)
 
                 except Bio.Application.ApplicationError:
                     os.remove(
