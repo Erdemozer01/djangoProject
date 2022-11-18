@@ -225,8 +225,9 @@ def MultipleSeqAlignment(request):
             in_file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{request.FILES['file']}")
             out_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'alignment.fasta')
             align_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
-            stats = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'stats.txt')
-            newick_tree_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.txt')
+            stats_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'stats.txt')
+            scores_path = os.path.join(BASE_DIR, "bioinformatic", "files", "scores.txt")
+            newick_tree_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', f"{request.FILES['file']}.dnd")
             tree_image_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.png')
             xml_tree_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
@@ -315,7 +316,7 @@ def MultipleSeqAlignment(request):
                         outorder="ALIGNED",
                         convert=True,
                         output="FASTA",
-                        stats=stats
+                        stats=stats_file_path
                     )
 
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
@@ -344,6 +345,13 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
+                    open(scores_path, "w").writelines(stdout)
+
+                    scores = open(scores_path, 'r').readlines()[44:52]
+
+                    for i in scores:
+                        open(scores_path, 'a').writelines(i)
+
                     obj.user = request.user
                     obj.method = method
                     obj.tree_type = tree_type
@@ -352,6 +360,8 @@ def MultipleSeqAlignment(request):
                     obj.align_file = File(Path(align_file_path).open('r'), name="aligned.{}".format(alignment_filetype))
                     obj.out_file = File(Path(out_file_path).open('r'), name="out_alignment.fasta")
                     obj.tree_file = File(Path(xml_tree_path).open('r'), name="tree.xml")
+                    obj.stats = File(Path(stats_file_path).open('r'), name="stats.txt")
+                    obj.scores = File(Path(scores_path).open('r'), name="scores.txt")
                     obj.save()
 
                     handle = open(in_file_path)
@@ -366,6 +376,12 @@ def MultipleSeqAlignment(request):
                     handle = open(xml_tree_path)
                     handle.close()
                     os.remove(xml_tree_path)
+                    handle = open(stats_file_path)
+                    handle.close()
+                    os.remove(stats_file_path)
+                    handle = open(scores_path)
+                    handle.close()
+                    os.remove(scores_path)
 
                 except Bio.Application.ApplicationError:
                     os.remove(
