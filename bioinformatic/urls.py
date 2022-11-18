@@ -1,6 +1,6 @@
 from django.urls import path
 from bioinformatic import views
-
+from django.views.generic import RedirectView
 app_name = "bioinformatic"
 
 urlpatterns = [
@@ -70,6 +70,7 @@ urlpatterns = [
     path('add-file-format/', views.add_file_format, name="add_file_format"),
     path('file-formats/', views.file_formats, name="edit_file_format"),
     path('<pk>/delete-file-format/', views.file_format_delete, name="file_format_delete"),
-    path('<slug:user>/<slug:method>/<molecule_type>/<pk>/', views.MultipleSeqDetailView.as_view(), name="msa_results"),
+    path('MultipleSeqAignmentResults/<user>/<method>/<slug:molecule_type>/<pk>/', views.MultipleSeqDetailView.as_view(), name="msa_results"),
+    path('alignment-chart/<user>/<method>/<molecule_type>/<pk>/', views.AlignmentChartView.as_view(), name="alignment_chart_show"),
     path('phylogenetic_tree/<slug:tree_type>/<slug:user>/<slug:method>/<molecule_type>/<pk>/', views.PhyloTreeDetailView.as_view(), name="phylogenetic_tree"),
 ]

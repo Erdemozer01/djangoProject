@@ -133,8 +133,8 @@ class FileUploadModel(models.Model):
 
 METHOD = (
     ('', '------------'),
-    ('MUSCLE', 'MUSCLE'),
-    ('clustalw2', 'clustalw2'.upper()),
+    ('muscle', 'MUSCLE'),
+    ('clustalw2', 'CLUSTALW2'),
     ('omega', 'ClustalOmega'),
 )
 
@@ -154,6 +154,7 @@ MOLECULE_TYPE = (
 
 ALIGNMENT_FILE_TYPE = (
     ('', '------------'),
+    ('fasta', 'FASTA'),
     ('clustal', 'CLUSTAL'),
     ('phylip', 'PHYLİB'),
     ('nexus', 'NEXUS'),
@@ -167,7 +168,7 @@ PALM_TOOLS = (
 
 
 def upload_to(instance, filename):
-    return 'msa/{username}/{username}_{filename}'.format(
+    return 'MultipleSequenceAlignment/{username}/{username}_{filename}'.format(
         username=instance.user.username, filename=filename)
 
 
@@ -176,17 +177,18 @@ class MultipleSequenceAlignment(models.Model):
     method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Aracı", max_length=1000)
     tree_type = models.CharField(choices=TREE_TYPE, verbose_name="Filogenetik Ağaç Türü", max_length=1000)
     molecule_type = models.CharField(choices=MOLECULE_TYPE, verbose_name="Molekül Tipi", max_length=1000)
-    palm_tools = models.CharField(choices=PALM_TOOLS, verbose_name="PALM Aracı", max_length=1000)
+    palm_tools = models.CharField(choices=PALM_TOOLS, verbose_name="PALM Aracı", max_length=1000, blank=True, null=True)
     alignment_filetype = models.CharField(choices=ALIGNMENT_FILE_TYPE, verbose_name="Alignment Dosya Tipi",
                                           max_length=1000)
-    input_file = models.FileField(verbose_name="Fasta Dosyası", upload_to=upload_to)
-    output_file = models.FileField(verbose_name="Alignment Dosyası", upload_to=upload_to, blank=True, null=True)
+    in_file = models.FileField(verbose_name="Girdi Dosyası", upload_to=upload_to, blank=True, null=True)
+    out_file = models.FileField(verbose_name="Çıktı Dosyası", upload_to=upload_to, blank=True, null=True)
     align_file = models.FileField(verbose_name="Aligned Dosyası", upload_to=upload_to, blank=True, null=True)
     stats = models.FileField(verbose_name="İstatistik Dosyası", upload_to=upload_to, blank=True, null=True)
     scores = models.FileField(verbose_name="Alignment Scor Dosyası", upload_to=upload_to, blank=True, null=True)
     ml_file = models.FileField(verbose_name="Maximum Likelihood", upload_to=upload_to, blank=True, null=True)
     tree_file = models.FileField(verbose_name="Filogenetik Ağaç Dosyası", upload_to=upload_to, blank=True, null=True)
-    tree = models.ImageField(verbose_name="Filogenetik Ağaç")
+    alignment_chart = models.FileField(verbose_name="Aligment Haritası", upload_to=upload_to, blank=True, null=True)
+    tree = models.ImageField(verbose_name="Filogenetik Ağaç", blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
 
     def __str__(self):

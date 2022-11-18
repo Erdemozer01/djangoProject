@@ -1,5 +1,6 @@
 import os.path
 import sys
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.files import File
 from pathlib import Path
@@ -13,17 +14,27 @@ import subprocess
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculator
 from Bio.Align.Applications import ClustalwCommandline, ClustalOmegaCommandline
 from bioinformatic \
-    .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm
+    .forms.alignments import GlobalForm, LocalForm, MultipleSequenceAlignmentForm, MultipleSequenceAlignmentModelForm
 from bioinformatic.models import MultipleSequenceAlignment, MaximumFileSize
 from django.contrib.auth.decorators import login_required
+import numpy as np
+import plotly.graph_objs as go
+from django.views import generic
+from dash import html, dcc
+import dash_bio as dashbio
+from dash.dependencies import Input, Output
+from django_plotly_dash import DjangoDash
+import json, math
+from Bio.Align.Applications import MuscleCommandline
+from xml.etree import ElementTree
+import pandas as pd
+from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')
-msa_path = os.path.join(BASE_DIR, 'media', 'msa')
 
 
 def handle_uploaded_file(f):
-    with open(path + f.name, 'wb+') as destination:
+    with open(os.path.join(BASE_DIR, "bioinformatic", "files", f"{f}"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
@@ -102,51 +113,141 @@ def local_alignment(request):
     return render(request, "bioinformatic/alignments/local.html", {"form": form, "bre": "Local Alignment"})
 
 
-@login_required
+class MultipleSeqAlignmentView(generic.DetailView, generic.FormView):
+    template_name = "bioinformatic/alignments/msa_analiz.html"
+    model = MultipleSequenceAlignment
+
+    def get_success_url(self):
+        return HttpResponseRedirect(reverse('bioinformatic:msa_results', args=(
+            self.object.user, self.object.method, self.object.molecule_type, self.object.pk)))
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_anonymous:
+            from django.conf import settings
+            messages.error(self.request, "Lütfen Giriş Yapınız")
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+        return super(MultipleSeqAlignmentView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        global muscle_exe
+        if MultipleSequenceAlignment.objects.all().filter(user=self.request.user.id).exists():
+            MultipleSequenceAlignment.objects.all().filter(user=self.request.user.id).all().delete()
+            MultipleSequenceAlignment.objects.create(user=self.request.user)
+        else:
+            MultipleSequenceAlignment.objects.create(user=self.request.user)
+        form = MultipleSequenceAlignmentForm(self.request.POST or None, self.request.FILES or None)
+        handle_uploaded_file(self.request.FILES['file'])
+        method = form.cleaned_data['method']
+        molecule_type = form.cleaned_data['molecule_type']
+        tree_type = form.cleaned_data['tree_type']
+        alignment_filetype = form.cleaned_data['alignment_filetype']
+        in_file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{self.request.FILES['file']}")
+        out_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
+        align_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
+        tree_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'{self.request.user}_tree.xml')
+
+        if alignment_filetype == "phylip":
+            align_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.phy')
+
+        if method == "MUSCLE":
+            try:
+                if sys.platform.startswith('win32'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
+                elif sys.platform.startswith('linux'):
+                    muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
+
+                records = SeqIO.parse(in_file_path, "fasta")
+
+                seq_id = []
+
+                for record in records:
+                    seq_id.append(record.id)
+
+                if len(seq_id) < 3:
+                    return render(self.request, "bioinformatic/fasta/notfound.html",
+                                  {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
+                                   'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+                muscle_result = subprocess.check_output([muscle_exe, "-in", in_file_path, "-out", out_file_path])
+
+                AlignIO.convert(out_file_path, 'fasta', align_file_path, f'{alignment_filetype}',
+                                molecule_type=molecule_type)
+
+                MultipleSequenceAlignment.objects.filter(user=self.request.user.pk).update(
+                    method=method,
+                    tree_type=tree_type,
+                    molecule_type=molecule_type,
+                    alignment_filetype=alignment_filetype,
+                    align_file=File(align_file_path, name=f"aligned_{alignment_filetype}"),
+                    out_file=File(out_file_path),
+                )
+
+                handle = open(in_file_path)
+                handle.close()
+                os.remove(in_file_path)
+                handle = open(align_file_path)
+                handle.close()
+                os.remove(align_file_path)
+
+            except Bio.Application.ApplicationError:
+                os.remove(
+                    os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+
+                return render(self.request, 'bioinformatic/fasta/notfound.html', {
+                    'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                    'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+        return self.get_success_url()
+
+
 def MultipleSeqAlignment(request):
     global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2, clustalx_exe
+    if request.user.is_anonymous:
+        from django.conf import settings
+        messages.error(request, "Lütfen Giriş Yapınız")
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     obj = MultipleSequenceAlignment()
+
     if request.method == "POST":
         if form.is_valid():
+
+            if MultipleSequenceAlignment.objects.all().filter(user=request.user).exists():
+                MultipleSequenceAlignment.objects.all().filter(user=request.user).all().delete()
+
             handle_uploaded_file(request.FILES['file'])
             method = form.cleaned_data['method']
-            tree_type = form.cleaned_data['tree_type']
             molecule_type = form.cleaned_data['molecule_type']
+            tree_type = form.cleaned_data['tree_type']
             alignment_filetype = form.cleaned_data['alignment_filetype']
+            in_file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{request.FILES['file']}")
+            out_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'alignment.fasta')
+            align_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
+            newick_tree_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.txt')
+            tree_image_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.png')
+            xml_tree_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
 
-            if method == "MUSCLE":
+            if alignment_filetype == "phylip":
+                align_file_path = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.phy')
+
+            if method == "muscle":
                 try:
-                    user_path = os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user))
-                    if Path(user_path).exists():
-                        pass
-                    else:
-                        os.makedirs(os.path.join(BASE_DIR, "media", 'msa', '{}'.format(request.user)))
-
                     if sys.platform.startswith('win32'):
                         muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
+                        muscle_cline = MuscleCommandline(muscle_exe, input=in_file_path, out=out_file_path,
+                                                         tree1=newick_tree_path)
+                        stdin, stdout = muscle_cline()
                     elif sys.platform.startswith('linux'):
                         muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
+                        muscle_result = subprocess.check_output(
+                            [muscle_exe, "-in", in_file_path, "-out", out_file_path])
 
-                    input_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                              '{}'.format(request.FILES['file']))
+                    AlignIO.convert(out_file_path, 'fasta', align_file_path, f'{alignment_filetype}',
+                                    molecule_type=molecule_type)
 
-                    output_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligment.fasta')
-
-                    align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', f'aligned.{alignment_filetype}')
-
-                    if alignment_filetype == "phylip":
-                        align_file = os.path.join(BASE_DIR, 'bioinformatic', 'files',
-                                                  f'aligned.phy')
-
-                    path = Path(align_file)
-
-                    tree_file = os.path.join(BASE_DIR, 'bioinformatic', 'files', 'tree.xml')
-
-                    if MultipleSequenceAlignment.objects.all().filter(user=request.user.id).exists():
-                        MultipleSequenceAlignment.objects.all().filter(user=request.user.id).all().delete()
-
-                    records = SeqIO.parse(input_file, "fasta")
+                    records = SeqIO.parse(in_file_path, "fasta")
 
                     seq_id = []
 
@@ -158,65 +259,22 @@ def MultipleSeqAlignment(request):
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
-                    muscle_result = subprocess.check_output([muscle_exe, "-in", input_file, "-out", output_file])
+                    obj.user = request.user
+                    obj.method = method
+                    obj.tree_type = tree_type
+                    obj.alignment_filetype = alignment_filetype
+                    obj.molecule_type = molecule_type
+                    obj.align_file = File(Path(align_file_path).open('r'), name="aligned.{}".format(alignment_filetype))
+                    obj.out_file = File(Path(out_file_path).open('r'), name="out_alignment.fasta")
+                    obj.tree_file = File(Path(xml_tree_path).open('r'), name="tree.xml")
+                    obj.save()
 
-                    AlignIO.convert(output_file, 'fasta', align_file, f'{alignment_filetype}',
-                                    molecule_type=molecule_type)
-                    alignment = AlignIO.read(align_file, f'{alignment_filetype}')
-
-                    calculator = DistanceCalculator('identity')
-
-                    constructor = DistanceTreeConstructor(calculator, method=tree_type)
-                    tree = constructor.build_tree(alignment)
-
-                    Phylo.write(tree, tree_file, "phyloxml")
-
-                    Phylo.draw(tree, do_show=False)
-
-                    f = Phylo.to_networkx(tree)
-
-                    plt.xlabel('Dal uzunluğu')
-                    plt.ylabel('Taksonomi')
-
-                    if tree_type == "nj":
-                        plt.title('Neighbor Joining Ağacı')
-                    elif tree_type == "upgma":
-                        plt.title('UPGMA Ağacı')
-
-                    plt.suptitle(f'{method}')
-
-                    plt.savefig(os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                             "{}_filogenetik_ağaç.jpg".format(request.user)))
-
-                    with path.open(mode='r') as f:
-                        obj.align_file = File(f, name=path.name)
-                        obj.user = request.user
-                        obj.method = method
-                        obj.tree_type = tree_type
-                        obj.molecule_type = molecule_type
-                        obj.alignment_filetype = alignment_filetype
-                        obj.tree = os.path.join(BASE_DIR, "media", "msa", "{}".format(request.user),
-                                                "{}_filogenetik_ağaç.jpg".format(request.user))
-                        obj.save()
-
-                    tree_path = Path(tree_file)
-
-                    with tree_path.open(mode='rb') as tree_file_obj:
-                        obj.tree_file = File(tree_file_obj, name=tree_path.name)
-                        obj.save()
-
-                    handle = open(input_file)
+                    handle = open(in_file_path)
                     handle.close()
-                    os.remove(input_file)
-                    handle = open(output_file)
+                    os.remove(in_file_path)
+                    handle = open(align_file_path)
                     handle.close()
-                    os.remove(output_file)
-                    handle = open(align_file)
-                    handle.close()
-                    os.remove(align_file)
-                    handle = open(tree_file)
-                    handle.close()
-                    os.remove(tree_file)
+                    os.remove(align_file_path)
 
                 except Bio.Application.ApplicationError:
                     os.remove(
@@ -460,6 +518,10 @@ def MultipleSeqAlignment(request):
                                                 "{}_filogenetik_ağaç.jpg".format(request.user))
                         obj.save()
 
+                    with Path(tree_file).open('r') as file_obj:
+                        obj.tree_file = File(file_obj, name="tree.xml")
+                        obj.save()
+
                     os.remove(input_file)
                     os.remove(output_path)
                     os.remove(align_file)
@@ -474,21 +536,17 @@ def MultipleSeqAlignment(request):
                         'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
                         'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
+            obj = MultipleSequenceAlignment.objects.filter(user=request.user).latest('created')
             return HttpResponseRedirect(
                 reverse('bioinformatic:msa_results',
-                        args=(obj.user, obj.method.lower(), obj.molecule_type.lower(), obj.pk)))
+                        args=(request.user, obj.method, obj.molecule_type.lower(), obj.pk)))
 
         else:
             form = MultipleSequenceAlignmentForm()
 
-    return render(request, 'bioinformatic/alignments/multiple.html',
+    return render(request, 'bioinformatic/alignments/msa_analiz.html',
                   {'form': form, 'bre': 'Multiple Sekans Alignment'})
 
-
-from Bio import Phylo
-import numpy as np
-import plotly.graph_objs as go
-from django.views import generic
 
 class MultipleSeqDetailView(generic.DetailView):
     template_name = "bioinformatic/alignments/msa_results.html"
@@ -499,461 +557,263 @@ class MultipleSeqDetailView(generic.DetailView):
         context['bre'] = "Multiple Sekans Alignment Sonuçları"
         return context
 
+
 class PhyloTreeDetailView(generic.DetailView):
     template_name = "bioinformatic/alignments/tree.html"
     model = MultipleSequenceAlignment
 
-
     def get_queryset(self):
         return MultipleSequenceAlignment.objects.filter(user=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        global tree
+        if self.request.user.is_anonymous:
+            from django.contrib import messages
+            messages.error(request, "Lütfen Giriş Yapınız")
+            return redirect('login')
+        else:
+            pass
+
+        app = DjangoDash('PhylogeneticTree')
+        tree_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{self.request.user}",
+                                 f"{self.request.user}_tree.xml")
+
+        def generate_elements(tree, xlen=30, ylen=30, grabbable=False):
+
+            def get_col_positions(tree, column_width=80):
+                taxa = tree.get_terminals()
+
+                # Some constants for the drawing calculations
+                max_label_width = max(len(str(taxon)) for taxon in taxa)
+                drawing_width = column_width - max_label_width - 1
+
+                """Create a mapping of each clade to its column position."""
+                depths = tree.depths()
+                # If there are no branch lengths, assume unit branch lengths
+                if not max(depths.values()):
+                    depths = tree.depths(unit_branch_lengths=True)
+                    # Potential drawing overflow due to rounding -- 1 char per tree layer
+                fudge_margin = int(math.ceil(math.log(len(taxa), 2)))
+                cols_per_branch_unit = ((drawing_width - fudge_margin) /
+                                        float(max(depths.values())))
+                return dict((clade, int(blen * cols_per_branch_unit + 1.0))
+                            for clade, blen in depths.items())
+
+            def get_row_positions(tree):
+                taxa = tree.get_terminals()
+                positions = dict((taxon, 2 * idx) for idx, taxon in enumerate(taxa))
+
+                def calc_row(clade):
+                    for subclade in clade:
+                        if subclade not in positions:
+                            calc_row(subclade)
+                    positions[clade] = ((positions[clade.clades[0]] +
+                                         positions[clade.clades[-1]]) // 2)
+
+                calc_row(tree.root)
+                return positions
+
+            def add_to_elements(clade, clade_id):
+                children = clade.clades
+
+                pos_x = col_positions[clade] * xlen
+                pos_y = row_positions[clade] * ylen
+
+                cy_source = {
+                    "data": {"id": clade_id},
+                    'position': {'x': pos_x, 'y': pos_y},
+                    'classes': 'nonterminal',
+                    'grabbable': grabbable
+                }
+                nodes.append(cy_source)
+
+                if clade.is_terminal():
+                    cy_source['data']['name'] = clade.name
+                    cy_source['classes'] = 'terminal'
+
+                for n, child in enumerate(children):
+                    # The "support" node is on the same column as the parent clade,
+                    # and on the same row as the child clade. It is used to create the
+                    # 90 degree angle between the parent and the children.
+                    # Edge config: parent -> support -> child
+
+                    support_id = clade_id + 's' + str(n)
+                    child_id = clade_id + 'c' + str(n)
+                    pos_y_child = row_positions[child] * ylen
+
+                    cy_support_node = {
+                        'data': {'id': support_id},
+                        'position': {'x': pos_x, 'y': pos_y_child},
+                        'grabbable': grabbable,
+                        'classes': 'support'
+                    }
+
+                    cy_support_edge = {
+                        'data': {
+                            'source': clade_id,
+                            'target': support_id,
+                            'sourceCladeId': clade_id
+                        },
+                    }
+
+                    cy_edge = {
+                        'data': {
+                            'source': support_id,
+                            'target': child_id,
+                            'length': clade.branch_length,
+                            'sourceCladeId': clade_id
+                        },
+                    }
+
+                    if clade.confidence and clade.confidence.value:
+                        cy_source['data']['confidence'] = clade.confidence.value
+
+                    nodes.append(cy_support_node)
+                    edges.extend([cy_support_edge, cy_edge])
+
+                    add_to_elements(child, child_id)
+
+            col_positions = get_col_positions(tree)
+            row_positions = get_row_positions(tree)
+
+            nodes = []
+            edges = []
+
+            add_to_elements(tree.clade, 'r')
+
+            return nodes, edges
+
+        # Define elements, stylesheet and layout
+        # download this from http://www.phyloxml.org/examples/apaf.xml
+
+        tree = Phylo.read(tree_file, 'phyloxml')
+
+        nodes, edges = generate_elements(tree)
+        elements = nodes + edges
+
+        layout = {'name': 'preset'}
+
+        stylesheet = [
+            {
+                'selector': '.nonterminal',
+                'style': {
+                    'label': 'data(confidence)',
+                    'background-opacity': 0,
+                    "text-halign": "left",
+                    "text-valign": "top",
+                }
+            },
+            {
+                'selector': '.support',
+                'style': {'background-opacity': 0}
+            },
+            {
+                'selector': 'edge',
+                'style': {
+                    "source-endpoint": "inside-to-node",
+                    "target-endpoint": "inside-to-node",
+                }
+            },
+            {
+                'selector': '.terminal',
+                'style': {
+                    'label': 'data(name)',
+                    'width': 10,
+                    'height': 10,
+                    "text-valign": "center",
+                    "text-halign": "right",
+                    'background-color': '#222222'
+                }
+            }
+        ]
+
+        import dash_cytoscape as cyto
+
+        # Start the app
+        app.layout = html.Div([
+            cyto.Cytoscape(
+                id='cytoscape-usage-phylogeny',
+                elements=elements,
+                responsive=True,
+                stylesheet=stylesheet,
+                layout=layout,
+                style={
+                    'height': '95vh',
+                    'width': '100%'
+                }
+            )
+        ])
+
+        @app.callback(Output('cytoscape-usage-phylogeny', 'stylesheet'),
+                      Input('cytoscape-usage-phylogeny', 'mouseoverEdgeData'))
+        def color_children(edgeData):
+            if edgeData is None:
+                return stylesheet
+
+            if 's' in edgeData['source']:
+                val = edgeData['source'].split('s')[0]
+            else:
+                val = edgeData['source']
+
+            children_style = [{
+                'selector': 'edge[source *= "{}"]'.format(val),
+                'style': {
+                    'line-color': 'blue'
+                }
+            }]
+
+            return stylesheet + children_style
+
+        return super(PhyloTreeDetailView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(PhyloTreeDetailView, self).get_context_data(**kwargs)
         context['bre'] = "Filogenetik Ağaç"
-        xml_file = os.path.join(BASE_DIR, "media", "msa", f"{self.request.user}", f"{self.request.user}_tree.xml")
-
-        def get_circular_tree_data(tree, order='level', dist=1, start_angle=0, end_angle=360, start_leaf='first'):
-            """Define  data needed to get the Plotly plot of a circular tree
-            """
-            # tree:  an instance of Bio.Phylo.Newick.Tree or Bio.Phylo.PhyloXML.Phylogeny
-            # order: tree  traversal method to associate polar coordinates to its nodes
-            # dist:  the vertical distance between two consecutive leafs in the associated rectangular tree layout
-            # start_angle:  angle in degrees representing the angle of the first leaf mapped to a circle
-            # end_angle: angle in degrees representing the angle of the last leaf
-            # the list of leafs mapped in anticlockwise direction onto circles can be tree.get_terminals()
-            # or its reversed version tree.get_terminals()[::-1].
-            # start leaf: is a keyword with two possible values"
-            # 'first': to map  the leafs in the list tree.get_terminals() onto a circle,
-            #         in the counter-clockwise direction
-            # 'last': to map  the leafs in the  list, tree.get_terminals()[::-1]
-
-            start_angle *= np.pi / 180  # conversion to radians
-            end_angle *= np.pi / 180
-
-            def get_radius(tree):
-                node_radius = tree.depths()
-
-                #  If the tree did not record  the branch lengths  assign  the unit branch length
-                #  (ex: the case of a newick tree "(A, (B, C), (D, E))")
-                if not np.count_nonzero(node_radius.values()):
-                    node_radius = tree.depths(unit_branch_lengths=True)
-                return node_radius
-
-            def get_vertical_position(tree):
-                """
-                returns a dict {clade: ycoord}, where y-coord is the cartesian y-coordinate
-                of a  clade root in a rectangular phylogram
-
-                """
-                n_leafs = tree.count_terminals()  # Counts the number of tree leafs.
-
-                # Assign y-coordinates to the tree leafs
-                if start_leaf == 'first':
-                    node_ycoord = dict((leaf, k) for k, leaf in enumerate(tree.get_terminals()))
-                elif start_leaf == 'last':
-                    node_ycoord = dict((leaf, k) for k, leaf in enumerate(reversed(tree.get_terminals())))
-                else:
-                    raise ValueError("start leaf can be only 'first' or 'last'")
-
-                def assign_ycoord(clade):  # compute the y-coord for the root of this clade
-                    for subclade in clade:
-                        if subclade not in node_ycoord:  # if the subclade root hasn't a y-coord yet
-                            assign_ycoord(subclade)
-                    node_ycoord[clade] = 0.5 * (node_ycoord[clade.clades[0]] + node_ycoord[clade.clades[-1]])
-
-                if tree.root.clades:
-                    assign_ycoord(tree.root)
-                return node_ycoord
-
-            node_radius = get_radius(tree)
-            node_ycoord = get_vertical_position(tree)
-            y_vals = node_ycoord.values()
-            ymin, ymax = min(y_vals), max(y_vals)
-            ymin -= dist  # this dist subtraction is necessary to avoid coincidence of the  first and last leaf angle
-
-            # when the interval  [ymin, ymax] is mapped onto [0, 2pi],
-
-            def ycoord2theta(y):
-                return start_angle + (end_angle - start_angle) * (y - ymin) / float(ymax - ymin)
-
-            def get_points_on_lines(linetype='radial', x_left=0, x_right=0, y_right=0, y_bot=0, y_top=0):
-                """
-                - define the points that generate a radial branch and the circular arcs, perpendicular to that branch
-
-                - a circular arc (angular linetype) is defined by 10 points on the segment of ends
-                (x_bot, y_bot), (x_top, y_top) in the rectangular layout,
-                 mapped by the polar transformation into 10 points that are spline interpolated
-                - returns for each linetype the lists X, Y, containing the x-coords, resp y-coords of the
-                line representative points
-                """
-
-                if linetype == 'radial':
-                    theta = ycoord2theta(y_right)
-                    X = [x_left * np.cos(theta), x_right * np.cos(theta), None]
-                    Y = [x_left * np.sin(theta), x_right * np.sin(theta), None]
-
-                elif linetype == 'angular':
-                    theta_b = ycoord2theta(y_bot)
-                    theta_t = ycoord2theta(y_top)
-                    t = np.linspace(0, 1, 10)  # 10 points that span the circular arc
-                    theta = (1 - t) * theta_b + t * theta_t
-                    X = list(x_right * np.cos(theta)) + [None]
-                    Y = list(x_right * np.sin(theta)) + [None]
-
-                else:
-                    raise ValueError("linetype can be only 'radial' or 'angular'")
-
-                return X, Y
-
-            def get_line_lists(clade, x_left, xlines, ylines, xarc, yarc):
-                """Recursively compute the lists of points that span the tree branches"""
-
-                # xlines, ylines  - the lists of x-coords, resp y-coords of radial edge ends
-                # xarc, yarc - the lists of points generating arc segments for tree branches
-
-                x_right = node_radius[clade]
-                y_right = node_ycoord[clade]
-
-                X, Y = get_points_on_lines(linetype='radial', x_left=x_left, x_right=x_right, y_right=y_right)
-
-                xlines.extend(X)
-                ylines.extend(Y)
-
-                if clade.clades:
-
-                    y_top = node_ycoord[clade.clades[0]]
-                    y_bot = node_ycoord[clade.clades[-1]]
-
-                    X, Y = get_points_on_lines(linetype='angular', x_right=x_right, y_bot=y_bot, y_top=y_top)
-                    xarc.extend(X)
-                    yarc.extend(Y)
-
-                    # get and append the lists of points representing the  branches of the descedants
-                    for child in clade:
-                        get_line_lists(child, x_right, xlines, ylines, xarc, yarc)
-
-            xlines = []
-            ylines = []
-            xarc = []
-            yarc = []
-            get_line_lists(tree.root, 0, xlines, ylines, xarc, yarc)
-            xnodes = []
-            ynodes = []
-
-            for clade in tree.find_clades(order='preorder'):  # it was 'level'
-                theta = ycoord2theta(node_ycoord[clade])
-                xnodes.append(node_radius[clade] * np.cos(theta))
-                ynodes.append(node_radius[clade] * np.sin(theta))
-
-            return xnodes, ynodes, xlines, ylines, xarc, yarc
-
-        tree = Phylo.read(xml_file, 'phyloxml')
-
-        traverse_order = 'preorder'
-
-        all_clades = list(tree.find_clades(order=traverse_order))
-        for k in range(len((all_clades))):
-            all_clades[k].id = k
-
-        xnodes, ynodes, xlines, ylines, xarc, yarc = get_circular_tree_data(tree, order=traverse_order,
-                                                                            start_leaf='last')
-
-        tooltip = []
-        color = []
-        for clade in tree.find_clades(order=traverse_order):
-            if clade.name and clade.confidence and clade.branch_length:
-                tooltip.append(f"id: {clade.id}<br>name: {clade.name}<br>branch-length: {clade.branch_length}\
-                            <br>confidence: {int(clade.confidence.value)}")
-
-                color.append[clade.confidence.value]
-            elif clade.name is None and clade.branch_length is not None and clade.confidence is not None:
-                color.append(clade.confidence.value)
-                tooltip.append(f"id: {clade.id}<br>branch-length: {clade.branch_length}\
-                            <br>confidence: {int(clade.confidence.value)}")
-            elif clade.name and clade.branch_length and clade.confidence is None:
-                tooltip.append(f"id: {clade.id}<br>name: {clade.name}<br>branch-length: {clade.branch_length}")
-                color.append(-1)
-            else:
-                tooltip.append('')
-                color.append(-1)
-
-        size = [9 if c != -1 else 7 for c in color]
-
-        pl_colorscale = [[0.0, 'rgb(10,10,150)'],  # color for leafs that haven't associated a confidence
-                         [0.001, 'rgb(10,10,150)'],
-                         [0.001, 'rgb(214, 47, 38)'],  # in fact the colorscale starts here
-                         [0.1, 'rgb(214, 47, 38)'],
-                         [0.2, 'rgb(244, 109, 67)'],
-                         [0.3, 'rgb(252, 172, 96)'],
-                         [0.4, 'rgb(254, 224, 139)'],
-                         [0.5, 'rgb(254, 254, 189)'],
-                         [0.6, 'rgb(217, 239, 139)'],
-                         [0.7, 'rgb(164, 216, 105)'],
-                         [0.8, 'rgb(102, 189, 99)'],
-                         [0.9, 'rgb(63, 170, 89)'],
-                         [1.0, 'rgb(25, 151, 79)']]
-
-        trace_nodes = dict(type='scatter',
-                           x=xnodes,
-                           y=ynodes,
-                           mode='markers',
-
-                           text=tooltip,
-                           hoverinfo='text',
-                           opacity=1)
-
-        trace_radial_lines = dict(type='scatter',
-                                  x=xlines,
-                                  y=ylines,
-                                  mode='lines',
-                                  line=dict(color='rgb(20,20,20)', width=1),
-                                  hoverinfo='none')
-
-        trace_arcs = dict(type='scatter',
-                          x=xarc,
-                          y=yarc,
-                          mode='lines',
-                          line=dict(color='rgb(20,20,20)', width=1, shape='spline'),
-                          hoverinfo='none')
-
-        layout = dict(title='{} Filogenetik Ağaç'.format(self.object.tree_type.title()),
-                      font=dict(family='Balto', size=14),
-                      width=700,
-                      height=750,
-                      autosize=True,
-                      showlegend=False,
-                      xaxis=dict(visible=False),
-                      yaxis=dict(visible=False),
-                      hovermode='closest',
-                      plot_bgcolor='rgb(245,245,245)',
-                      margin=dict(t=75)
-                      )
-
-        fig = go.FigureWidget(data=[trace_radial_lines, trace_arcs, trace_nodes], layout=layout)
-        context['fig'] = fig
-
         return context
 
 
-def phylogenetic_tree(request):
-    xml_file = os.path.join(BASE_DIR, "media", "msa", f"{request.user}", f"{request.user}_tree.xml")
+class AlignmentChartView(generic.DetailView):
+    template_name = "bioinformatic/alignments/alignment_chart.html"
+    model = MultipleSequenceAlignment
 
-    def get_circular_tree_data(tree, order='level', dist=1, start_angle=0, end_angle=360, start_leaf='first'):
-        """Define  data needed to get the Plotly plot of a circular tree
-        """
-        # tree:  an instance of Bio.Phylo.Newick.Tree or Bio.Phylo.PhyloXML.Phylogeny
-        # order: tree  traversal method to associate polar coordinates to its nodes
-        # dist:  the vertical distance between two consecutive leafs in the associated rectangular tree layout
-        # start_angle:  angle in degrees representing the angle of the first leaf mapped to a circle
-        # end_angle: angle in degrees representing the angle of the last leaf
-        # the list of leafs mapped in anticlockwise direction onto circles can be tree.get_terminals()
-        # or its reversed version tree.get_terminals()[::-1].
-        # start leaf: is a keyword with two possible values"
-        # 'first': to map  the leafs in the list tree.get_terminals() onto a circle,
-        #         in the counter-clockwise direction
-        # 'last': to map  the leafs in the  list, tree.get_terminals()[::-1]
+    def get(self, request, *args, **kwargs):
+        app = DjangoDash('AlignmentChart')
 
-        start_angle *= np.pi / 180  # conversion to radians
-        end_angle *= np.pi / 180
+        handle = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{self.request.user}",
+                              f"{self.request.user}_out_alignment.fasta")
 
-        def get_radius(tree):
-            node_radius = tree.depths()
+        data = open(handle).read()
 
-            #  If the tree did not record  the branch lengths  assign  the unit branch length
-            #  (ex: the case of a newick tree "(A, (B, C), (D, E))")
-            if not np.count_nonzero(node_radius.values()):
-                node_radius = tree.depths(unit_branch_lengths=True)
-            return node_radius
+        app.layout = html.Div([
+            dashbio.AlignmentChart(
+                id='alignment-viewer-eventDatum-usage',
+                data=data,
+            ),
+            html.P('Yaptığınız İşlemler'),
+            html.Div(id='alignment-viewer-eventDatum-usage-output')
+        ])
 
-        def get_vertical_position(tree):
-            """
-            returns a dict {clade: ycoord}, where y-coord is the cartesian y-coordinate
-            of a  clade root in a rectangular phylogram
+        @app.callback(
+            Output('alignment-viewer-eventDatum-usage-output', 'children'),
+            Input('alignment-viewer-eventDatum-usage', 'eventDatum')
+        )
+        def update_output(value):
+            if value is None:
+                return 'Bir Sorun Oluştu'
 
-            """
-            n_leafs = tree.count_terminals()  # Counts the number of tree leafs.
+            value = json.loads(value)
 
-            # Assign y-coordinates to the tree leafs
-            if start_leaf == 'first':
-                node_ycoord = dict((leaf, k) for k, leaf in enumerate(tree.get_terminals()))
-            elif start_leaf == 'last':
-                node_ycoord = dict((leaf, k) for k, leaf in enumerate(reversed(tree.get_terminals())))
-            else:
-                raise ValueError("start leaf can be only 'first' or 'last'")
+            if len(value.keys()) == 0:
+                return 'Bir Sorun Oluştu'
 
-            def assign_ycoord(clade):  # compute the y-coord for the root of this clade
-                for subclade in clade:
-                    if subclade not in node_ycoord:  # if the subclade root hasn't a y-coord yet
-                        assign_ycoord(subclade)
-                node_ycoord[clade] = 0.5 * (node_ycoord[clade.clades[0]] + node_ycoord[clade.clades[-1]])
+            return [
+                html.Div('- {}: {}'.format(key, value[key]))
+                for key in value.keys()
+            ]
 
-            if tree.root.clades:
-                assign_ycoord(tree.root)
-            return node_ycoord
+        return super(AlignmentChartView, self).get(request, *args, **kwargs)
 
-        node_radius = get_radius(tree)
-        node_ycoord = get_vertical_position(tree)
-        y_vals = node_ycoord.values()
-        ymin, ymax = min(y_vals), max(y_vals)
-        ymin -= dist  # this dist subtraction is necessary to avoid coincidence of the  first and last leaf angle
-
-        # when the interval  [ymin, ymax] is mapped onto [0, 2pi],
-
-        def ycoord2theta(y):
-            return start_angle + (end_angle - start_angle) * (y - ymin) / float(ymax - ymin)
-
-        def get_points_on_lines(linetype='radial', x_left=0, x_right=0, y_right=0, y_bot=0, y_top=0):
-            """
-            - define the points that generate a radial branch and the circular arcs, perpendicular to that branch
-
-            - a circular arc (angular linetype) is defined by 10 points on the segment of ends
-            (x_bot, y_bot), (x_top, y_top) in the rectangular layout,
-             mapped by the polar transformation into 10 points that are spline interpolated
-            - returns for each linetype the lists X, Y, containing the x-coords, resp y-coords of the
-            line representative points
-            """
-
-            if linetype == 'radial':
-                theta = ycoord2theta(y_right)
-                X = [x_left * np.cos(theta), x_right * np.cos(theta), None]
-                Y = [x_left * np.sin(theta), x_right * np.sin(theta), None]
-
-            elif linetype == 'angular':
-                theta_b = ycoord2theta(y_bot)
-                theta_t = ycoord2theta(y_top)
-                t = np.linspace(0, 1, 10)  # 10 points that span the circular arc
-                theta = (1 - t) * theta_b + t * theta_t
-                X = list(x_right * np.cos(theta)) + [None]
-                Y = list(x_right * np.sin(theta)) + [None]
-
-            else:
-                raise ValueError("linetype can be only 'radial' or 'angular'")
-
-            return X, Y
-
-        def get_line_lists(clade, x_left, xlines, ylines, xarc, yarc):
-            """Recursively compute the lists of points that span the tree branches"""
-
-            # xlines, ylines  - the lists of x-coords, resp y-coords of radial edge ends
-            # xarc, yarc - the lists of points generating arc segments for tree branches
-
-            x_right = node_radius[clade]
-            y_right = node_ycoord[clade]
-
-            X, Y = get_points_on_lines(linetype='radial', x_left=x_left, x_right=x_right, y_right=y_right)
-
-            xlines.extend(X)
-            ylines.extend(Y)
-
-            if clade.clades:
-
-                y_top = node_ycoord[clade.clades[0]]
-                y_bot = node_ycoord[clade.clades[-1]]
-
-                X, Y = get_points_on_lines(linetype='angular', x_right=x_right, y_bot=y_bot, y_top=y_top)
-                xarc.extend(X)
-                yarc.extend(Y)
-
-                # get and append the lists of points representing the  branches of the descedants
-                for child in clade:
-                    get_line_lists(child, x_right, xlines, ylines, xarc, yarc)
-
-        xlines = []
-        ylines = []
-        xarc = []
-        yarc = []
-        get_line_lists(tree.root, 0, xlines, ylines, xarc, yarc)
-        xnodes = []
-        ynodes = []
-
-        for clade in tree.find_clades(order='preorder'):  # it was 'level'
-            theta = ycoord2theta(node_ycoord[clade])
-            xnodes.append(node_radius[clade] * np.cos(theta))
-            ynodes.append(node_radius[clade] * np.sin(theta))
-
-        return xnodes, ynodes, xlines, ylines, xarc, yarc
-
-    tree = Phylo.read(xml_file, 'phyloxml')
-
-    traverse_order = 'preorder'
-
-    all_clades = list(tree.find_clades(order=traverse_order))
-    for k in range(len((all_clades))):
-        all_clades[k].id = k
-
-    xnodes, ynodes, xlines, ylines, xarc, yarc = get_circular_tree_data(tree, order=traverse_order, start_leaf='last')
-
-    tooltip = []
-    color = []
-    for clade in tree.find_clades(order=traverse_order):
-        if clade.name and clade.confidence and clade.branch_length:
-            tooltip.append(f"id: {clade.id}<br>name: {clade.name}<br>branch-length: {clade.branch_length}\
-                        <br>confidence: {int(clade.confidence.value)}")
-
-            color.append[clade.confidence.value]
-        elif clade.name is None and clade.branch_length is not None and clade.confidence is not None:
-            color.append(clade.confidence.value)
-            tooltip.append(f"id: {clade.id}<br>branch-length: {clade.branch_length}\
-                        <br>confidence: {int(clade.confidence.value)}")
-        elif clade.name and clade.branch_length and clade.confidence is None:
-            tooltip.append(f"id: {clade.id}<br>name: {clade.name}<br>branch-length: {clade.branch_length}")
-            color.append(-1)
-        else:
-            tooltip.append('')
-            color.append(-1)
-
-    size = [9 if c != -1 else 7 for c in color]
-
-    pl_colorscale = [[0.0, 'rgb(10,10,150)'],  # color for leafs that haven't associated a confidence
-                     [0.001, 'rgb(10,10,150)'],
-                     [0.001, 'rgb(214, 47, 38)'],  # in fact the colorscale starts here
-                     [0.1, 'rgb(214, 47, 38)'],
-                     [0.2, 'rgb(244, 109, 67)'],
-                     [0.3, 'rgb(252, 172, 96)'],
-                     [0.4, 'rgb(254, 224, 139)'],
-                     [0.5, 'rgb(254, 254, 189)'],
-                     [0.6, 'rgb(217, 239, 139)'],
-                     [0.7, 'rgb(164, 216, 105)'],
-                     [0.8, 'rgb(102, 189, 99)'],
-                     [0.9, 'rgb(63, 170, 89)'],
-                     [1.0, 'rgb(25, 151, 79)']]
-
-    trace_nodes = dict(type='scatter',
-                       x=xnodes,
-                       y=ynodes,
-                       mode='markers',
-
-                       text=tooltip,
-                       hoverinfo='text',
-                       opacity=1)
-
-    trace_radial_lines = dict(type='scatter',
-                              x=xlines,
-                              y=ylines,
-                              mode='lines',
-                              line=dict(color='rgb(20,20,20)', width=1),
-                              hoverinfo='none')
-
-    trace_arcs = dict(type='scatter',
-                      x=xarc,
-                      y=yarc,
-                      mode='lines',
-                      line=dict(color='rgb(20,20,20)', width=1, shape='spline'),
-                      hoverinfo='none')
-
-    layout = dict(title='Filogenetik Ağaç',
-                  font=dict(family='Balto', size=14),
-                  width=700,
-                  height=750,
-                  autosize=True,
-                  showlegend=False,
-                  xaxis=dict(visible=False),
-                  yaxis=dict(visible=False),
-                  hovermode='closest',
-                  plot_bgcolor='rgb(245,245,245)',
-                  margin=dict(t=75)
-                  )
-
-    fig = go.FigureWidget(data=[trace_radial_lines, trace_arcs, trace_nodes], layout=layout)
-
-    return render(request, "bioinformatic/alignments/tree.html", {'fig': fig})
+    def get_context_data(self, **kwargs):
+        context = super(AlignmentChartView, self).get_context_data(**kwargs)
+        context['bre'] = "Multiple Sekans Alignment Haritası"
+        return context

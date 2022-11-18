@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <div class="container-fluid py-4 mt-3 col-sm-10 shadow-md">
+    <div class="container-fluid py-4 mt-3 col-sm-12 shadow-md">
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -15,16 +15,12 @@
                     <div class="card-header pb-0">
                         <div class="d-lg-flex">
                             <div>
-                                <h5 class="mb-0">{{ object.tree_type|title }}-{{ bre }}</h5>
-                                <p class="m-0">Analizi Yapan Laborant: {{ object.user|title }}</p>
+                                <h5 class="mb-0">{{ object.method.title }}-{{ bre }}</h5>
                             </div>
                         </div>
                     </div>
                     <div class="card-body px-0 pb-0">
-                        <div class="col-lg-12">
-                            {% plotly_app name="PhylogeneticTree" ratio=1 use_frameborder=True %}
-                        </div>
-
+                        {% plotly_app name="AlignmentChart" ratio=1 use_frameborder=True %}
                     </div>
                 </div>
             </div>

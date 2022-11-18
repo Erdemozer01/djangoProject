@@ -31,8 +31,8 @@ MATRIS = (
 
 METHOD = (
     ('', '------------'),
-    ('MUSCLE', 'MUSCLE'),
-    ('clustalw2', 'clustalw2'.upper()),
+    ('muscle', 'MUSCLE'),
+    ('clustalw2', 'CLUSTALW2'),
     ('omega', 'ClustalOmega'),
 )
 
@@ -51,6 +51,7 @@ MOLECULE_TYPE = (
 
 ALIGNMENT_FILE_TYPE = (
     ('', '------------'),
+    ('fasta', 'FASTA'),
     ('clustal', 'CLUSTAL'),
     ('phylip', 'PHYLİB'),
     ('nexus', 'NEXUS'),
@@ -127,6 +128,11 @@ class MultipleSequenceAlignmentForm(forms.Form):
     molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
     tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
     alignment_filetype = forms.ChoiceField(choices=ALIGNMENT_FILE_TYPE, label="Alignment Dosya Tipi")
+
+class MultipleSequenceAlignmentModelForm(forms.ModelForm):
+    class Meta:
+        model = MultipleSequenceAlignment
+        fields = ['in_file', 'method', 'alignment_filetype', 'molecule_type', 'tree_type']
 
 
 class MaximumLikeHoodForm(forms.Form):
