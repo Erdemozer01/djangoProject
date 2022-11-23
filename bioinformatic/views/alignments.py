@@ -275,7 +275,7 @@ def MultipleSeqAlignment(request, user, method):
                         try:
                             cml = codeml.Codeml()
                             cml.alignment = align_file_path
-                            cml.tree = xml_tree_path
+                            cml.tree = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", f'{request.user}_tree.xml')
                             cml.ctl_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "codeml.ctl")
                             cml.working_dir = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}")
                             cml.out_file = paml_results
