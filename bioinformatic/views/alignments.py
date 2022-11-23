@@ -276,7 +276,8 @@ def MultipleSeqAlignment(request, user, method):
                             cml = codeml.Codeml()
                             cml.alignment = align_file_path
                             cml.tree = xml_tree_path
-                            cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
+                            cml.ctl_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "codeml.ctl")
+                            cml.working_dir = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}")
                             cml.out_file = paml_results
                             cml.run(command=cml_exe, verbose=True)
                             obj.ml_file = File(Path(paml_results).open('r'), name=f"{obj.palm_tools}.txt")
