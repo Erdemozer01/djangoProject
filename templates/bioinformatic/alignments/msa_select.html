@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 {% load static bootstrap5 %}
-{% block title %} Plot Oluşturma {% endblock %}
+{% block title %} Multiple Sekans Alignment {% endblock %}
 
 
 {% block content %}
@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-9 col-12 mx-auto">
                 <div class="card card-body mt-3">
-                    <h6 class="mb-0">{{ obj.graph_type|upper }} Plot Oluşturma</h6>
+                    <h6 class="mb-0">Multiple Sekans Alignment Metodu Seçiniz</h6>
                     <div class="row mt-4">
                         <div class="col-12 col-md-12 mx-auto">
                             <div class="form-group ">
@@ -20,7 +20,7 @@
                                             <a href="{% url "bioinformatic:home" %}">Vazgeç</a>
                                         </button>
                                         <button type="submit" name="button" class="btn bg-gradient-dark m-0 ms-2">
-                                            ANALİZ
+                                            Sonraki
                                         </button>
                                     </div>
                                 </form>

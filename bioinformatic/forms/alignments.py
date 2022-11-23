@@ -122,12 +122,17 @@ class GlobalForm(forms.Form):
     )
 
 
-class MultipleSequenceAlignmentForm(forms.Form):
-    file = forms.FileField(label="Fasta Dosyası Giriniz")
+class MultipleSequenceAlignmentSelectForm(forms.Form):
     method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Aracı")
+    palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="Maximum Likelihood (PAML)", required=False, help_text="Boş Olabilir")
+
+
+class MultipleSequenceAlignmentForm(forms.Form):
+    file = forms.FileField(label="Fasta Dosyası Seçiniz")
     molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
     tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
     alignment_filetype = forms.ChoiceField(choices=ALIGNMENT_FILE_TYPE, label="Alignment Dosya Tipi")
+
 
 class MultipleSequenceAlignmentModelForm(forms.ModelForm):
     class Meta:
@@ -136,7 +141,4 @@ class MultipleSequenceAlignmentModelForm(forms.ModelForm):
 
 
 class MaximumLikeHoodForm(forms.Form):
-    palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="Palm Aracı")
-    molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
-    tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
-    file = forms.FileField(label="Fasta Dosyası Giriniz", help_text=" Not: Alignment olmamış dosya giriniz")
+    palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="Palm Aracı", required=False)

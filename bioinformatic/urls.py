@@ -1,6 +1,7 @@
 from django.urls import path
 from bioinformatic import views
 from django.views.generic import RedirectView
+
 app_name = "bioinformatic"
 
 urlpatterns = [
@@ -21,7 +22,8 @@ urlpatterns = [
     path('add-enzyme/<pk>/', views.add_enzyme, name="add_enzyme"),
     path('update-enzyme/<pk>/', views.update_enzyme, name="update_enzyme"),
     path('delete-enzyme/<pk>/', views.delete_enzyme, name="delete_enzyme"),
-    path('plot/', views.plot, name="plot"),
+    path('plot/<pk>/<user>/<graph_type>/', views.plot, name="plot"),
+    path('plot-secimi/', views.plot_select, name="plot_select"),
     path('genome-diagram-download/', views.genome_diagram_pdf_download, name="genome_diagram_pdf_download"),
     path('histogram_download/', views.histogram_download, name="histogram_download"),
     path('gc-plot-download/', views.gc_plot_download, name="gc_plot_download"),
@@ -37,7 +39,8 @@ urlpatterns = [
     path('local-alignment/', views.local_alignment, name="local_alignment"),
     path('local-alignment-download/', views.local_alignments_download, name="local_alignment_download"),
     path('global-alignment/', views.global_alignment, name="global_alignment"),
-    path('multiple-sequence-alignments-analiz/', views.MultipleSeqAlignment, name="multiple_sequence_alignments"),
+    path('multiple-sequence-alignment/', views.MultipleSequenceAlignmentView, name="multiple_sequence_alignments"),
+    path('multiple-sequence-alignment/<user>/<method>/', views.MultipleSeqAlignment, name="multiple_sequence_alignments_analiz"),
     path('global-alignment-download/', views.global_alignments_download, name="global_alignment_download"),
     path('fasta-blast-tools/', views.fasta_blast_tools, name="fasta_blast_tools"),
     path('xml-hsp/', views.hsp_download, name="xml_hsp"),
@@ -60,7 +63,8 @@ urlpatterns = [
     path('pssm-download/', views.pssm_download, name="pssm_download"),
     path('pwm-download/', views.pwm_download, name="pwm_download"),
     path('jaspar-motif-create/', views.jaspar_motif_create, name="jaspar_motif_create"),
-    path('nucleotid-matrix-positions-download/', views.nucleotid_matrix_positions_download, name="nucleotid_matrix_positions_download"),
+    path('nucleotid-matrix-positions-download/', views.nucleotid_matrix_positions_download,
+         name="nucleotid_matrix_positions_download"),
     path('clustal-alignment-download/', views.clustal_alignment_download, name="clustal_alignment_download"),
     path('maximum-likelihood/', views.maxlikehood, name="maximum_likelihood"),
     path('maximum-likelihood-download/', views.maximum_likelihood_download, name="maximum_likelihood_download"),
@@ -70,7 +74,12 @@ urlpatterns = [
     path('add-file-format/', views.add_file_format, name="add_file_format"),
     path('file-formats/', views.file_formats, name="edit_file_format"),
     path('<pk>/delete-file-format/', views.file_format_delete, name="file_format_delete"),
-    path('MultipleSeqAignmentResults/<user>/<method>/<slug:molecule_type>/<pk>/', views.MultipleSeqDetailView.as_view(), name="msa_results"),
-    path('alignment-chart/<user>/<method>/<molecule_type>/<pk>/', views.AlignmentChartView.as_view(), name="alignment_chart_show"),
-    path('phylogenetic_tree/<slug:tree_type>/<slug:user>/<slug:method>/<molecule_type>/<pk>/', views.PhyloTreeDetailView.as_view(), name="phylogenetic_tree"),
+    path('MultipleSeqAignmentResults/<user>/<method>/<slug:molecule_type>/<pk>/', views.MultipleSeqDetailView.as_view(),
+         name="msa_results"),
+    path('alignment-chart/<user>/<method>/<molecule_type>/<pk>/', views.AlignmentChartView.as_view(),
+         name="alignment_chart_show"),
+    path('phylogenetic_tree/<slug:tree_type>/<slug:user>/<slug:method>/<molecule_type>/<pk>/',
+         views.PhyloTreeDetailView.as_view(), name="phylogenetic_tree"),
+    path('clustergram/<slug:tree_type>/<slug:user>/<slug:method>/<molecule_type>/<pk>/',
+         views.AlignmentClusterGramView.as_view(), name="clustergram_showing"),
 ]

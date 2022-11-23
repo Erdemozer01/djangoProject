@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-9 col-12 mx-auto">
                 <div class="card card-body mt-3">
-                    <h6 class="mb-0">Multiple Sekans Alignment</h6>
+                    <h6 class="mb-0">{{ obj|title }} - Multiple Sekans Alignment</h6>
                     <div class="row mt-4">
                         <div class="col-12 col-md-12 mx-auto">
                             <div class="form-group ">
@@ -16,9 +16,12 @@
                                     {% csrf_token %}
                                     {% bootstrap_form form %}
                                     <div class="d-flex justify-content-end mt-4">
-                                        <button type="button" name="button" class="btn btn-light m-0">
-                                            <a href="{% url "bioinformatic:home" %}">Vazgeç</a>
-                                        </button>
+                                        <a href="{% url "bioinformatic:multiple_sequence_alignments" %}">
+                                            <button type="button" name="button" class="btn btn-light m-0">
+                                                Geri
+                                            </button>
+                                        </a>
+
                                         <button type="submit" name="button" class="btn bg-gradient-dark m-0 ms-2">
                                             ANALİZ
                                         </button>

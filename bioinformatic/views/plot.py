@@ -1,7 +1,9 @@
+import plotly
+from django.contrib import messages
 from django.shortcuts import *
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from bioinformatic.forms.plot import PlotForm
+from bioinformatic.forms.plot import PlotForm, PlotSelectForm
 from pathlib import Path
 import os
 from Bio import SeqIO
@@ -9,6 +11,10 @@ from Bio.SeqUtils import GC
 import pylab
 from django.core.files import File
 from bioinformatic.models import GraphicModels
+from django_plotly_dash import DjangoDash
+from dash import html, dcc, ctx
+import plotly.express as px
+import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -19,52 +25,104 @@ def handle_uploaded_file(f):
             destination.write(chunk)
 
 
+def plot_select(request):
+    if request.user.is_anonymous:
+        from django.conf import settings
+        messages.error(request, "Lütfen Giriş Yapınız")
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    form = PlotSelectForm(request.POST or None)
+    object = GraphicModels()
+    obj = GraphicModels.objects.filter(user=request.user)
+
+    if request.method == "POST":
+        if form.is_valid():
+            if obj.exists():
+                obj.delete()
+            graph_type = form.cleaned_data['plot_type']
+            object.user = request.user
+            object.graph_type = graph_type
+            object.save()
+            obj = GraphicModels.objects.filter(user=request.user).latest('created')
+            return HttpResponseRedirect(
+                reverse('bioinformatic:plot',
+                        args=(obj.pk, obj.user, obj.graph_type)))
+    return render(request, "bioinformatic/plot/plot.html", {'form': form})
+
+
 @login_required
-def plot(request):
+def plot(request, pk, user, graph_type):
     form = PlotForm(request.POST or None, request.FILES or None)
-    obj = GraphicModels()
+    obj = GraphicModels.objects.filter(user=request.user).latest('created')
     if request.method == "POST":
         if form.is_valid():
             try:
                 handle_uploaded_file(request.FILES['file'])
                 file_format = form.cleaned_data['file_format']
-                plot_type = form.cleaned_data['plot_type']
                 file_path = os.path.join(BASE_DIR, "files", f"{request.FILES['file']}")
-                image_path = os.path.join(BASE_DIR, "files", "{}_{}.png".format(request.user, plot_type))
                 handle = open(file_path)
                 records = SeqIO.parse(handle, format=file_format)
+                obj.format = file_format
+                obj.save()
 
+                if obj.graph_type == "histogram":
+                    seq_len = [len(rec) for rec in records]
 
+                    df = pd.DataFrame({
+                        'Sekans Uzunluğu': seq_len,
+                    })
 
-                if plot_type == "histogram":
-                    sizes = [len(rec) for rec in records]
-                    pylab.hist(sizes, bins=20)
-                    pylab.title(
-                        "Sekans Uzunluk Histogram"
-                    )
+                    app = DjangoDash("histogram")
+                    app.layout = html.Div([
+                        dcc.Graph(
+                            figure=px.histogram(df, x="Sekans Uzunluğu", title="Sekans Uzunluk Dağılımı"),
+                        )
+                    ])
 
-                    pylab.xlabel("Sekans Uzunluğu (bp)")
-                    pylab.ylabel("Sayı")
-                    pylab.savefig(image_path)
+                elif obj.graph_type == "gc":
+                    app = DjangoDash("gc_plot")
 
-                elif plot_type == "gc":
+                    app2 = DjangoDash('name')
 
                     gc_values = sorted(GC(record.seq) for record in records)
+
+                    name = []
+
+                    gc = []
+
+                    for rec in SeqIO.parse(file_path, format=file_format):
+                        name.append(rec.name)
+                        gc.append(GC(rec.seq))
+
+                    data = pd.DataFrame({
+                        'Organizma': name,
+                        '%GC': gc
+                    })
 
                     if gc_values == []:
                         return render(request, "bioinformatic/fasta/notfound.html",
                                       {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
 
-                    pylab.plot(gc_values)
-                    pylab.title(
-                        "%GC Plot"
-                    )
-                    pylab.xlabel("Gen Sayısı")
-                    pylab.ylabel("%GC")
-                    pylab.savefig(image_path)
+                    df = pd.DataFrame({
+                        '%GC': gc_values,
+                    })
 
-                elif plot_type == "dot":
+                    app.layout = html.Div([
+                        dcc.Graph(
+                            figure=px.line(df, title="%GC Plot", y="%GC"),
+                        )
+                    ])
+
+                    app2.layout = html.Div([
+                        dcc.Graph(
+                            figure=px.scatter(data, title="%GC Plot", y="%GC", color="Organizma"),
+                        )
+                    ])
+
+                elif obj.graph_type == "dot":
+                    app = DjangoDash("dot")
+
                     rec_one = next(records)
+
                     rec_two = next(records)
                     window = 7
                     seq_one = rec_one.seq.upper()
@@ -76,38 +134,21 @@ def plot(request):
                         ]
                         for i in range(len(seq_two) - window)
                     ]
+                    import plotly.graph_objects as go
 
-                    pylab.gray()
-                    pylab.imshow(data)
-                    pylab.xlabel("%s (length %i bp)" % (rec_one.id, len(rec_one)))
-                    pylab.ylabel("%s (length %i bp)" % (rec_two.id, len(rec_two)))
-                    pylab.title("Dot Plot")
-                    pylab.savefig(image_path)
-
-                if GraphicModels.objects.filter(user=request.user).exists():
-                    GraphicModels.objects.filter(user=request.user).delete()
-
-                with Path(image_path).open('rb') as image_obj:
-                    obj.user = request.user
-                    obj.graph_type = plot_type
-                    obj.format = file_format
-                    if plot_type == "histogram":
-                        obj.histogram_plot = File(image_obj, name="{}_plot.png".format(plot_type))
-                    elif plot_type == "gc":
-                        obj.gc_plot = File(image_obj, name="{}_plot.png".format(plot_type))
-                    elif plot_type == "dot":
-                        obj.dot_plot = File(image_obj, name="{}_plot.png".format(plot_type))
-                    obj.save()
+                    app.layout = html.Div([
+                        dcc.Graph(
+                            figure=px.imshow(data),
+                            responsive=True
+                        )
+                    ])
 
                 handle.close()
                 os.remove(file_path)
-                image_handle = open(image_path)
-                image_handle.close()
-                os.remove(image_path)
 
                 return HttpResponseRedirect(
                     reverse('bioinformatic:plot_results',
-                            args=(obj.graph_type.lower(), obj.user, obj.created.date(), obj.pk)))
+                            args=(obj.graph_type, obj.user,  obj.created.date(), obj.pk)))
             except StopIteration:
                 return render(request, "bioinformatic/fasta/notfound.html",
                               {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
@@ -117,7 +158,7 @@ def plot(request):
         else:
             return redirect('bioinformatic:plot')
 
-    return render(request, "bioinformatic/plot/input.html", {'form': form})
+    return render(request, "bioinformatic/plot/input.html", {'form': form, 'obj':obj})
 
 
 class PlotDetailView(generic.DetailView):
@@ -126,6 +167,7 @@ class PlotDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PlotDetailView, self).get_context_data(**kwargs)
-        context['bre'] = "Plot Sonuçları"
+        obj = GraphicModels.objects.filter(user=self.request.user).latest('created')
+        context['bre'] = f"{obj.graph_type.title()} Plot Sonuçları"
         context['object'] = GraphicModels.objects.filter(user=self.request.user).latest('created')
         return context

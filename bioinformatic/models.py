@@ -131,11 +131,12 @@ class FileUploadModel(models.Model):
         verbose_name_plural = "files"
 
 
-METHOD = (
+MSA_TYPE = (
     ('', '------------'),
-    ('muscle', 'MUSCLE'),
-    ('clustalw2', 'CLUSTALW2'),
-    ('omega', 'ClustalOmega'),
+    ('muscle', 'Muscle'),
+    ('clustalw2', 'ClustalW2'),
+    ('omega', 'Clustal Omega'),
+    ('paml', 'Maximum Likelihood (PAML)'),
 )
 
 TREE_TYPE = (
@@ -162,8 +163,9 @@ ALIGNMENT_FILE_TYPE = (
 
 PALM_TOOLS = (
     ('', '------------'),
-    ('codeml', 'CODEML'),
     ('baseml', 'BASEML'),
+    ('basemlg', 'BASEMLG'),
+    ('codeml', 'CODEML'),
 )
 
 
@@ -174,10 +176,10 @@ def upload_to(instance, filename):
 
 class MultipleSequenceAlignment(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
-    method = models.CharField(choices=METHOD, verbose_name="Multiple Sekans Alignment Aracı", max_length=1000)
+    method = models.CharField(choices=MSA_TYPE, verbose_name="Multiple Sekans Alignment Aracı", max_length=1000)
     tree_type = models.CharField(choices=TREE_TYPE, verbose_name="Filogenetik Ağaç Türü", max_length=1000)
     molecule_type = models.CharField(choices=MOLECULE_TYPE, verbose_name="Molekül Tipi", max_length=1000)
-    palm_tools = models.CharField(choices=PALM_TOOLS, verbose_name="PALM Aracı", max_length=1000, blank=True, null=True)
+    palm_tools = models.CharField(choices=PALM_TOOLS, verbose_name="Maximum Likelihood (PAML)", max_length=1000, blank=True, null=True)
     alignment_filetype = models.CharField(choices=ALIGNMENT_FILE_TYPE, verbose_name="Alignment Dosya Tipi",
                                           max_length=1000)
     in_file = models.FileField(verbose_name="Girdi Dosyası", upload_to=upload_to, blank=True, null=True)
@@ -189,6 +191,7 @@ class MultipleSequenceAlignment(models.Model):
     tree_file = models.FileField(verbose_name="Filogenetik Ağaç Dosyası", upload_to=upload_to, blank=True, null=True)
     alignment_chart = models.FileField(verbose_name="Aligment Haritası", upload_to=upload_to, blank=True, null=True)
     tree = models.ImageField(verbose_name="Filogenetik Ağaç", blank=True, null=True)
+    cluster_csv = models.FileField(verbose_name="ClusterGram CSV Dosyası", upload_to=upload_to, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
 
     def __str__(self):
@@ -341,7 +344,7 @@ def upload_to_graphic(instance, filename):
 class GraphicModels(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
     graph_type = models.CharField(max_length=1000, verbose_name="Grafik Türü")
-    format = models.CharField(max_length=1000, verbose_name="Dosya Formatı")
+    format = models.CharField(max_length=1000, verbose_name="Dosya Formatı", blank=True, null=True)
     histogram_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Histogram", blank=True, null=True)
     gc_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="%GC Plot", blank=True, null=True)
     dot_plot = models.ImageField(upload_to=upload_to_graphic, verbose_name="Dot Plot", blank=True, null=True)

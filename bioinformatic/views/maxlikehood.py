@@ -13,8 +13,9 @@ from Bio import AlignIO
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor, DistanceCalculator
 from bioinformatic.forms.alignments import MaximumLikeHoodForm
 from Bio.Phylo.PAML import codeml
-from django.contrib.auth.decorators import login_required
 from Bio.Phylo.PAML._paml import PamlError
+from django.contrib.auth.decorators import login_required
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 path = os.path.join(BASE_DIR, 'bioinformatic', 'files/')

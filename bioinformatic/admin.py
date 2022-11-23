@@ -38,10 +38,10 @@ class BiologicalResourcesDatabases(admin.ModelAdmin):
 
 
 @admin.register(MultipleSequenceAlignment)
-class LabSlideModelAdmin(admin.ModelAdmin):
-    list_display = ['user', 'method', 'tree_type', 'molecule_type', 'created']
-    list_filter = ['user', 'method', 'tree_type', 'molecule_type', 'created']
-    search_fields = ['user', 'method', 'tree_type', 'created']
+class MultipleSequenceAlignmentModelAdmin(admin.ModelAdmin):
+    list_display = ['user', 'method', "palm_tools", 'tree_type', 'molecule_type', 'created']
+    list_filter = ['user', 'method', "palm_tools", 'tree_type', 'molecule_type', 'created']
+    search_fields = ['user', 'method', "palm_tools", 'tree_type', 'molecule_type', 'created']
 
 
 @admin.register(LabSlideModel)

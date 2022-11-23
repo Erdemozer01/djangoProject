@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-
+{% load plotly_dash %}
 {% block title %} {{ bre }} {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <div class="container-fluid py-4 mt-3 col-sm-10 shadow-md">
+    <div class="container-fluid col-sm-10 col-10 col-lg-10">
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -15,67 +15,49 @@
                     <div class="card-header pb-0">
                         <div class="d-lg-flex">
                             <div>
-                                <h5 class="mb-0">{{ bre }}</h5>
-
+                                <h5 class="mb-0">{{ object.graph_type|upper }} Plot Sonuçları</h5>
                                 <p class="m-0">Analizi Yapan Laborant: {{ object.user|title }}</p>
+                                <p class="m-0">Dosya Türü: {{ object.format|title }} Dosyası</p>
+                                <p class="m-0">Tarih: {{ object.created.date }}</p>
 
-                                <p><b>Not:</b> İndirdiğiniz dosyalar silinecektir. Analizi Tekrar yapıp
-                                    sayfayı yenileyebilir veya görüntüleyebilirsiniz.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body px-0 pb-0">
+                    <div class="card-body px-0 pb-0 container">
                         <div class="table-responsive">
-                            <div class="m-3">
+                            <div class="mb-3">
+
                                 {% if "histogram" in request.build_absolute_uri %}
-                                    <img src="{{ object.histogram_plot.url }}" alt="{{ object.user }}"
-                                         class="img-fluid">
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <a href="{% url "bioinformatic:plot" %}">
+                                    {% plotly_app name="histogram" ratio=1 %}
+                                    <div class="d-flex justify-content-end mt-1">
+                                        <a href="{% url "bioinformatic:plot" object.pk object.user object.graph_type %}">
                                             <button type="button" name="button" class="btn btn-outline-danger m-2">
-                                                <i class="fas fa-arrow-left text-secondary" title="İndir"></i>
+                                                <i class="fas fa-arrow-left text-secondary" title="Geri"></i>
                                                 Geri
-                                            </button>
-                                        </a>
-                                        <a href="{% url "bioinformatic:histogram_download" %}">
-                                            <button type="button" name="button" class="btn btn-light m-2">
-                                                <i class="fas fa-download text-secondary" title="İndir"></i>
-                                                İndir
                                             </button>
                                         </a>
                                     </div>
                                 {% elif "gc" in request.build_absolute_uri %}
-                                    <img src="{{ object.gc_plot.url }}" alt="{{ object.user }}"
-                                         class="img-fluid">
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <a href="{% url "bioinformatic:plot" %}">
+                                    {% plotly_app name="gc_plot" ratio=1 %}
+                                    {% plotly_app name="name" ratio=1 %}
+                                    <div class=" justify-content-end">
+                                        <a href="{% url "bioinformatic:plot" object.pk object.user object.graph_type %}">
                                             <button type="button" name="button" class="btn btn-outline-danger m-2">
-                                                <i class="fas fa-arrow-left text-secondary" title="İndir"></i>
+                                                <i class="fas fa-arrow-left text-secondary" title="Geri"></i>
                                                 Geri
                                             </button>
                                         </a>
-                                        <a href="{% url "bioinformatic:gc_plot_download" %}">
-                                            <button type="button" name="button" class="btn btn-light m-2">
-                                                <i class="fas fa-download text-secondary" title="İndir"></i>
-                                                İndir
-                                            </button>
-                                        </a>
-
                                     </div>
                                 {% elif "dot" in request.build_absolute_uri %}
-                                    <img src="{{ object.dot_plot.url }}" alt="{{ object.user }}"
-                                         class="img-fluid">
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <a href="{% url "bioinformatic:plot" %}">
+                                    <div class="container-lg">
+                                        {% plotly_app name="dot" ratio=1 %}
+                                    </div>
+
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{% url "bioinformatic:plot" object.pk object.user object.graph_type %}">
                                             <button type="button" name="button" class="btn btn-outline-danger m-2">
-                                                <i class="fas fa-arrow-left text-secondary" title="İndir"></i>
+                                                <i class="fas fa-arrow-left text-secondary" title="Geri"></i>
                                                 Geri
-                                            </button>
-                                        </a>
-                                        <a href="{% url "bioinformatic:dot_plot_download" %}">
-                                            <button type="button" name="button" class="btn btn-light m-2">
-                                                <i class="fas fa-download text-secondary" title="İndir"></i>
-                                                İndir
                                             </button>
                                         </a>
                                     </div>

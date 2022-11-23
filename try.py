@@ -1,27 +1,31 @@
 import math
 import os
 from pathlib import Path
-from Bio import Phylo, SeqIO
-import dash_cytoscape as cyto
-from dash import Dash, html, Input, Output
-from Bio.Align.Applications import MuscleCommandline
-import plotly.graph_objs as go
-
+from Bio.Phylo import PhyloXML, PhyloXMLIO
+from xml.etree import ElementTree
+from Bio import Phylo
+import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent
 
-in_file = os.path.join(BASE_DIR, "bioinformatic", "files", "ls_orchid.fasta.txt")
-out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "aligned.fasta")
-scorefile = os.path.join(BASE_DIR, "bioinformatic", "files", "scorefile.txt")
-usetree = os.path.join(BASE_DIR, "bioinformatic", "files", "usetree.txt")
+in_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "admin_tree.xml")
 
-muscle_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "muscle3.8.425_win32.exe")
+xml_file_read = PhyloXMLIO.parse(in_file)
 
-muscle_cline = MuscleCommandline(muscle_exe, input=in_file, out=out_file,
-                                 scorefile=scorefile, tree2=usetree)
-muscle_cline()
+names = []
+branch_length = []
+cols = ["name", "branch_length"]
+rows = []
 
-tree = Phylo.read(usetree, "newick")
+for i in xml_file_read:
+    for j in i.clade.find_clades():
+        rows.append({
+            'name': j.name,
+            'branch_length': j.branch_length
+        })
 
+df = pd.DataFrame(rows, columns=cols)
+df.to_csv('output.csv')
 
-Phylo.convert(usetree, "newick", "converted_tree.xml", "phyloxml")
+for i in range(94):
+    print(i)
