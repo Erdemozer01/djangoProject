@@ -274,7 +274,7 @@ def MultipleSeqAlignment(request, user, method):
 
                         try:
                             cml = codeml.Codeml()
-                            cml.alignment = out_file_path
+                            cml.alignment = align_file_path
                             cml.tree = xml_tree_path
                             cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
                             cml.out_file = paml_results
