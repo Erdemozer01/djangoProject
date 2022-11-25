@@ -295,9 +295,24 @@ def MultipleSeqAlignment(request, user, method):
                             elif obj.palm_tools == "basemlg":
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
                                                        "basemlg.exe")
+
                         elif sys.platform.startswith('linux'):
                             if obj.palm_tools == "codeml":
-                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "codeml")
+                                try:
+                                    command = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "codeml")
+
+                                    paml = codeml.Codeml()
+
+                                    paml.alignment = align_file_path
+                                    paml.tree = newick_tree_path
+                                    paml.working_dir = working_dir
+                                    paml.out_file = paml_results
+                                    paml.ctl_file = ctl_file
+
+                                    paml.run(command=command)
+
+                                except ValueError:
+                                    pass
                             elif obj.palm_tools == "baseml":
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "baseml")
                             elif obj.palm_tools == "basemlg":
