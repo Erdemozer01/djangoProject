@@ -309,7 +309,7 @@ def MultipleSeqAlignment(request, user, method):
                                     paml.out_file = paml_results
                                     paml.ctl_file = ctl_file
 
-                                    paml.run(command=command)
+                                    paml.run(command=command, verbose=True)
 
                                 except ValueError:
                                     pass
