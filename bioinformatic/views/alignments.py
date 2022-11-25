@@ -308,6 +308,7 @@ def MultipleSeqAlignment(request, user, method):
                                     paml.working_dir = working_dir
                                     paml.out_file = paml_results
                                     paml.ctl_file = ctl_file
+                                    paml.set_options(fix_omega=1)
 
                                     paml.run(command=command, verbose=True)
 
