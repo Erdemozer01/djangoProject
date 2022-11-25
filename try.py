@@ -1,31 +1,20 @@
-import math
-import os
+import os.path
+import subprocess
+import sys
+from Bio import SeqIO
+from Bio.Phylo.PAML import codeml, baseml
 from pathlib import Path
-from Bio.Phylo import PhyloXML, PhyloXMLIO
-from xml.etree import ElementTree
-from Bio import Phylo
-import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent
+command = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
+ctl_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "codeml.ctl")
 
-in_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "admin_tree.xml")
+codeml = codeml.Codeml()
 
-xml_file_read = PhyloXMLIO.parse(in_file)
+codeml.alignment = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "alignment.fasta")
+codeml.tree = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "tree.nwk")
+codeml.working_dir = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin")
+codeml.out_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "result_codeml.txt")
+codeml.ctl_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "codeml.ctl")
 
-names = []
-branch_length = []
-cols = ["name", "branch_length"]
-rows = []
-
-for i in xml_file_read:
-    for j in i.clade.find_clades():
-        rows.append({
-            'name': j.name,
-            'branch_length': j.branch_length
-        })
-
-df = pd.DataFrame(rows, columns=cols)
-df.to_csv('output.csv')
-
-for i in range(94):
-    print(i)
+codeml.run(command=command, verbose=True, parse=True)

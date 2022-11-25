@@ -23,7 +23,7 @@ from dash.dependencies import Input, Output
 from django_plotly_dash import DjangoDash
 import json, math
 import dash_cytoscape as cyto
-from Bio.Phylo.PAML import codeml
+from Bio.Phylo.PAML import codeml, baseml
 from Bio.Phylo.PAML._paml import PamlError
 import pandas as pd
 from Bio.Phylo import PhyloXMLIO
@@ -126,7 +126,6 @@ def PalmSelectView(request):
             obj.save()
 
 
-
 def MultipleSequenceAlignmentView(request):
     if request.user.is_anonymous:
         from django.conf import settings
@@ -153,6 +152,9 @@ def MultipleSequenceAlignmentView(request):
 
 
 def MultipleSeqAlignment(request, user, method):
+    if request.user.is_anonymous:
+        from django.conf import settings
+        messages.error(request, "Lütfen Giriş Yapınız")
     global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2, clustalx_exe, cml_exe
     form = MultipleSequenceAlignmentForm(request.POST or None, request.FILES or None)
     try:
@@ -185,30 +187,40 @@ def MultipleSeqAlignment(request, user, method):
 
             out_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
                                          'alignment.fasta')
+            html_out_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
+                                         'alignment.html')
             align_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
                                            f'aligned.{alignment_filetype}')
             stats_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
                                            'stats.txt')
             scores_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "scores.txt")
-            newick_tree_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", f"{request.FILES['file']}.dnd")
-            tree_image_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", 'tree.png')
+            newick_tree_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
+                                            "tree.nwk")
+            tree_image_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
+                                           'tree.png')
             xml_tree_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", 'tree.xml')
             cluster_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
                                              'cluster.csv')
             paml_results = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
-                                                  f"result_{obj.palm_tools}.txt")
+                                        f"result_{obj.palm_tools}.txt")
+            ctl_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
+                                    f"{obj.palm_tools}.ctl")
+            working_dir = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}")
 
             if alignment_filetype == "phylip":
                 align_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
                                                'aligned.phy')
 
             if obj.method == "muscle":
+
                 try:
                     if sys.platform.startswith('win32'):
-
                         muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_win32.exe')
-                        muscle_cline = MuscleCommandline(muscle_exe, input=in_file_path,
-                                                         out=out_file_path)
+                        muscle_cline = MuscleCommandline(
+                            muscle_exe,
+                            input=in_file_path,
+                            out=out_file_path,
+                        )
                         stdin, stdout = muscle_cline()
                     elif sys.platform.startswith('linux'):
                         muscle_exe = os.path.join(BASE_DIR, 'bioinformatic', 'apps', 'muscle3.8.425_i86linux32')
@@ -217,6 +229,7 @@ def MultipleSeqAlignment(request, user, method):
 
                     AlignIO.convert(out_file_path, 'fasta', align_file_path, f'{alignment_filetype}',
                                     molecule_type=molecule_type)
+
                     alignment = AlignIO.read(align_file_path, f'{alignment_filetype}')
 
                     calculator = DistanceCalculator('identity')
@@ -256,14 +269,32 @@ def MultipleSeqAlignment(request, user, method):
                                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
                     if obj.palm_tools:
+                        Phylo.convert(xml_tree_path, "phyloxml", newick_tree_path, "newick")
                         if sys.platform.startswith('win32'):
                             if obj.palm_tools == "codeml":
-                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "codeml.exe")
+
+                                try:
+                                    command = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
+
+                                    paml = codeml.Codeml()
+
+                                    paml.alignment = align_file_path
+                                    paml.tree = newick_tree_path
+                                    paml.working_dir = working_dir
+                                    paml.out_file = paml_results
+                                    paml.ctl_file = ctl_file
+
+                                    paml.run(command=command)
+
+                                except ValueError:
+                                    pass
+
                             elif obj.palm_tools == "baseml":
-                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin",
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
                                                        "baseml.exe")
                             elif obj.palm_tools == "basemlg":
-                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "basemlg.exe")
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
+                                                       "basemlg.exe")
                         elif sys.platform.startswith('linux'):
                             if obj.palm_tools == "codeml":
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "codeml")
@@ -271,19 +302,6 @@ def MultipleSeqAlignment(request, user, method):
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "baseml")
                             elif obj.palm_tools == "basemlg":
                                 cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "basemlg")
-
-                        try:
-                            cml = codeml.Codeml()
-                            cml.alignment = out_file_path
-                            cml.tree = xml_tree_path
-                            cml.ctl_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "codeml.ctl")
-                            cml.working_dir = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}")
-                            cml.out_file = paml_results
-                            cml.run(command=cml_exe, verbose=True)
-
-
-                        except PamlError:
-                            pass
 
                     obj.tree_type = tree_type
                     obj.alignment_filetype = alignment_filetype
@@ -310,14 +328,29 @@ def MultipleSeqAlignment(request, user, method):
                     handle.close()
                     os.remove(cluster_file_path)
 
-                except Bio.Application.ApplicationError:
-                    os.remove(
-                        os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
-                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+                    if obj.palm_tools:
+                        os.remove(ctl_file)
+                        os.remove(
+                            os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "rst"))
+                        os.remove(
+                            os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "rub"))
+                        os.remove(
+                            os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "rst1"))
 
-                    return render(request, 'bioinformatic/fasta/notfound.html', {
-                        'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
-                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
+                except Bio.Application.ApplicationError:
+                    try:
+                        os.remove(
+                            os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                        os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+
+                        return render(request, 'bioinformatic/fasta/notfound.html', {
+                            'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
+                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
+
+                    except FileNotFoundError:
+                        return render(request, 'bioinformatic/fasta/notfound.html', {
+                            'msg': 'Dosya Bulunamadı',
+                            'url': reverse('bioinformatic:multiple_sequence_alignments')})
 
             elif obj.method == "clustalw2":
                 try:
@@ -335,7 +368,7 @@ def MultipleSeqAlignment(request, user, method):
                         outorder="ALIGNED",
                         convert=True,
                         output="FASTA",
-                        stats=stats_file_path
+                        stats=stats_file_path,
                     )
 
                     assert os.path.isfile(clustalw2_exe), "Clustal W executable missing"
@@ -388,12 +421,46 @@ def MultipleSeqAlignment(request, user, method):
 
                     rows.clear()
 
+                    if obj.palm_tools:
+                        Phylo.convert(xml_tree_path, "phyloxml", newick_tree_path, "newick")
+                        if sys.platform.startswith('win32'):
+                            if obj.palm_tools == "codeml":
+
+                                try:
+                                    cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
+                                                           "codeml.exe")
+                                    paml = codeml.Codeml(
+                                        alignment=align_file_path,
+                                        tree=newick_tree_path,
+                                        working_dir=working_dir,
+                                        out_file=paml_results
+                                    )
+                                    paml.ctl_file = ctl_file
+                                    paml.run(command=cml_exe, verbose=True)
+
+                                except ValueError:
+                                    pass
+
+                            elif obj.palm_tools == "baseml":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
+                                                       "baseml.exe")
+                            elif obj.palm_tools == "basemlg":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
+                                                       "basemlg.exe")
+                        elif sys.platform.startswith('linux'):
+                            if obj.palm_tools == "codeml":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "codeml")
+                            elif obj.palm_tools == "baseml":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "baseml")
+                            elif obj.palm_tools == "basemlg":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "basemlg")
+
                     obj.user = request.user
                     obj.method = method
                     obj.tree_type = tree_type
                     obj.alignment_filetype = alignment_filetype
                     obj.molecule_type = molecule_type
-                    obj.align_file = File(Path(align_file_path).open('r'), name="aligned.{}".format(alignment_filetype))
+                    obj.align_file = File(Path(align_file_path).open('r'), name="aligned.phy")
                     obj.out_file = File(Path(out_file_path).open('r'), name="out_alignment.fasta")
                     obj.tree_file = File(Path(xml_tree_path).open('r'), name="tree.xml")
                     obj.cluster_csv = File(Path(cluster_file_path).open('r'), name="cluster.csv")
@@ -497,7 +564,36 @@ def MultipleSeqAlignment(request, user, method):
                         return render(request, "bioinformatic/fasta/notfound.html",
                                       {'msg': "Ağaç oluşturmak için en az 3 canlı türü olmalıdır.",
                                        'url': reverse('bioinformatic:multiple_sequence_alignments')})
+                    if obj.palm_tools:
+                        Phylo.convert(xml_tree_path, "phyloxml", newick_tree_path, "newick")
+                        if sys.platform.startswith('win32'):
+                            if obj.palm_tools == "codeml":
+                                try:
+                                    cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
+                                                           "codeml.exe")
+                                    paml = codeml.Codeml(
+                                        alignment=align_file_path,
+                                        tree=newick_tree_path,
+                                        working_dir=working_dir,
+                                        out_file=paml_results
+                                    )
+                                    paml.run(command=cml_exe, ctl_file=ctl_file, verbose=True)
+                                except PamlError:
+                                    pass
 
+                            elif obj.palm_tools == "baseml":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
+                                                       "baseml.exe")
+                            elif obj.palm_tools == "basemlg":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin",
+                                                       "basemlg.exe")
+                        elif sys.platform.startswith('linux'):
+                            if obj.palm_tools == "codeml":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "codeml")
+                            elif obj.palm_tools == "baseml":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "baseml")
+                            elif obj.palm_tools == "basemlg":
+                                cml_exe = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml", "bin", "basemlg")
                     obj.tree_type = tree_type
                     obj.alignment_filetype = alignment_filetype
                     obj.molecule_type = molecule_type
