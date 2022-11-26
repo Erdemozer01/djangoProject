@@ -34,6 +34,7 @@ METHOD = (
     ('muscle', 'MUSCLE'),
     ('clustalw2', 'CLUSTALW2'),
     ('omega', 'ClustalOmega'),
+    ('paml', 'Maximum Likelihood (PAML)'),
 )
 
 ALGORITMA = (
@@ -124,7 +125,6 @@ class GlobalForm(forms.Form):
 
 class MultipleSequenceAlignmentSelectForm(forms.Form):
     method = forms.ChoiceField(choices=METHOD, label="Multiple Sekans Alignment Aracı")
-    palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="Maximum Likelihood (PAML)", required=False, help_text="Boş Olabilir")
 
 
 class MultipleSequenceAlignmentForm(forms.Form):
@@ -141,4 +141,7 @@ class MultipleSequenceAlignmentModelForm(forms.ModelForm):
 
 
 class MaximumLikeHoodForm(forms.Form):
-    palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="Palm Aracı", required=False)
+    file = forms.FileField(label="Fasta Dosyası Seçiniz")
+    palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="PAML Aracı")
+    molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
+    tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")

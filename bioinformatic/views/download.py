@@ -3,7 +3,33 @@ import os
 from pathlib import Path
 from django.http import HttpResponse
 from django.shortcuts import render, reverse
+from django.http import FileResponse
+from bioinformatic.models import MultipleSequenceAlignment
 
+def maxlike_download(request):
+    obj = MultipleSequenceAlignment.objects.filter(user=request.user).latest('created')
+    response = FileResponse(obj.ml_file.file, as_attachment=True)
+    return response
+
+def aligned_download(request):
+    obj = MultipleSequenceAlignment.objects.filter(user=request.user).latest('created')
+    response = FileResponse(obj.align_file.file, as_attachment=True)
+    return response
+
+def maxlike_stats_download(request):
+    obj = MultipleSequenceAlignment.objects.filter(user=request.user).latest('created')
+    response = FileResponse(obj.stats.file, as_attachment=True)
+    return response
+
+def maxlike_scores_download(request):
+    obj = MultipleSequenceAlignment.objects.filter(user=request.user).latest('created')
+    response = FileResponse(obj.scores.file, as_attachment=True)
+    return response
+
+def phylo_tree_download(request):
+    obj = MultipleSequenceAlignment.objects.filter(user=request.user).latest('created')
+    response = FileResponse(obj.tree_file.file, as_attachment=True)
+    return response
 
 def swiss_download(request):
     # Define Django project base directory
