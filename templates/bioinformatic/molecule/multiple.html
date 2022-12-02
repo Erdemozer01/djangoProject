@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+{% load plotly_dash %}
+{% block title %} {{ bre }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid py-4 mt-3 col-sm-12 shadow-md col-lg-12 col-12">
+        <div class="row">
+            <div class="col-12 container">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">{{ bre }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-0">
+                        {% plotly_app name="MultipleMoleculeView" ratio=1 %}
+                    </div>
+                    {% if "molecule-detail" in request.build_absolute_uri %}
+                        <div class="d-flex justify-content-xl-start mt-4">
+                            <a href="{% url "bioinformatic:multiplemoleculeviewer" %}">
+                                <button type="button" name="button" class="btn btn-light m-0">
+                                    Başka Molekül Görüntüle
+                                </button>
+                            </a>
+                        </div>
+                        <div class="d-flex justify-content-xl-start mt-4">
+                            <button type="button" name="button" class="btn btn-light m-0">
+                                <a href="{% url "bioinformatic:molecule3dviewer" object.user object.pk object.id_name object.created.date %}">Geri</a>
+                            </button>
+                        </div>
+                    {% else %}
+
+                    {% endif %}
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
