@@ -1,0 +1,50 @@
+{% extends 'layouts/base.html' %}
+{% load plotly_dash %}
+{% block title %} {{ bre }} {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid py-4 mt-3 col-sm-12 shadow-md col-lg-12 col-12">
+        <div class="row">
+            <div class="col-12 container">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header pb-0">
+                        <div class="d-lg-flex">
+                            <div>
+                                <h5 class="mb-0">{{ bre }}</h5>
+                                <hr>
+                                <h6>Laborant: {{ object.user|title }}</h6>
+                                <h6>Analiz :{{ object.created }}</h6>
+                                <h6>Molekül Adı: {{ object.head }}</h6>
+                                <h6>İD: {{ object.id_code }}</h6>
+                                <h6>Yazar: {{ object.author|safe }}</h6>
+                                <h6>Anahtar Kelimeler: {{ object.name }}</h6>
+                                <hr>
+                                <h6>Molekül Tablosu</h6>
+                            </div>
+                        </div>
+                    </div>
+                    {% if "molecule3DShape" in request.build_absolute_uri %}
+                        <div class="card-body px-0 pb-0 ">
+                            {% plotly_app name="Molecule3DShape" ratio=1 %}
+                        </div>
+                    {% else %}
+                        <div class="card-body px-0 pb-0">
+                            {% plotly_app name="Molecule3dViewer" ratio=1 %}
+                        </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" name="button" class="btn btn-light m-0">
+                            <a href="{% url "bioinformatic:molecule_detail" object.user object.pk object.created.date %}">Molekülü İncele</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

@@ -5,6 +5,11 @@ admin.site.register(MedlineArticle)
 admin.site.register(FastaDNAMotifModel)
 
 
+@admin.register(MolecularModel)
+class MolecularModelModelAdmin(admin.ModelAdmin):
+    list_display = ['user', 'in_file', 'id_name', 'created']
+
+
 @admin.register(MaximumFileSize)
 class MaximumFileSizeModelAdmin(admin.ModelAdmin):
     list_display = ['file_size', 'created']

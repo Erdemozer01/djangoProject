@@ -5,20 +5,24 @@ from Bio import SeqIO
 from Bio.Phylo.PAML import codeml, baseml
 from pathlib import Path
 from Bio.Phylo.PAML._paml import PamlError
-
+from Bio.PDB import parse_pdb_header
 BASE_DIR = Path(__file__).resolve().parent
 
-command = os.path.join(BASE_DIR, "bioinformatic", "apps", "paml4.9j", "bin", "codeml.exe")
-ctl_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "codeml.ctl")
-results_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "result.txt")
-paml = codeml.Codeml()
+pdb_file_path = os.path.join(BASE_DIR, "media", "molecule", "admin", "6z2e.cif")
+from Bio.PDB.PDBParser import PDBParser
+from Bio.PDB.MMCIF2Dict import MMCIF2Dict
+parser = PDBParser(PERMISSIVE=1)
 
-paml.alignment = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "admin_out_alignment.fasta")
-paml.tree = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "admin_in_file.dnd")
-paml.working_dir = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin")
-paml.out_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "admin", "result.txt")
-paml.ctl_file = ctl_file
+mmcif_dict = MMCIF2Dict(pdb_file_path)
+print(mmcif_dict)
+print(mmcif_dict.keys())
+print(mmcif_dict.values())
+sc = mmcif_dict["_exptl_crystal.density_percent_sol"]
+print(sc)
+y_list = mmcif_dict["_atom_site.Cartn_y"]
+print(y_list)
 
-paml.run(command=command, verbose=True)
+
+
 
 

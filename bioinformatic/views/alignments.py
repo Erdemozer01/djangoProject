@@ -110,25 +110,13 @@ def local_alignment(request):
     return render(request, "bioinformatic/alignments/local.html", {"form": form, "bre": "Local Alignment"})
 
 
-def PalmSelectView(request):
-    form = MaximumLikeHoodForm(request.POST or None)
-    obj = MultipleSequenceAlignment()
-    if request.user.is_anonymous:
-        from django.conf import settings
-        messages.error(request, "Lütfen Giriş Yapınız")
-        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    if request.method == "POST":
-        if form.is_valid():
-            palm_tools = form.cleaned_data['palm_tools']
-            obj.palm_tools = palm_tools
-            obj.save()
-
-
 def MultipleSequenceAlignmentView(request):
+
     if request.user.is_anonymous:
         from django.conf import settings
         messages.error(request, "Lütfen Giriş Yapınız")
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
     obj = MultipleSequenceAlignment()
     form = MultipleSequenceAlignmentSelectForm(request.POST or None)
     if request.method == "POST":

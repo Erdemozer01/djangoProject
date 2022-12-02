@@ -13,7 +13,7 @@ urlpatterns = [
                   path('post/', include('post.urls')),
                   path('laboratory/bioinformatic/', include('bioinformatic.urls')),
                   path('logout/', LogoutView.as_view(), name="logout"),
-                  path('django_plotly_dash/', include('django_plotly_dash.urls')),
+                  path('django_plotly_dash/', include('django_plotly_dash.urls', namespace="plotly")),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()

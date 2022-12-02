@@ -11,7 +11,6 @@ from bioinformatic.models import RestrictionModel, DiagramModel
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
@@ -19,6 +18,7 @@ def handle_uploaded_file(f):
     with open(os.path.join(BASE_DIR, "bioinformatic", "files", f"{f.name}"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
 
 @login_required
 def genome_diagram(request):
@@ -125,7 +125,8 @@ def genome_diagram(request):
                 os.remove(output)
                 os.remove(image)
 
-                return render(request, "bioinformatic/diagram/result.html", {'object': DiagramModel.objects.filter(user=request.user)})
+                return render(request, "bioinformatic/diagram/result.html",
+                              {'object': DiagramModel.objects.filter(user=request.user)})
 
             except ValueError:
                 handle.close()
@@ -139,6 +140,7 @@ def genome_diagram(request):
 
     return render(request, "bioinformatic/diagram/analiz.html",
                   {'form': form, 'restric': restric, 'obj': enzyme_obj, 'bre': "Genom Diagram Oluşturma"})
+
 
 @login_required
 def add_enzyme(request, pk):
@@ -155,6 +157,7 @@ def add_enzyme(request, pk):
             return redirect('bioinformatic:genome_diagram')
     return render(request, "bioinformatic/diagram/add_enzym.html", {'form': form, 'bre': "Enzim Ekleme"})
 
+
 @login_required
 def update_enzyme(request, pk):
     user = DiagramModel.objects.get(user=request.user)
@@ -166,6 +169,7 @@ def update_enzyme(request, pk):
             form.save()
             return redirect('bioinformatic:genome_diagram')
     return render(request, "bioinformatic/diagram/enzyme_update.html", {'form': form, 'bre': 'Enzim Düzenleme'})
+
 
 @login_required
 def delete_enzyme(request, pk):

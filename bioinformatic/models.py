@@ -1,9 +1,10 @@
+import os.path
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.models import User
 from django.db import models
-from os.path import splitext
+from pathlib import Path
 
-
-# Create your models here.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 class LabSlideModel(models.Model):
@@ -174,12 +175,47 @@ def upload_to(instance, filename):
         username=instance.user.username, filename=filename)
 
 
+def molecule_upload_to(instance, filename):
+    return 'molecule/{username}/{filename}'.format(
+        username=instance.user.username, filename=filename.lower())
+
+
+def molecule_upload_to2(instance, filename):
+    return 'molecule/{username}/{filename}'.format(
+        username=instance.user.username, filename=filename)
+
+
+def molecule_path():
+    return os.path.join(BASE_DIR, "media", "molecule")
+
+
+class MolecularModel(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
+    if InMemoryUploadedFile:
+        in_file = models.FileField(verbose_name="PDB Dosyası", upload_to=molecule_upload_to2, blank=True, null=True)
+    else:
+        in_file = models.FileField(verbose_name="PDB Dosyası", upload_to=molecule_upload_to, blank=True, null=True)
+    file_path = models.FilePathField(path=molecule_path, blank=True, null=True, recursive=True)
+    file_name = models.CharField(max_length=100, verbose_name="Dosya Adı:", blank=True, null=True)
+    name = models.CharField(max_length=100, verbose_name="Adı:", blank=True, null=True)
+    author = models.CharField(max_length=100, verbose_name="Yazar:", blank=True, null=True)
+    head = models.CharField(max_length=100, verbose_name="Özellik:", blank=True, null=True)
+    id_code = models.CharField(max_length=100, verbose_name="id cod:", blank=True, null=True)
+    keywords = models.CharField(max_length=100, verbose_name="Kategori:", blank=True, null=True)
+    id_name = models.CharField(max_length=100, verbose_name="id:", blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    def __str__(self):
+        return str(self.user)
+
+
 class MultipleSequenceAlignment(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Laborant')
     method = models.CharField(choices=MSA_TYPE, verbose_name="Multiple Sekans Alignment Aracı", max_length=1000)
     tree_type = models.CharField(choices=TREE_TYPE, verbose_name="Filogenetik Ağaç Türü", max_length=1000)
     molecule_type = models.CharField(choices=MOLECULE_TYPE, verbose_name="Molekül Tipi", max_length=1000)
-    palm_tools = models.CharField(choices=PALM_TOOLS, verbose_name="Maximum Likelihood (PAML)", max_length=1000, blank=True, null=True)
+    palm_tools = models.CharField(choices=PALM_TOOLS, verbose_name="Maximum Likelihood (PAML)", max_length=1000,
+                                  blank=True, null=True)
     alignment_filetype = models.CharField(choices=ALIGNMENT_FILE_TYPE, verbose_name="Alignment Dosya Tipi",
                                           max_length=1000)
     in_file = models.FileField(verbose_name="Girdi Dosyası", upload_to=upload_to, blank=True, null=True)
@@ -229,7 +265,6 @@ BLAST_DATABASE = (
     ('', '------------'),
     ('nr', 'BLASTN'),
     ('nt', 'BLASTP'),
-
 )
 
 

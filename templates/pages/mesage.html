@@ -16,8 +16,8 @@
                     <div class="card shadow-lg">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                             <div class="bg-gradient-dark shadow-dark border-radius-lg p-4">
-                                <h3 class="text-white mb-0">{{ msg.name }}</h3>
-                                <p class="text-white opacity-8 mb-0">{{ msg.created }}</p>
+                                <h3 class="text-white mb-0">{{ messages.name }}</h3>
+                                <p class="text-white opacity-8 mb-0">{{ messages.created }}</p>
                             </div>
                         </div>
                         <section class="py-4">
@@ -55,14 +55,14 @@
                                             </div>
                                             <div class="card-body">
                                                 <h5 class="text-gradient text-info text-uppercase text-xs font-weight-bold my-2">{{ post.category.name|title }}</h5>
-                                                <p>Gönderen : {{ msg.name }}</p>
-                                                <p>Konu : {{ msg.topic }}</p>
-                                                <p>Email : {{ msg.email }}</p>
-                                                <p>Telefon : {{ msg.phone }}</p>
-                                                <p>Mesaj : {{ msg.message }}</p>
+                                                <p>Gönderen : {{ messages.name }}</p>
+                                                <p>Konu : {{ messages.topic }}</p>
+                                                <p>Email : {{ messages.email }}</p>
+                                                <p>Telefon : {{ messages.phone }}</p>
+                                                <p>Mesaj : {{ messages.message }}</p>
                                                 {% if request.user.is_authenticated %}
                                                     <button type="submit" class="btn btn-danger float-end">
-                                                        <a href="{% url "message_delete" msg.pk %}"
+                                                        <a href="{% url "message_delete" messages.pk %}"
                                                            class="text-white">Sil</a>
                                                     </button>
                                                 {% endif %}

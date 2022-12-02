@@ -16,3 +16,4 @@ from .motif import fasta_motif, jaspar_motif_create
 from .diagram import genome_diagram, add_enzyme, update_enzyme, delete_enzyme
 from .plot import *
 from .convert import file_convert, add_file_format, file_format_delete, file_formats
+from .molecule import molecule3dviewer, Molecule3DView, MultipleMoleculeView, multiplemoleculeviewer, MoleculeDetailView

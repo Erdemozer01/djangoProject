@@ -183,7 +183,7 @@ def maxlikehood(request, user, method):
                         cml = codeml.Codeml()
                         cml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
                         cml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.dnd")
-                        cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
+                        cml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", f"{palm_tools}.ctl")
                         cml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
                         cml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
                         cml.run(command=cml_exe, verbose=True)
@@ -191,12 +191,18 @@ def maxlikehood(request, user, method):
                     except PamlError:
                         pass
 
+                    finally:
+                        os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "lnf"))
+                        os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst"))
+                        os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rub"))
+                        os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst1"))
+
                 elif palm_tools == "baseml":
                     try:
                         bml = baseml.Baseml()
                         bml.alignment = os.path.join(BASE_DIR, "bioinformatic", "files", "aligment.fasta")
                         bml.tree = os.path.join(BASE_DIR, "bioinformatic", "files", "tree.dnd")
-                        bml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl")
+                        bml.ctl_file = os.path.join(BASE_DIR, "bioinformatic", "files", f"{palm_tools}.ctl")
                         bml.out_file = os.path.join(BASE_DIR, "bioinformatic", "files", "result_codeml.txt")
                         bml.working_dir = os.path.join(BASE_DIR, "bioinformatic", "files")
                         bml.run(command=bml_exe, verbose=True)
@@ -222,7 +228,7 @@ def maxlikehood(request, user, method):
                 os.remove(dnd_file)
                 os.remove(xml_tree_path)
                 os.remove(max_likelihood_results)
-                os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "codeml.ctl"))
+                os.remove(os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", "codeml.ctl"))
                 os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst"))
                 os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rub"))
                 os.remove(os.path.join(BASE_DIR, "bioinformatic", "files", "rst1"))

@@ -145,3 +145,9 @@ class MaximumLikeHoodForm(forms.Form):
     palm_tools = forms.ChoiceField(choices=PALM_TOOLS, label="PAML Aracı")
     molecule_type = forms.ChoiceField(choices=MOLECULE_TYPE, label="Molekül Tipi")
     tree_type = forms.ChoiceField(choices=ALGORITMA, label="Filogenetik Ağaç Tipi")
+
+
+
+
+
+

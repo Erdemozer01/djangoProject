@@ -307,7 +307,6 @@
                             <div class="collapse " id="Alignment">
 
                                 <ul class="nav nav-sm flex-column">
-
                                     <li class="nav-item">
                                         <a class="nav-link "
                                            href="{% url "bioinformatic:multiple_sequence_alignments" %}">
@@ -315,11 +314,40 @@
                                             <span class="sidenav-normal"> Multiple Sekans Aligment </span>
                                         </a>
                                     </li>
-
                                     <li class="nav-item">
                                         <a class="nav-link " href="{% url "bioinformatic:local_alignment" %}">
                                             <span class="sidenav-mini-icon text-xs"> LC </span>
                                             <span class="sidenav-normal"> Local Alignment </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="{% url "bioinformatic:global_alignment" %}">
+                                            <span class="sidenav-mini-icon text-xs"> GB </span>
+                                            <span class="sidenav-normal"> Global Alignment </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="nav-item ">
+                            <a class="nav-link " data-bs-toggle="collapse" aria-expanded="false" href="#Moleküler">
+                                <span class="sidenav-mini-icon"> A </span>
+                                <span class="sidenav-normal"> Molekül Görüntüleme <b class="caret"></b></span>
+                            </a>
+                            <div class="collapse " id="Moleküler">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link "
+                                           href="{% url "bioinformatic:molecule_analiz" %}">
+                                            <span class="sidenav-mini-icon text-xs"> MSA </span>
+                                            <span class="sidenav-normal"> 3D Tekli Molekül </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="{% url "bioinformatic:multiplemoleculeviewer" %}">
+                                            <span class="sidenav-mini-icon text-xs"> MM </span>
+                                            <span class="sidenav-normal"> 3D Çoklu Molekül </span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
