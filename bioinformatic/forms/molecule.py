@@ -3,7 +3,11 @@ from bioinformatic.models import MolecularModel
 
 
 class MoleculeForm(forms.Form):
-    file = forms.FileField(label="Dosya Seçiniz", help_text=".pdb veya .cif uzanlı olmalıdır")
+    file = forms.FileField(
+        label="Dosya Seçiniz",
+        help_text=".pdb veya .cif uzanlı olmalıdır. max. 2mb",
+        required=True,
+    )
 
 
 class MultipleMoleculeForm(forms.ModelForm):

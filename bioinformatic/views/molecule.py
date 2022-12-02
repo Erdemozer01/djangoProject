@@ -1,4 +1,5 @@
 import dash_bio.utils.ngl_parser as ngl_parser
+import parmed.exceptions
 from django.views import generic
 import os
 from pathlib import Path
@@ -41,11 +42,16 @@ def molecule3dviewer(request):
         if form.is_valid():
             handle_uploaded_file(request.FILES['file'])
             file = form.cleaned_data['file']
-            if not str(file).endswith('.pdb'):
-                return render(request, 'bioinformatic/fasta/notfound.html', {
-                    'msg': 'Dosya uzantınız .pdb olmalıdır.',
-                    'url': reverse('bioinformatic:molecule_analiz')})
+
             file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{request.FILES['file']}")
+            file_size = os.stat(file_path)
+            print(file_size.st_size)
+            if file_size.st_size > 2000000:
+                msg = "Dosya Boyutu 2mb fazla olmamalı"
+                url = reverse('bioinformatic:molecule_analiz')
+                os.remove(file_path)
+                return render(request, 'bioinformatic/fasta/notfound.html',
+                              {"msg": msg, 'bre': 'Hata', "url": url})
             obj = MolecularModel()
             obj.user = request.user
             obj.file_name = file
@@ -58,7 +64,7 @@ def molecule3dviewer(request):
                 reverse('bioinformatic:molecule3dviewer',
                         args=(request.user, object.pk, obj.id_name, obj.created.date())))
 
-    return render(request, "bioinformatic/molecule/input.html", {'form': form, 'bre': "Tekli 3D Molekül Görüntüleme"})
+    return render(request, "bioinformatic/molecule/input.html", {'form': form, 'bre': "3D Tekli Molekül Görüntüleme"})
 
 
 class Molecule3DView(generic.DetailView):
@@ -108,6 +114,10 @@ class Molecule3DView(generic.DetailView):
                 messages.error(self.request, "Sayfayı yenilediğiniz İçin veriler kaybolmuştur")
                 return redirect('bioinformatic:molecule_analiz')
 
+            except parmed.exceptions.FormatNotFound:
+                messages.error(self.request, "Hatalı Dosya Formatı")
+                return redirect('bioinformatic:molecule_analiz')
+
             data = parser.mol3d_data()
 
             styles = create_mol3d_style(
@@ -134,7 +144,7 @@ class Molecule3DView(generic.DetailView):
                         modelData=data,
                         styles=styles,
                         style={'marginRight': 'auto', 'marginLeft': 'auto'},
-                        width=950,height=600
+                        width=950, height=600
                     ),
                 ], className="container"
             )
@@ -397,7 +407,7 @@ class MoleculeDetailView(generic.DetailView):
                     html.H3('Gösterim Şekli: '),
 
                     dcc.Dropdown(id="nglstyle-dropdown", options=representation_options,
-                                         multi=True, value=["cartoon", "axes+box"]),
+                                 multi=True, value=["cartoon", "axes+box"]),
 
                     html.H3('Pozisyon:'),
 

@@ -196,7 +196,7 @@ class MessageDetail(generic.DetailView):
     template_name = "pages/mesage.html"
     model = Inbox
     queryset = Inbox.objects.all()
-    context_object_name = "messages"
+    context_object_name = "messagess"
 
 
 class MessageDeleteView(generic.DeleteView):
