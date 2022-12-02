@@ -1,5 +1,3 @@
-import uuid
-from dash.exceptions import PreventUpdate
 import dash_bio.utils.ngl_parser as ngl_parser
 from django.views import generic
 import os
@@ -77,9 +75,6 @@ class Molecule3DView(generic.DetailView):
             obj = MolecularModel.objects.filter(user=self.request.user).latest('created')
             app = DjangoDash(
                 name='Molecule3dViewer',
-                external_stylesheets=["https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"],
-                external_scripts=["https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"],
-
             )
 
             try:
@@ -233,8 +228,6 @@ class MultipleMoleculeView(generic.DetailView):
 
             app = DjangoDash(
                 name='MultipleMoleculeView',
-                external_stylesheets=["https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"],
-                external_scripts=["https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"],
             )
 
             pdb_id = []
@@ -301,7 +294,7 @@ class MultipleMoleculeView(generic.DetailView):
                 dcc.Input(id='file-ngl-simg', placeholder="Dosya Adı"),
 
                 dashbio.NglMoleculeViewer(id="nglstyle-ngl"),
-            ], className="container col-10")
+            ], className="container")
 
             @app.callback(
                 Output("nglstyle-ngl", 'data'),
@@ -380,7 +373,6 @@ class MoleculeDetailView(generic.DetailView):
             obj = MolecularModel.objects.filter(user=self.request.user)
             app = DjangoDash(
                 name='MultipleMoleculeView',
-
             )
 
             pdb_id = []
