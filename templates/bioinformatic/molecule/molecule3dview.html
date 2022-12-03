@@ -37,10 +37,19 @@
                             {% plotly_app name="Molecule3dViewer" ratio=1 %}
                         </div>
                     {% endif %}
-                    <div class="d-flex justify-content-end mt-4">
-                        <button type="button" name="button" class="btn btn-light m-0">
-                            <a href="{% url "bioinformatic:molecule_detail" object.user object.pk object.created.date %}">Molekülü İncele</a>
-                        </button>
+                    <div class="d-flex justify-content-start m-4">
+                        <a href="{% url "bioinformatic:molecule_detail" object.user object.pk object.created.date %}">
+                            <button type="button" name="button" class="btn btn-light m-0">
+                                Molekülü İncele
+                            </button>
+                        </a>
+                        <div class="d-flex justify-content-between" style="margin-left: 2%">
+                            <a href="{% url "bioinformatic:molecule_analiz" %}">
+                                <button type="button" name="button" class="btn btn-light m-0">
+                                    Başka Molekül İncele
+                                </button>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

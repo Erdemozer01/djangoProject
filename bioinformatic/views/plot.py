@@ -46,7 +46,7 @@ def plot_select(request):
             return HttpResponseRedirect(
                 reverse('bioinformatic:plot',
                         args=(obj.pk, obj.user, obj.graph_type)))
-    return render(request, "bioinformatic/plot/plot.html", {'form': form})
+    return render(request, "bioinformatic/plot/plot.html", {'form': form, 'bre': 'Plot Türü Seçiniz'})
 
 
 @login_required
@@ -148,7 +148,7 @@ def plot(request, pk, user, graph_type):
 
                 return HttpResponseRedirect(
                     reverse('bioinformatic:plot_results',
-                            args=(obj.graph_type, obj.user,  obj.created.date(), obj.pk)))
+                            args=(obj.graph_type, obj.user, obj.created.date(), obj.pk)))
             except StopIteration:
                 return render(request, "bioinformatic/fasta/notfound.html",
                               {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
@@ -158,7 +158,7 @@ def plot(request, pk, user, graph_type):
         else:
             return redirect('bioinformatic:plot')
 
-    return render(request, "bioinformatic/plot/input.html", {'form': form, 'obj':obj})
+    return render(request, "bioinformatic/plot/input.html", {'form': form, 'obj': obj, 'bre': f"{obj.graph_type.upper()} Plot Oluşturma"})
 
 
 class PlotDetailView(generic.DetailView):

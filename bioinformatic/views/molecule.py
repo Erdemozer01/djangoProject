@@ -17,6 +17,7 @@ from django.core.files import File
 from django.conf import settings
 from Bio.PDB.PDBParser import PDBParser
 from Bio.PDB import parse_pdb_header
+import dash_bootstrap_components as dbc
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -32,7 +33,7 @@ def molecule3dviewer(request):
         from django.conf import settings
         messages.error(request, "Lütfen Giriş Yapınız")
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-
+    obj = MolecularModel()
     if MolecularModel.objects.filter(user=request.user).exists():
         MolecularModel.objects.filter(user=request.user).delete()
 
@@ -40,23 +41,53 @@ def molecule3dviewer(request):
 
     if request.method == "POST":
         if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            file = form.cleaned_data['file']
 
-            file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{request.FILES['file']}")
-            file_size = os.stat(file_path)
-            print(file_size.st_size)
-            if file_size.st_size > 2000000:
-                msg = "Dosya Boyutu 2mb fazla olmamalı"
+            try:
+
+                file = form.cleaned_data['file']
+                pdb_id = form.cleaned_data['pdb_id'].lower()
+                if file is not None:
+                    handle_uploaded_file(request.FILES['file'])
+                    file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{request.FILES['file']}")
+
+                    file_size = os.stat(file_path)
+                    if file_size.st_size > 2000000:
+                        msg = "Dosya Boyutu 2mb fazla olmamalı"
+                        url = reverse('bioinformatic:molecule_analiz')
+                        os.remove(file_path)
+
+                        return render(request, 'bioinformatic/fasta/notfound.html',
+                                      {"msg": msg, 'bre': 'Hata', "url": url})
+                    else:
+                        obj.in_file = File(request.FILES['file'], name=file)
+                        obj.file_name = file
+                        obj.id_name = str(file)[:4]
+
+                else:
+                    from Bio.PDB import PDBList
+                    pdbl = PDBList()
+                    pdir = os.path.join(BASE_DIR, "bioinformatic", "files")
+                    pdbl.retrieve_pdb_file(pdb_id, pdir=pdir, overwrite=True)
+                    file_path = os.path.join(BASE_DIR, "bioinformatic", "files", f"{pdb_id}.cif")
+                    file_size = os.stat(file_path)
+                    if file_size.st_size > 2000000:
+                        msg = "Dosya Boyutu 2mb fazla olmamalı"
+                        url = reverse('bioinformatic:molecule_analiz')
+                        os.remove(file_path)
+                        return render(request, 'bioinformatic/fasta/notfound.html',
+                                      {"msg": msg, 'bre': 'Hata', "url": url})
+                    else:
+                        obj.in_file = File(Path(file_path).open('r'), name=f"{pdb_id}.cif")
+                        obj.file_name = f"{pdb_id}.cif"
+                        obj.id_name = str(pdb_id)[:4]
+
+            except FileNotFoundError:
+                msg = "Dosya Bulunamadı"
                 url = reverse('bioinformatic:molecule_analiz')
-                os.remove(file_path)
                 return render(request, 'bioinformatic/fasta/notfound.html',
                               {"msg": msg, 'bre': 'Hata', "url": url})
-            obj = MolecularModel()
+
             obj.user = request.user
-            obj.file_name = file
-            obj.id_name = str(file)[:4]
-            obj.in_file = File(request.FILES['file'], name=file)
             obj.save()
             os.remove(file_path)
             object = MolecularModel.objects.filter(user=request.user).latest('created')
@@ -72,7 +103,7 @@ class Molecule3DView(generic.DetailView):
     model = MolecularModel
 
     def get(self, request, *args, **kwargs):
-        import dash_bootstrap_components as dbc
+
         try:
             if request.user.is_anonymous:
                 from django.conf import settings
@@ -100,10 +131,15 @@ class Molecule3DView(generic.DetailView):
                 elif obj.file_name.endswith('.cif'):
                     from Bio.PDB.MMCIF2Dict import MMCIF2Dict
                     mmcif_dict = MMCIF2Dict(obj.in_file.path)
+
                     try:
                         obj.name = mmcif_dict["_entity_src_gen.pdbx_gene_src_scientific_name"][0]
                         obj.author = mmcif_dict["_audit_author.name"][0:30]
-                        obj.id_code = mmcif_dict["data_"]
+
+                        if mmcif_dict["data_"]:
+                            obj.id_code = mmcif_dict["data_"]
+                        else:
+                            obj.id_code = mmcif_dict["_pdbx_entry_details.entry_id"]
                         obj.keywords = mmcif_dict["_struct_keywords.text"][0]
                         obj.head = mmcif_dict["_struct.title"][0]
                         obj.save()

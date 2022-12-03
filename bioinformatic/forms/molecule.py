@@ -6,8 +6,11 @@ class MoleculeForm(forms.Form):
     file = forms.FileField(
         label="Dosya Seçiniz",
         help_text=".pdb veya .cif uzanlı olmalıdır. max. 2mb",
-        required=True,
+        required=False,
     )
+
+    pdb_id = forms.CharField(max_length=10, min_length=4, widget=forms.TextInput(attrs={'placeholder': '1FAT'}),
+                             label="PDB İD", help_text="Protein veritabanında id numarasına göre molekül görüntüleme yapabilirsiniz", required=False)
 
 
 class MultipleMoleculeForm(forms.ModelForm):
@@ -19,7 +22,7 @@ class MultipleMoleculeForm(forms.ModelForm):
         }
 
         help_texts = {
-            'in_file': ".pdb veya .cif uzantılı dosya seçiniz"
+            'in_file': ".pdb veya .cif uzanlı olmalıdır. max. 2mb"
         }
 
         labels = {
