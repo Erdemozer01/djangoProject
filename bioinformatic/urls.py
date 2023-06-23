@@ -3,6 +3,7 @@ from bioinformatic import views
 
 app_name = "bioinformatic"
 
+
 urlpatterns = [
     path('bioinformatik-labratory-home/', views.BioinformaticHomeView.as_view(), name="home"),
     path('dna-sequence/', views.sekans, name="sekans_analiz"),
