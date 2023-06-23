@@ -1,6 +1,5 @@
 from django.urls import path
 from bioinformatic import views
-from django.views.generic import RedirectView
 
 app_name = "bioinformatic"
 
