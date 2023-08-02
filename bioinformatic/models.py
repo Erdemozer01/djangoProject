@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class LabSlideModel(models.Model):
     image = models.ImageField(upload_to="laboratory/slide/")
     title = models.CharField(max_length=100, verbose_name='Başlık')
-    subtitle = models.CharField(max_length=100, verbose_name='Alt Başlık:')
+    text = models.CharField(max_length=100, verbose_name='Alt Başlık:')
     content = models.TextField(verbose_name='İçerik')
 
     def __str__(self):
