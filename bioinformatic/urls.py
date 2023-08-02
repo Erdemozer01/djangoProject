@@ -3,7 +3,6 @@ from bioinformatic import views
 
 app_name = "bioinformatic"
 
-
 urlpatterns = [
     path('bioinformatik-labratory-home/', views.BioinformaticHomeView.as_view(), name="home"),
     path('dna-sequence/', views.sekans, name="sekans_analiz"),
@@ -94,3 +93,4 @@ urlpatterns = [
          views.AlignmentClusterGramView.as_view(), name="clustergram_showing"),
     path('maximumlikelihood-download/', views.maxlike_download, name="max_download"),
 ]
+1
