@@ -11,9 +11,7 @@ def translation(request):
         if form.is_valid():
             table = form.cleaned_data['table']
             sequence = form.cleaned_data['sequence'].upper()
-
             sequence = sequence.replace(" ", "")
-
             sequence = sequence.replace("\n", "")
             sequence = sequence.replace("\t", "")
             sequence = sequence.replace("\r", "")
