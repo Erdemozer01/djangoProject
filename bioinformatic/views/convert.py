@@ -59,7 +59,7 @@ def file_convert(request):
                 handle.close()
                 os.remove(out_file_path)
 
-    return render(request, "bioinformatic/convert/input.html", {'form': form})
+    return render(request, "bioinformatic/convert/input.html", {'form': form, 'bre': 'Dosya Dönüştürme'})
 
 
 from django.contrib.auth.decorators import permission_required, login_required

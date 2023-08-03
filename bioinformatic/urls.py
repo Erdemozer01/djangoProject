@@ -93,4 +93,3 @@ urlpatterns = [
          views.AlignmentClusterGramView.as_view(), name="clustergram_showing"),
     path('maximumlikelihood-download/', views.maxlike_download, name="max_download"),
 ]
-1
