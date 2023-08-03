@@ -51,7 +51,8 @@ def translation(request):
                               'complement': complement,
                               'revese': revese,
                               'transcribe': transcribe,
-                              'translate': translate
+                              'translate': translate,
+                              'bre': 'Protein Sentezi'
                           })
         else:
             error = 'hata'
