@@ -16,6 +16,7 @@ from bioinformatic.models import GraphicModels
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from django.views import generic
+from django.contrib import messages
 import plotly.express as px
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -150,6 +151,10 @@ class DotPlotDetailView(generic.DetailView):
 
 
 def fasta_writing(request):
+    if request.user.is_anonymous:
+        from django.conf import settings
+        messages.error(request, "Lütfen Giriş Yapınız")
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     fastaform = FastaWritingForm(request.POST or None)
     if request.method == "POST":
         if fastaform.is_valid():
@@ -169,11 +174,11 @@ def fasta_writing(request):
                 description=descriptions
             )
 
-            file = os.path.join(BASE_DIR, 'files\\file.fasta')
+            file = os.path.join(BASE_DIR, f'files\\{request.user.username}.fasta')
 
             SeqIO.write(rec1, file, "fasta")
 
-            return redirect("bioinformatic:download")
+            return redirect("bioinformatic:fasta_download")
 
         else:
 

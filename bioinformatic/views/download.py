@@ -66,9 +66,9 @@ def fasta_download(request):
     # Define Django project base directory
     BASE_DIR = Path(__file__).resolve().parent.parent
     # Define text file name
-    filename = 'file.fasta'
+    filename = f'{request.user.username}.fasta'
     # Define the full file path
-    filepath = os.path.join(BASE_DIR, 'files\\file.fasta')
+    filepath = os.path.join(BASE_DIR, f'files\\{request.user.username}.fasta')
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
