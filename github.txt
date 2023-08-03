@@ -1,0 +1,5 @@
+merge branch error: 
+
+git stash
+
+git pull https://github.com/Erdemozer01/djangoProject.git
