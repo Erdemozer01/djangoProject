@@ -1,8 +1,5 @@
-import gzip
-import pandas as pd
-import plotly.io
 from django.shortcuts import render, redirect, reverse
-from bioinformatic.forms.file import FileReadForm, GenbankIdForm, FileUploadModelForm
+from bioinformatic.forms.file import FileReadForm
 from bioinformatic.forms.writing import GenbankWritingForm
 from bioinformatic.forms.add import AddFastaData
 from Bio import SeqIO
@@ -12,7 +9,6 @@ import os
 from django.views import generic
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-import plotly.graph_objects as go
 import plotly.express as px
 
 from bioinformatic.forms.translation import GenbankTranslationForm
@@ -181,6 +177,11 @@ class GenBankResultView(generic.ListView):
 class GenbankDetailView(generic.DetailView):
     model = GenbankRead
     template_name = "bioinformatic/genbank/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(GenbankDetailView, self).get_context_data(**kwargs)
+        context['bre'] = 'Genbank okuması'
+        return context
 
 
 def genbank_writing(request):

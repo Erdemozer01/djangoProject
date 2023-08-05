@@ -1,6 +1,6 @@
 import Bio
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.shortcuts import render, redirect, reverse
 from bioinformatic.forms.writing import FastaWritingForm
 from bioinformatic.forms.add import AddFastaData
 from Bio import SeqIO
@@ -17,7 +17,6 @@ from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from django.views import generic
 from django.contrib import messages
-import plotly.express as px
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 path = os.path.join(BASE_DIR, 'files\\')
@@ -27,9 +26,6 @@ def handle_uploaded_file(f):
     with open(os.path.join(BASE_DIR, "files", f"{f}"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
-
-
-
 
 
 @login_required
@@ -140,6 +136,7 @@ def fasta_dot_plot(request):
 
     return render(request, "bioinformatic/fasta/read.html", {'form': form, "bre": "Fasta Dot Plot"})
 
+
 class DotPlotDetailView(generic.DetailView):
     template_name = "bioinformatic/fasta/dot_plot_result.html"
     model = GraphicModels
@@ -211,13 +208,15 @@ def append_new_line(file_name, text_to_append):
 def fasta_add(request):
     form = AddFastaData(request.POST or None, request.FILES or None)
     if request.method == "POST":
+
         if form.is_valid():
+
             try:
                 handle_uploaded_file(request.FILES["file"])
                 input_file = form.cleaned_data['file']
                 fasta_id = form.cleaned_data["fasta_id"]
                 description = form.cleaned_data['description']
-                sequence = form.cleaned_data["sequence"]
+                sequence = form.cleaned_data["sequence"].replace("\n", "").replace("\r", "")
                 file_fasta = os.path.join(BASE_DIR, "files", f"{input_file}")
 
                 record = SeqRecord(
@@ -234,14 +233,16 @@ def fasta_add(request):
                     return render(request, "bioinformatic/fasta/notfound.html", {
                         "msg": msg
                     })
+
                 if "#NEXUS" in read_input:
                     os.remove(file_fasta)
                     msg = "Lütfen Fasta Dosyası Seçiniz."
                     return render(request, "bioinformatic/fasta/notfound.html", {
                         "msg": msg
                     })
+
                 append_new_line(file_fasta, str(record))
-                os.rename(file_fasta, os.path.join(BASE_DIR, "files", "file.fasta"))
+                os.rename(file_fasta, os.path.join(BASE_DIR, "files", f"{request.user}.fasta"))
                 return redirect("bioinformatic:fasta_download")
 
             except UnicodeDecodeError:
@@ -293,7 +294,7 @@ def fasta_file_translate(request):
 
         return redirect('bioinformatic:fasta_protein_download')
 
-    return render(request, "bioinformatic/fasta/translate.html", {'form': form})
+    return render(request, "bioinformatic/fasta/translate.html", {'form': form, 'bre':"Fasta Dosyası Translasyon"})
 
 
 files_names = []

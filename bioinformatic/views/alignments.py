@@ -111,7 +111,6 @@ def local_alignment(request):
 
 
 def MultipleSequenceAlignmentView(request):
-
     if request.user.is_anonymous:
         from django.conf import settings
         messages.error(request, "Lütfen Giriş Yapınız")
@@ -140,7 +139,7 @@ def MultipleSequenceAlignmentView(request):
 
 
 def MultipleSeqAlignment(request, user, method):
-    global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2, clustalx_exe, cml_exe
+    global clustalw2_exe, muscle_exe, clustal_omega_exe, clustal_result, clustalw2, clustalx_exe, cml_exe,obj
 
     if request.user.is_anonymous:
         from django.conf import settings
@@ -157,11 +156,8 @@ def MultipleSeqAlignment(request, user, method):
 
     if request.method == "POST":
         if form.is_valid():
-            if obj.in_file:
-                delete_file = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment",
-                                           f"{request.user}", f"{request.user}_in_file.fasta")
-                if Path(delete_file).exists():
-                    obj.delete()
+            if obj:
+               obj.delete()
 
             obj.in_file = File(request.FILES['file'], name="in_file.fasta")
             obj.save()
@@ -179,13 +175,16 @@ def MultipleSeqAlignment(request, user, method):
                                            f'aligned.{alignment_filetype}')
             stats_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
                                            'stats.txt')
-            scores_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", "scores.txt")
-            xml_tree_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}", 'tree.xml')
+            scores_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
+                                       "scores.txt")
+            xml_tree_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
+                                         'tree.xml')
             cluster_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
                                              'cluster.csv')
 
             if alignment_filetype == "phylip":
-                align_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment", f"{request.user}",
+                align_file_path = os.path.join(BASE_DIR, "media", "MultipleSequenceAlignment",
+                                               f"{request.user}",
                                                'aligned.phy')
 
             if obj.method == "muscle":
@@ -248,7 +247,8 @@ def MultipleSeqAlignment(request, user, method):
                     obj.tree_type = tree_type
                     obj.alignment_filetype = alignment_filetype
                     obj.molecule_type = molecule_type
-                    obj.align_file = File(Path(align_file_path).open('r'), name="aligned.{}".format(alignment_filetype))
+                    obj.align_file = File(Path(align_file_path).open('r'),
+                                          name="aligned.{}".format(alignment_filetype))
                     obj.out_file = File(Path(out_file_path).open('r'), name="out_alignment.fasta")
                     obj.tree_file = File(Path(xml_tree_path).open('r'), name="tree.xml")
                     obj.cluster_csv = File(Path(cluster_file_path).open('r'), name="cluster.csv")
@@ -270,12 +270,11 @@ def MultipleSeqAlignment(request, user, method):
                     handle.close()
                     os.remove(cluster_file_path)
 
-
-
                 except Bio.Application.ApplicationError:
                     try:
                         os.remove(
-                            os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                            os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                         '{}'.format(form.cleaned_data['file'])))
                         os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
 
                         return render(request, 'bioinformatic/fasta/notfound.html', {
@@ -389,9 +388,7 @@ def MultipleSeqAlignment(request, user, method):
                     os.remove(scores_path)
 
                 except Bio.Application.ApplicationError:
-                    os.remove(
-                        os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
-                    os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
+                    obj.delete()
 
                     return render(request, 'bioinformatic/fasta/notfound.html', {
                         'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
@@ -421,7 +418,8 @@ def MultipleSeqAlignment(request, user, method):
                         stdout, stderr = clustal_omega_cline()
 
                     elif sys.platform.startswith('linux'):
-                        subprocess.Popen(str(clustal_omega_cline), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                        subprocess.Popen(str(clustal_omega_cline), stdin=subprocess.PIPE,
+                                         stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE, universal_newlines=True,
                                          shell=(sys.platform != "win32"))
 
@@ -469,7 +467,8 @@ def MultipleSeqAlignment(request, user, method):
                     obj.tree_type = tree_type
                     obj.alignment_filetype = alignment_filetype
                     obj.molecule_type = molecule_type
-                    obj.align_file = File(Path(align_file_path).open('r'), name="aligned.{}".format(alignment_filetype))
+                    obj.align_file = File(Path(align_file_path).open('r'),
+                                          name="aligned.{}".format(alignment_filetype))
                     obj.out_file = File(Path(out_file_path).open('r'), name="out_alignment.fasta")
                     obj.tree_file = File(Path(xml_tree_path).open('r'), name="tree.xml")
                     obj.cluster_csv = File(Path(cluster_file_path).open('r'), name="cluster.csv")
@@ -490,14 +489,13 @@ def MultipleSeqAlignment(request, user, method):
 
                 except Bio.Application.ApplicationError:
                     os.remove(
-                        os.path.join(BASE_DIR, 'bioinformatic', 'files', '{}'.format(form.cleaned_data['file'])))
+                        os.path.join(BASE_DIR, 'bioinformatic', 'files',
+                                     '{}'.format(form.cleaned_data['file'])))
                     os.remove(os.path.join(BASE_DIR, 'bioinformatic', 'files', 'aligned.fasta'))
 
                     return render(request, 'bioinformatic/fasta/notfound.html', {
                         'msg': 'Hatalı Dosya Seçtiniz. Lütfen fasta dosyası seçiniz.',
                         'url': reverse('bioinformatic:multiple_sequence_alignments')})
-
-
 
             return HttpResponseRedirect(
                 reverse('bioinformatic:msa_results',
@@ -798,18 +796,19 @@ class AlignmentClusterGramView(generic.DetailView):
             data=df.loc[rows].values,
             row_labels=rows,
             column_labels=columns,
+
             color_threshold={
                 'row': 250,
                 'col': 700
             },
             height=800,
-            width=700,
+            width=800,
             color_list={
                 'row': ['#636EFA', '#00CC96', '#19D3F3'],
                 'col': ['#AB63FA', '#EF553B'],
                 'bg': '#506784'
             },
-            line_width=2
+            line_width=3
         )
         context['fig'] = clustergram.to_html()
         return context

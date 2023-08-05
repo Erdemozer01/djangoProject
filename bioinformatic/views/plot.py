@@ -3,13 +3,11 @@ from django.contrib import messages
 from django.shortcuts import *
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from bioinformatic.forms.plot import PlotForm, PlotSelectForm
+from bioinformatic.forms.plot import PlotForm, PlotSelectForm, VolcanoPlotForm
 from pathlib import Path
 import os
 from Bio import SeqIO
 from Bio.SeqUtils import GC
-import pylab
-from django.core.files import File
 from bioinformatic.models import GraphicModels
 from django_plotly_dash import DjangoDash
 from dash import html, dcc, ctx
@@ -39,10 +37,14 @@ def plot_select(request):
             if obj.exists():
                 obj.delete()
             graph_type = form.cleaned_data['plot_type']
+
             object.user = request.user
             object.graph_type = graph_type
             object.save()
+            if graph_type == "volcano":
+                return redirect('bioinformatic:volcano_plot')
             obj = GraphicModels.objects.filter(user=request.user).latest('created')
+
             return HttpResponseRedirect(
                 reverse('bioinformatic:plot',
                         args=(obj.pk, obj.user, obj.graph_type)))
@@ -143,9 +145,6 @@ def plot(request, pk, user, graph_type):
                         )
                     ])
 
-                handle.close()
-                os.remove(file_path)
-
                 return HttpResponseRedirect(
                     reverse('bioinformatic:plot_results',
                             args=(obj.graph_type, obj.user, obj.created.date(), obj.pk)))
@@ -158,7 +157,8 @@ def plot(request, pk, user, graph_type):
         else:
             return redirect('bioinformatic:plot')
 
-    return render(request, "bioinformatic/plot/input.html", {'form': form, 'obj': obj, 'bre': f"{obj.graph_type.upper()} Plot Oluşturma"})
+    return render(request, "bioinformatic/plot/input.html",
+                  {'form': form, 'obj': obj, 'bre': f"{obj.graph_type.upper()} Plot Oluşturma"})
 
 
 class PlotDetailView(generic.DetailView):
@@ -171,3 +171,50 @@ class PlotDetailView(generic.DetailView):
         context['bre'] = f"{obj.graph_type.title()} Plot Sonuçları"
         context['object'] = GraphicModels.objects.filter(user=self.request.user).latest('created')
         return context
+
+
+def volcano_plot(request):
+    import dash_bio as dashbio
+    from dash import Dash, dcc, html, Input, Output, callback
+    obj = GraphicModels.objects.filter(user=request.user).latest('created')
+    form = VolcanoPlotForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        try:
+            app = DjangoDash("volcano")
+            handle_uploaded_file(request.FILES['file'])
+            read_file = os.path.join(BASE_DIR, 'files', str(form.cleaned_data['file']))
+            if str(form.cleaned_data['file']).endswith('.csv'):
+
+                df = pd.read_csv(read_file)
+
+            elif str(form.cleaned_data['file']).endswith('.xlsx'):
+
+                df = pd.read_excel(read_file)
+
+            else:
+                return render(request, "bioinformatic/fasta/notfound.html",
+                              {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:volcano_plot')})
+
+            volcanoplot = dashbio.VolcanoPlot(
+                dataframe=df,
+                effect_size_line_color='#AB63FA',
+                genomewideline_color='#EF553B',
+                highlight_color='#119DFF',
+                col='#2A3F5F'
+            )
+
+            app.layout = html.Div([
+                dcc.Graph(figure=volcanoplot)
+            ])
+
+            return HttpResponseRedirect(
+                reverse('bioinformatic:plot_results',
+                        args=(obj.graph_type, obj.user, obj.created.date(), obj.pk)))
+        except KeyError:
+            return render(request, "bioinformatic/fasta/notfound.html",
+                          {'msg': "Hatalı veri tipi ", 'url': reverse('bioinformatic:volcano_plot')})
+
+        finally:
+            os.remove(read_file)
+
+    return render(request, "bioinformatic/plot/input.html", {'form': form})

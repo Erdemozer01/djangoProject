@@ -4,6 +4,7 @@ FILE_FORMAT = (
     ('', '-' * 30),
     ('fasta', 'FASTA'),
     ('genbank', 'GENBANK'),
+    ('csv', 'CSV'),
 )
 
 PLOT_TYPE = (
@@ -11,6 +12,7 @@ PLOT_TYPE = (
     ('gc', "%GC Plot"),
     ('histogram', "Histogram Plot"),
     ('dot', "Dot Plot"),
+    ('volcano', "Volcano Plot"),
 )
 
 
@@ -19,5 +21,9 @@ class PlotSelectForm(forms.Form):
 
 
 class PlotForm(forms.Form):
-    file = forms.FileField(label="Dosya")
-    file_format = forms.ChoiceField(label="Dosya Formatı", choices=FILE_FORMAT)
+    file_format = forms.ChoiceField(label="Dosya formatı seçiniz", choices=FILE_FORMAT)
+    file = forms.FileField(label="Dosya seçiniz")
+
+
+class VolcanoPlotForm(forms.Form):
+    file = forms.FileField(label="CSV Dosya seçiniz",help_text=".* csv uzantılı olmalıdır")

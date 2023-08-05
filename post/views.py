@@ -4,8 +4,7 @@ from django.urls import reverse_lazy
 from .models import Category
 from django.shortcuts import get_object_or_404
 from .forms import PostForm
-from django.shortcuts import reverse
-from django.http import HttpResponseRedirect
+
 
 
 class CategoriesView(ListView):

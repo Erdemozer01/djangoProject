@@ -17,7 +17,6 @@
                             <div>
                                 <h5 class="mb-0">{{ object.graph_type|upper }} Plot Sonuçları</h5>
                                 <p class="m-0">Analizi Yapan Laborant: {{ object.user|title }}</p>
-                                <p class="m-0">Dosya Türü: {{ object.format|title }} Dosyası</p>
                                 <p class="m-0">Tarih: {{ object.created.date }}</p>
 
                             </div>
@@ -39,7 +38,18 @@
                                     </div>
                                 {% elif "gc" in request.build_absolute_uri %}
                                     {% plotly_app name="gc_plot" ratio=1 %}
-                                    {% plotly_app name="name" ratio=1 %}
+
+                                    <div class=" justify-content-end">
+                                        <a href="{% url "bioinformatic:plot" object.pk object.user object.graph_type %}">
+                                            <button type="button" name="button" class="btn btn-outline-danger m-2">
+                                                <i class="fas fa-arrow-left text-secondary" title="Geri"></i>
+                                                Geri
+                                            </button>
+                                        </a>
+                                    </div>
+                                {% elif "volcano" in request.build_absolute_uri %}
+                                    {% plotly_app name="volcano" ratio=1 %}
+
                                     <div class=" justify-content-end">
                                         <a href="{% url "bioinformatic:plot" object.pk object.user object.graph_type %}">
                                             <button type="button" name="button" class="btn btn-outline-danger m-2">

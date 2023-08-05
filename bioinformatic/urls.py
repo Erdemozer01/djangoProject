@@ -30,6 +30,7 @@ urlpatterns = [
     path('file-convert/', views.file_convert, name="file_convert"),
     path('plot/<graph_type>/<user>/<created>/<pk>/', views.PlotDetailView.as_view(), name="plot_results"),
     path('fasta_dot_plot/', views.fasta_dot_plot, name="fasta_dot_plot"),
+    path('volcano_plot/', views.volcano_plot, name="volcano_plot"),
     path('genome-diagram-download-image/', views.genome_diagram_image_download, name="genome_diagram_image_download"),
     path('genbank-region/<int:pk>/<slug:organism>/', views.GenbankDetailView.as_view(), name="genbank_detail"),
     path('delete-genbank/', views.delete_genbank, name="genbank_delete"),

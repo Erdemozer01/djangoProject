@@ -18,10 +18,11 @@
                                     <p><b>Taksnomi :</b> {{ object.taxonomy|slugify|upper }}</p>
                                     <p><b>Tanımı :</b> {{ object.description }}</p>
                                     <p><b>Organizma :</b> <i>{{ object.organism }}</i></p>
-                                    <p><b>DNA Sekansı :</b> {{ object.dna_sequence }}</p>
                                     <p><b>DNA Sekans Uzunluğu :</b> {{ object.dna_sequence_len }}</p>
                                     <p><b>Protein Sekansı :</b> {{ object.protein_sequence }}</p>
                                     <p><b>Protein Sekans Uzunluğu :</b> {{ object.protein_sequence_len }}</p>
+                                    <p><b>DNA Sekansı :</b> {{ object.dna_sequence }}</p>
+
                                     <div class="d-flex justify-content-end mt-4">
                                         <a href="{% url "bioinformatic:genbank_region" %}">
                                             <button type="button" name="button" class="btn btn-light m-0">
