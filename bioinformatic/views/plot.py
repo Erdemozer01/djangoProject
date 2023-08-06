@@ -217,4 +217,4 @@ def volcano_plot(request):
         finally:
             os.remove(read_file)
 
-    return render(request, "bioinformatic/plot/input.html", {'form': form})
+    return render(request, "bioinformatic/plot/input.html", {'form': form, 'bre':'Volcano plot'})
