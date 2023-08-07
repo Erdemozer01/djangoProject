@@ -18,7 +18,7 @@ class MultipleMoleculeForm(forms.ModelForm):
         model = MolecularModel
         fields = ['in_file']
         widgets = {
-            'in_file': forms.ClearableFileInput(attrs={'multiple': True}),
+            'in_file': forms.MultipleHiddenInput(attrs={'multiple': True}),
         }
 
         help_texts = {

@@ -14,6 +14,7 @@ from pathlib import Path
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from datetime import timedelta
+from django.contrib.admin import site
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -146,10 +147,8 @@ STATICFILES_DIRS = [
 ]
 
 STATICFILES_FINDERS = [
-
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-
     'django_plotly_dash.finders.DashAssetFinder',
     'django_plotly_dash.finders.DashComponentFinder',
     'django_plotly_dash.finders.DashAppDirectoryFinder',

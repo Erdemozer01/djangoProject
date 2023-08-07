@@ -36,6 +36,6 @@ class FileUploadModelForm(forms.ModelForm):
 
 
 class MultipleUploadFileForm(forms.Form):
-    file_field = forms.FileField(widget=forms.ClearableFileInput(
+    file_field = forms.FileField(widget=forms.MultipleHiddenInput(
         attrs={'multiple': True}),
         label="Fasta Dosyaları")
