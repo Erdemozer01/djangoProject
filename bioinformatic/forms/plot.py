@@ -4,7 +4,6 @@ FILE_FORMAT = (
     ('', '-' * 30),
     ('fasta', 'FASTA'),
     ('genbank', 'GENBANK'),
-    ('csv', 'CSV'),
 )
 
 PLOT_TYPE = (
