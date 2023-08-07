@@ -189,7 +189,7 @@ def volcano_plot(request):
 
             elif str(form.cleaned_data['file']).endswith('.xlsx'):
 
-                df = pd.read_excel(read_file)
+                df = pd.read_excel(read_file, engine="openpyxl")
 
             else:
                 return render(request, "bioinformatic/fasta/notfound.html",
