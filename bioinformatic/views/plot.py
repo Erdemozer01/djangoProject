@@ -185,7 +185,7 @@ def volcano_plot(request):
             read_file = os.path.join(BASE_DIR, 'files', str(form.cleaned_data['file']))
             if str(form.cleaned_data['file']).endswith('.csv'):
 
-                df = pd.read_csv(read_file,  on_bad_lines='skip')
+                df = pd.read_csv(read_file,  header=None)
 
             elif str(form.cleaned_data['file']).endswith('.xlsx'):
 
