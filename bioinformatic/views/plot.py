@@ -81,44 +81,49 @@ def plot(request, pk, user, graph_type):
                     ])
 
                 elif obj.graph_type == "gc":
-                    app = DjangoDash("gc_plot")
+                    try:
+                        app = DjangoDash("gc_plot")
 
-                    app2 = DjangoDash('name')
+                        app2 = DjangoDash('name')
 
-                    gc_values = sorted(GC(record.seq) for record in records)
+                        gc_values = sorted(GC(record.seq) for record in records)
 
-                    name = []
+                        name = []
 
-                    gc = []
+                        gc = []
 
-                    for rec in SeqIO.parse(file_path, format=file_format):
-                        name.append(rec.name)
-                        gc.append(GC(rec.seq))
+                        for rec in SeqIO.parse(file_path, format=file_format):
+                            name.append(rec.name)
+                            gc.append(GC(rec.seq))
 
-                    data = pd.DataFrame({
-                        'Organizma': name,
-                        '%GC': gc
-                    })
+                        data = pd.DataFrame({
+                            'Organizma': name,
+                            '%GC': gc
+                        })
 
-                    if gc_values == []:
-                        return render(request, "bioinformatic/fasta/notfound.html",
-                                      {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
+                        if gc_values == []:
+                            return render(request, "bioinformatic/fasta/notfound.html",
+                                          {'msg': "Hatalı Dosya Türü", 'url': reverse('bioinformatic:plot')})
 
-                    df = pd.DataFrame({
-                        '%GC': gc_values,
-                    })
+                        df = pd.DataFrame({
+                            '%GC': gc_values,
+                            'organizma': name
+                        })
 
-                    app.layout = html.Div([
-                        dcc.Graph(
-                            figure=px.line(df, title="%GC Plot", y="%GC"),
-                        )
-                    ])
+                        app.layout = html.Div([
+                            dcc.Graph(
+                                figure=px.line(df, title="%GC Plot", y="%GC", x='organizma', height=600),
+                            )
+                        ])
 
-                    app2.layout = html.Div([
-                        dcc.Graph(
-                            figure=px.scatter(data, title="%GC Plot", y="%GC", color="Organizma"),
-                        )
-                    ])
+                        app2.layout = html.Div([
+                            dcc.Graph(
+                                figure=px.scatter(data, title="%GC Plot", y="%GC", color="Organizma"),
+                            )
+                        ])
+                    finally:
+                        handle.close()
+                        os.remove(file_path)
 
                 elif obj.graph_type == "dot":
                     app = DjangoDash("dot")
@@ -185,7 +190,7 @@ def volcano_plot(request):
             read_file = os.path.join(BASE_DIR, 'files', str(form.cleaned_data['file']))
             if str(form.cleaned_data['file']).endswith('.csv'):
 
-                df = pd.read_csv(read_file,  error_bad_lines=False)
+                df = pd.read_csv(read_file, error_bad_lines=False)
 
             elif str(form.cleaned_data['file']).endswith('.xlsx'):
 
@@ -217,4 +222,4 @@ def volcano_plot(request):
         finally:
             os.remove(read_file)
 
-    return render(request, "bioinformatic/plot/input.html", {'form': form, 'bre':'Volcano plot'})
+    return render(request, "bioinformatic/plot/input.html", {'form': form, 'bre': 'Volcano plot'})

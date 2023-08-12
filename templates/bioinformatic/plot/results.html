@@ -38,6 +38,7 @@
                                     </div>
                                 {% elif "gc" in request.build_absolute_uri %}
                                     {% plotly_app name="gc_plot" ratio=1 %}
+                                    {% plotly_app name="name" ratio=1 %}
 
                                     <div class=" justify-content-end">
                                         <a href="{% url "bioinformatic:plot" object.pk object.user object.graph_type %}">
