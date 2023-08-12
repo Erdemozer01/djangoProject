@@ -52,7 +52,7 @@ def plot_select(request):
 
 
 @login_required
-def plot(request):
+def plot(request, pk, user, graph_type):
     global handle, file_path
     form = PlotForm(request.POST or None, request.FILES or None)
     obj = GraphicModels.objects.filter(user=request.user).latest('created')
