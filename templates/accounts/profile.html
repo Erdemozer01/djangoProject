@@ -49,7 +49,7 @@
             <div class="col-auto my-auto">
                 <div class="h-100">
                     <h5 class="mb-1">
-                        {{ request.user.first_name }} {{ request.user.last_name }}
+                        {{ request.user }}
                     </h5>
                     <p class="mb-0 font-weight-bold text-sm">
                         {{ request.user.profile.job }}
@@ -240,11 +240,11 @@
                         <ul class="list-group">
                             <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Adı
                                 Soyadı:</strong>
-                                &nbsp; {{ request.user.first_name|title }} {{ request.user.last_name|title }}</li>
+                                &nbsp; {{ request.user.profile.first_name|title }} {{ request.user.profile.last_name|title }}</li>
                             <li class="list-group-item border-0 ps-0 text-sm"><strong
                                     class="text-dark">Telefon:</strong> &nbsp; {{ request.user.profile.phone }}</li>
                             <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong>
-                                &nbsp; {{ request.user.email }}</li>
+                                &nbsp; {{ request.user.profile.email }}</li>
                             <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Yaşadığı
                                 Şehir:</strong> &nbsp; {{ request.user.profile.location }}</li>
                             <li class="list-group-item border-0 ps-0 pb-0">
