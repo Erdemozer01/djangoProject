@@ -124,7 +124,6 @@ def plot(request, pk, user, graph_type):
                     finally:
                         handle.close()
                         os.remove(file_path)
-
                 elif obj.graph_type == "dot":
                     app = DjangoDash("dot")
 
