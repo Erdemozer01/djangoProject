@@ -6,7 +6,8 @@ from django.views.generic import ListView
 from post.models import Posts
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import UserRegistrationForm, UserEditForm, UserCreationForm, ProfileEditForm, UserProfileEditForm
+from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, UserProfileEditForm, DeleteAccountForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Profile
 from django.contrib.auth.decorators import login_required
@@ -26,6 +27,7 @@ def blog_dashboard(request):
         'social': Social.objects.all(),
         'cover': Cover.objects.all()
     })
+
 
 class AddContactView(CreateView):
     template_name = 'accounts/contact.html'
@@ -177,7 +179,6 @@ class ProfileDetailView(DetailView, LoginRequiredMixin):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
         context['posts'] = Posts.objects.filter(author_id=self.request.path.split('/')[4])
-
         return context
 
 
@@ -206,30 +207,88 @@ class MessageDeleteView(generic.DeleteView):
     success_url = reverse_lazy("dashboard")
 
 
-class UserAddView(generic.CreateView):
-    template_name = "pages/add_user.html"
-    form_class = UserCreationForm
-    success_url = reverse_lazy("dashboard")
-    model = User
-    context_object_name = "user"
+def dash_user_delete(request, pk):
+    if request.user.is_superuser:
+        User.objects.get(pk=pk).delete()
+        messages.success(request, f'{User.objects.get(pk=pk)} kullanıcı profili silinmiştir')
+        return redirect(request.META['HTTP_REFERER'])
+    else:
+        from django.conf import settings
+        messages.error(request, "Lütfen Giriş Yapınız")
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+
+def settings(request, pk, username):
+    user = Profile.objects.get(user=pk)
+    profile_form = ProfileEditForm(request.POST or None, request.FILES or None, instance=request.user.profile)
+    user_form = UserEditForm(request.POST or None, instance=request.user)
+    password_form = PasswordChangeForm(request.user, data=request.POST or None)
+    delete_account_form = DeleteAccountForm(request.POST or None)
+    if request.method == "POST":
+        profile_form = ProfileEditForm(request.POST or None, request.FILES or None, instance=request.user.profile)
+        if user_form.is_valid():
+            user_form.save()
+            messages.success(request, 'Kullanıcı adınız başarılı bir şekilde değişti')
+            return redirect(request.META['HTTP_REFERER'])
+        elif password_form.is_valid():
+            password_form.save()
+            from django.contrib.auth import update_session_auth_hash
+            update_session_auth_hash(request, password_form.user)
+            messages.success(request, 'Şifreniz başarılı bir şekilde değişmiştir')
+            return redirect(request.META['HTTP_REFERER'])
+        elif profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, 'Profil bilgileriniz başarılı bir şekilde güncellenmiştir')
+            return redirect(request.META['HTTP_REFERER'])
+        elif delete_account_form.is_valid():
+            confirm = delete_account_form.cleaned_data['confirm']
+            if confirm is True:
+                user.delete()
+                messages.success(request, 'Profil bilgileriniz başarılı silinmiştir')
+                return redirect('login')
+            else:
+                return redirect(request.META['HTTP_REFERER'])
+        else:
+            profile_form = ProfileEditForm(instance=request.user.profile)
+            user_form = UserEditForm(instance=request.user)
+
+    return render(request, 'accounts/settings.html',
+                  {'profile_form': profile_form, 'user_form': user_form, 'password_form': password_form,
+                   'delete_account_form': delete_account_form})
 
 
 class UserDeleteView(generic.DeleteView):
     template_name = "pages/deleteuser.html"
     success_url = reverse_lazy("dashboard")
     model = User
-    context_object_name = "user"
 
 
 class UserEditView(generic.UpdateView):
     template_name = "accounts/useredit.html"
     form_class = UserEditForm
-    success_url = reverse_lazy("dashboard")
     model = User
     context_object_name = "user"
 
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        first_name = instance.first_name
+        last_name = instance.last_name
+        email = instance.email
+        form.save()
+        Profile.objects.filter(user=self.request.user).update(first_name=first_name, last_name=last_name, email=email)
+        return super(UserEditView, self).form_valid(form)
 
-class ProfileView(generic.ListView):
+    def get_success_url(self):
+        pk = self.kwargs["pk"]
+        return reverse("profile", kwargs={"pk": pk, "username": self.request.user.username})
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(UserEditView, self).get_context_data(**kwargs)
+        context['bre'] = "Kullanıcı adını değiştir"
+        return context
+
+
+class ProfileView(generic.DetailView):
     template_name = "accounts/profile.html"
     model = User
     context_object_name = "user"
@@ -257,6 +316,15 @@ class ProfileUpdateView(generic.UpdateView, LoginRequiredMixin):
     template_name = "accounts/profile_edit.html"
     form_class = ProfileEditForm
     model = User
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        first_name = instance.first_name
+        last_name = instance.last_name
+        email = instance.email
+        form.save()
+        User.objects.filter(username=self.request.user).update(first_name=first_name, last_name=last_name, email=email)
+        return super(ProfileUpdateView, self).form_valid(form)
 
     def get_login_url(self):
         if self.request.user.is_anonymous:

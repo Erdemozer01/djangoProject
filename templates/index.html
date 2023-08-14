@@ -18,13 +18,6 @@
                                     <h5 class="mb-0">Kullanıcılar</h5>
                                 </div>
 
-                                <div class="ms-auto my-auto mt-lg-0 mt-4">
-                                    <div class="ms-auto my-auto">
-                                        <a href="{% url "user_add" %}" class="btn bg-gradient-dark btn-sm mb-0"
-                                           target="_blank">+&nbsp; Kullanıcı Ekle</a>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                         <div class="card-body px-0 pb-0">
@@ -53,16 +46,16 @@
                                             <td class="text-sm">{{ user.last_login }}</td>
                                             <td class="text-sm">{{ user.date_joined }}</td>
                                             <td class="text-sm">
-                                                <a href="{% url "useredit" user.pk user.username|slugify %}"
+                                                <a href="/admin/auth/user/{{ user.pk }}/change/"
                                                    class="mx-3"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-original-title="Düzenle">
                                                     <i class="fas fa-user-edit text-secondary"></i>
                                                 </a>
-                                                <a href="{% url "user_del" user.id %}"
+                                                <a href="{% url "dash_user_delete" user.pk %}"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-original-title="Sil">
-                                                    <i class="fas fa-trash text-secondary"></i>
+                                                    <i class="fas fa-trash text-danger"></i>
                                                 </a>
                                             </td>
                                         </tr>

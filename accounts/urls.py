@@ -1,8 +1,8 @@
 from django.urls import path, include
-from .views import UsersView, MessageDetail, MessageDeleteView, UserEditView, UserAddView, UserDeleteView, \
+from .views import UsersView, MessageDetail, MessageDeleteView, UserEditView, UserDeleteView, \
     ProfileView, UserUpdateView, ProfileUpdateView, PasswordChance, blog_dashboard, ProfileDetailView, AddBottomView, \
     delete_bottom, AddAboutView, delete_about, AddTermsView, delete_terms, AddTitlesView, delete_titles, PostsDashBoardView, \
-    AddSocialView, delete_social, AddCoverView, delete_cover, AddContactView, delete_contact
+    AddSocialView, delete_social, AddCoverView, delete_cover, AddContactView, delete_contact, dash_user_delete, settings
 from accounts.views import UserRegister
 
 urlpatterns = [
@@ -26,13 +26,14 @@ urlpatterns = [
     path('contact/delete/', delete_contact, name="delete_contact_dashboard"),
     path('top_cover/delete/', delete_cover, name="delete_top_cover_dashboard"),
     path('profile/detail/<int:pk>/<slug:user>/', ProfileDetailView.as_view(), name="profile_detay"),
-    path('edit/<int:pk>/<slug:username>/', UserEditView.as_view(), name="useredit"),
-    path('profile/<int:pk>/<slug:username>/', ProfileView.as_view(), name="profile"),
+    path('edit/<pk>/<username>/', UserEditView.as_view(), name="user_edit"),
+    path('profile/<pk>/<username>/', ProfileView.as_view(), name="profile"),
     path('user_edit/<int:pk>/<slug:username>/', UserUpdateView.as_view(), name="user_update"),
     path('profile_edit/<pk>/<username>/', ProfileUpdateView.as_view(), name="profile_update"),
-    path('add_user/', UserAddView.as_view(), name="user_add"),
-    path('add_user/<int:pk>/', UserDeleteView.as_view(), name="user_del"),
+    path('delete_user/<int:pk>/', UserDeleteView.as_view(), name="user_delete"),
+    path('kullanıcı_sil/<int:pk>/', dash_user_delete, name="dash_user_delete"),
     path('messages/<int:pk>/<slug:name>/', MessageDetail.as_view(), name="messages"),
     path('messages/<int:pk>/', MessageDeleteView.as_view(), name="message_delete"),
     path('password/<pk>/<username>/', PasswordChance.as_view(), name="password_change"),
+    path('settings/<pk>/<username>/', settings, name="settings"),
 ]

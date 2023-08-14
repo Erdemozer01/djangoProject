@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% load bootstrap5 %}
-{% block title %} User Delete {% endblock title %}
+{% block title %} Kullanıcı Sil {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock %}
@@ -15,14 +15,15 @@
                         <div class="card-header pb-0">
                             <div class="d-lg-flex">
                                 <div>
-                                    <h5 class="mb-0">{{ user.username|title }} Kullanıcısı Silinsin mi ?</h5>
+                                    <h5 class="mb-0">Profiliniz Silinsin mi ?</h5>
+                                    <p class="text-bg-danger">Profilinizin silinmesi halinde gönderilerinizde silinecektir!</p>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body px-0 pb-0 mx-auto">
                             <form method="post">
                                 {% csrf_token %}
-                                {% bootstrap_form form %}
+                                {{ object }}
                                 <button type="submit" class="btn btn-danger">Sil</button>
                                 <button type="submit" class="btn btn-dark float-end">
                                     <a href="{% url "dashboard" %}" class="text-white">Vazgeç</a>

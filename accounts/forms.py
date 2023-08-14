@@ -21,12 +21,9 @@ class UserRegistrationForm(UserCreationForm):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'is_superuser', 'is_staff', 'is_active']
+        fields = ['username']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Kullanıcı Adı'}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Adı'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Soyadı:'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email:'}),
         }
 
 
@@ -45,5 +42,9 @@ class UserProfileEditForm(forms.ModelForm):
 class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['cover', 'avatar', 'first_name', 'last_name', 'email','phone', 'location', 'job', 'about', 'facebook',
-                  'twitter', 'instagram']
+        fields = ['cover', 'avatar', 'first_name', 'last_name', 'email', 'phone', 'location', 'job', 'about',
+                  'facebook', 'twitter', 'instagram']
+
+
+class DeleteAccountForm(forms.Form):
+    confirm = forms.BooleanField(label="HESABIMI SİLME İŞLEMİNİ ONAYLIYORUM")

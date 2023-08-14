@@ -50,6 +50,8 @@
 
     {% block content %}{% endblock %}
 
+    {% include "includes/footer.html" %}
+
 </main>
 
 {% if request.user.is_superuser %}
