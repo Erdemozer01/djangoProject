@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from ckeditor_uploader.fields import RichTextUploadingField
 
 def avatar(instance, filename):
     # file will be uploaded to MEDIA_ROOT/beat/author/<filename>
@@ -46,3 +46,21 @@ class Profile(models.Model):
         db_table = 'profile'
         verbose_name = 'Profil'
         verbose_name_plural = 'Profil'
+
+
+class UserMessagesModel(models.Model):
+    title = models.CharField(max_length=150, verbose_name="Konu:", blank=True)
+    sender = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Gönderen: ', related_name='messages_sender')
+    receiver = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Alıcı: ', related_name='messages_receiver')
+    message = RichTextUploadingField(verbose_name='Mesaj', blank=False)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturulma Tarihi')
+
+    def __str__(self):
+        return str(self.receiver)
+
+    class Meta:
+        db_table = 'messages'
+        verbose_name = 'Kullanıcı Mesajları'
+        verbose_name_plural = 'Kullanıcı Mesajları'
+
+

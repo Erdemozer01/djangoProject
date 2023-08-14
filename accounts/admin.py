@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile
+from .models import Profile, UserMessagesModel
 
 
 @admin.register(Profile)
@@ -19,3 +19,10 @@ class ProfileAdmin(admin.ModelAdmin):
             'fields': ('facebook', 'twitter', 'instagram',),
         }),
     )
+
+
+@admin.register(UserMessagesModel)
+class UserMessageAdmin(admin.ModelAdmin):
+    list_display = ['sender', 'receiver', 'title', 'created']
+    list_filter = ['sender']
+    search_fields = ['sender']

@@ -1,0 +1,94 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %} Kullanıcı Mesajları {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+    {% if request.user.is_superuser or request.user.is_staff %}
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    {% if messages %}
+                        <div class="alert alert-success">
+                            {% for message in messages %}
+                                {% if message.tags %}
+                                    {{ message }}.
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="card">
+                        <!-- Card header -->
+                        <div class="card-header pb-0">
+                            <div class="d-lg-flex">
+                                <div>
+                                    <h5 class="mb-0">Gelen Mesajlar</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body px-0 pb-0">
+                            <div class="table-responsive">
+                                <table class="table table-flush" id="products-list">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>Tarih</th>
+                                        <th>Gönderen</th>
+                                        <th>Başlık</th>
+                                        <th>Eylem</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mx-auto">
+
+                                    {% for object in object_list %}
+                                        <tr class="mx-auto">
+                                            <td class="text-sm">{{ object.created }}</td>
+                                            <td class="text-sm">{{ object.sender }}</td>
+                                            <td class="text-sm">{{ object.title|truncatechars:50 }}</td>
+                                            <td class="text-sm">
+                                                <a href="{% url "user_messages_detail" object.pk object.title|slugify %}"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-original-title="Ayrıntılar" title="Görüntüle">
+                                                    <i class="fas fa-eye text-success mx-3"></i>
+                                                </a>
+
+                                                <a href="{% url "user_messages_delete" object.pk %}"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-original-title="Sil" title="SİL">
+                                                    <i class="fas fa-trash text-danger mx-1"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <section class="my-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 my-auto">
+                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız
+                            Gerekmekte</h1>
+                        <a href="{% url "blog:home" %}">
+                            <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
+                        </a>
+                    </div>
+                    <div class="col-lg-6 my-auto position-relative">
+                        <img class="w-100 position-relative"
+                             src="https://appsrv1-147a1.kxcdn.com/soft-ui-design-pro/img/illustrations/error-404.png"
+                             alt="404-page-page-error">
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endblock content %}

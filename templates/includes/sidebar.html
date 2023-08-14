@@ -148,6 +148,13 @@
                             </li>
                             <li class="nav-item ">
                                 <a class="nav-link "
+                                   href="{% url "user_messages" request.user.pk request.user.username %}">
+                                    <span class="sidenav-mini-icon"> A </span>
+                                    <span class="sidenav-normal"> Gelen Mesajlar </span>
+                                </a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link "
                                    href="{% url "settings" request.user.pk request.user.username %}">
                                     <span class="sidenav-mini-icon"> W </span>
                                     <span class="sidenav-normal"> Ayarlar </span>

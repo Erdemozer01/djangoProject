@@ -7,13 +7,12 @@ from post.models import Posts
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, UserProfileEditForm, DeleteAccountForm
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Profile
+from .models import Profile, UserMessagesModel
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
-from django.views.generic import DetailView, CreateView
+from django.views.generic import *
 
 
 def blog_dashboard(request):
@@ -359,3 +358,43 @@ def edit(request, pk, username):
         profil_form = ProfileEditForm(instance=request.user.profile)
 
     return render(request, 'accounts/profile_edit.html', {'form': profil_form})
+
+
+class UserMessagesListView(ListView):
+    template_name = "accounts/user_messages_list.html"
+    model = UserMessagesModel
+
+    def get_queryset(self):
+        return UserMessagesModel.objects.filter(receiver=self.request.user)
+
+
+class UserMessagesDetailView(DetailView):
+    template_name = "accounts/user_messages_detail.html"
+    model = UserMessagesModel
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bre'] = "Mesaj detay"
+        return context
+
+
+class UserMessagesDeleteView(DeleteView):
+    template_name = "accounts/user_messages_detail.html"
+    model = UserMessagesModel
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bre'] = "Mesaj detay"
+        return context
+
+
+def user_messages_delete(request, pk):
+    from django.http import HttpResponseRedirect
+    UserMessagesModel.objects.get(pk=pk).delete()
+    messages.success(request, 'Mesaj başarılı şekilde silindi')
+    return HttpResponseRedirect(reverse('user_messages',
+                                        kwargs={'pk': request.user.pk, 'username': request.user.username}))
+
+
+
+

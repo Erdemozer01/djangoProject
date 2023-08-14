@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Profile
+from .models import Profile, UserMessagesModel
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -48,3 +48,9 @@ class ProfileEditForm(forms.ModelForm):
 
 class DeleteAccountForm(forms.Form):
     confirm = forms.BooleanField(label="HESABIMI SİLME İŞLEMİNİ ONAYLIYORUM")
+
+
+class UserMessagesForm(forms.ModelForm):
+    class Meta:
+        model = UserMessagesModel
+        fields = ['receiver', 'title', 'message']

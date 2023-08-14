@@ -1,8 +1,10 @@
 from django.urls import path, include
 from .views import UsersView, MessageDetail, MessageDeleteView, UserEditView, UserDeleteView, \
     ProfileView, UserUpdateView, ProfileUpdateView, PasswordChance, blog_dashboard, ProfileDetailView, AddBottomView, \
-    delete_bottom, AddAboutView, delete_about, AddTermsView, delete_terms, AddTitlesView, delete_titles, PostsDashBoardView, \
-    AddSocialView, delete_social, AddCoverView, delete_cover, AddContactView, delete_contact, dash_user_delete, settings
+    delete_bottom, AddAboutView, delete_about, AddTermsView, delete_terms, AddTitlesView, delete_titles, \
+    PostsDashBoardView, \
+    AddSocialView, delete_social, AddCoverView, delete_cover, AddContactView, delete_contact, dash_user_delete, \
+    settings, UserMessagesListView, UserMessagesDetailView, user_messages_delete, UserMessagesDeleteView
 from accounts.views import UserRegister
 
 urlpatterns = [
@@ -36,4 +38,9 @@ urlpatterns = [
     path('messages/<int:pk>/', MessageDeleteView.as_view(), name="message_delete"),
     path('password/<pk>/<username>/', PasswordChance.as_view(), name="password_change"),
     path('settings/<pk>/<username>/', settings, name="settings"),
+    path('kullanıcı/messages/<int:pk>/<username>/', UserMessagesListView.as_view(), name="user_messages"),
+    path('kullanıcı/messages/detay/<int:pk>/<slug:title>/', UserMessagesDetailView.as_view(),
+         name="user_messages_detail"),
+    path('kullanıcı/messages/sil/<int:pk>/', user_messages_delete,
+         name="user_messages_delete"),
 ]
