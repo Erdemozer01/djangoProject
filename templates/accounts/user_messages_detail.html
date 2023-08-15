@@ -32,9 +32,13 @@
                                     <h5 class="mb-2 text-bolder justify-content-around">{{ object.message|safe }}</h5>
 
                                     <a href="{% url 'user_messages_delete' object.pk %}">
-                                        <h5 class="btn btn-danger mb-2 text-bolder justify-content-around float-start m-2 mb-5">SİL</h5>
+                                        <h5 class="btn btn-danger mb-2 text-bolder justify-content-around float-start m-2 mb-5">
+                                            SİL</h5>
                                     </a>
 
+                                    <button class="btn btn-dark mb-2 text-bolder justify-content-around float-start m-2 mb-5" type="button">
+                                        <i class="ni ni-curved-next" ></i><span style="margin-left: 10px">Yanıtla</span>
+                                    </button>
                                 </form>
                             </div>
                         </div>

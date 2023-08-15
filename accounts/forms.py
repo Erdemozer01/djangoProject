@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile, UserMessagesModel
+import datetime
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -42,8 +43,10 @@ class UserProfileEditForm(forms.ModelForm):
 class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['cover', 'avatar', 'first_name', 'last_name', 'email', 'phone', 'location', 'job', 'about',
-                  'facebook', 'twitter', 'instagram']
+        fields = ['cover', 'avatar', 'first_name', 'last_name', 'email', 'phone', 'location', 'gender', 'birth_day',
+                  'job', 'about', 'facebook', 'twitter', 'instagram']
+
+        widgets = {'birth_day': forms.SelectDateWidget(years=range(1900, datetime.datetime.today().year))}
 
 
 class DeleteAccountForm(forms.Form):

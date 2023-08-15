@@ -38,6 +38,7 @@
                                         <th>Tarih</th>
                                         <th>Gönderen</th>
                                         <th>Başlık</th>
+                                        <th>Okunma Durumu</th>
                                         <th>Eylem</th>
                                     </tr>
                                     </thead>
@@ -46,8 +47,9 @@
                                     {% for object in object_list %}
                                         <tr class="mx-auto">
                                             <td class="text-sm">{{ object.created }}</td>
-                                            <td class="text-sm">{{ object.sender }}</td>
+                                            <td class="text-sm"><a href="{% url 'profile' object.sender.pk object.sender.username %}">{{ object.sender }}</a></td>
                                             <td class="text-sm">{{ object.title|truncatechars:50 }}</td>
+                                            <td class="text-sm">{{ object.status }}</td>
                                             <td class="text-sm">
                                                 <a href="{% url "user_messages_detail" object.pk object.title|slugify %}"
                                                    data-bs-toggle="tooltip"

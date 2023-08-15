@@ -12,7 +12,7 @@ class ProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'user', 'cover', 'avatar', 'phone', 'job', 'about', 'birth_day')
+                'user', 'cover', 'avatar', 'phone', 'job', 'location', 'gender', 'about', 'birth_day')
         }),
         ('Sosyal Medya', {
             'classes': ('collapse ', 'extrapretty'),

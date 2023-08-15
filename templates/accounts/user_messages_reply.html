@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
-
+{% load bootstrap5 %}
 {% block title %} Kullanıcı Mesajı sil {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
@@ -16,23 +16,19 @@
                         <div class="card-header pb-0">
                             <div class="d-lg-flex">
                                 <div>
-                                    <h5 class="mb-0">{{ object.title }} Kullanıcısından gelen mesaj silinsin mi ? </h5>
+                                    <h5 class="mb-0"> Mesaj Gönder </h5>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card-body px-0 pb-0">
                             <div class="card-header pb-0">
-
                                 <form method="post">
-                                    <h5 class="mb-2">Tarih: {{ object.created }}</h5>
-                                    <h5 class="mb-2">Gönderen: {{ object.sender }}</h5>
-                                    <h5 class="mb-2">Konu: {{ object.title }}</h5>
-                                    <h5 class="mb-2">Mesaj:</h5>
-                                    <h5 class="mb-2 text-bolder justify-content-around">{{ object.message|safe }}</h5>
+                                    {% csrf_token %}
+                                    {% bootstrap_form form %}
+                                    <button type="submit" name="button" class="btn bg-gradient-dark m-0 ms-2">Gönder</button>
                                 </form>
                             </div>
-
                         </div>
                     </div>
                 </div>

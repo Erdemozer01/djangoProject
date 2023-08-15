@@ -2,18 +2,18 @@ from blog.models import Inbox, Terms, Contact, Bottom, About, Cover, Social, Tit
 from django.views import generic
 from django.urls import reverse_lazy
 from django.shortcuts import render, reverse, redirect
-from django.views.generic import ListView
 from post.models import Posts
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, UserProfileEditForm, DeleteAccountForm
+from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, UserProfileEditForm, DeleteAccountForm, \
+    UserMessagesForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Profile, UserMessagesModel
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.views.generic import *
-
+from django.http import HttpResponseRedirect
 
 def blog_dashboard(request):
     return render(request, 'dashboard/blog.html', context={
@@ -372,6 +372,10 @@ class UserMessagesDetailView(DetailView):
     template_name = "accounts/user_messages_detail.html"
     model = UserMessagesModel
 
+    def get(self, request, *args, **kwargs):
+        UserMessagesModel.objects.update(status='Okundu')
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['bre'] = "Mesaj detay"
@@ -389,12 +393,22 @@ class UserMessagesDeleteView(DeleteView):
 
 
 def user_messages_delete(request, pk):
-    from django.http import HttpResponseRedirect
+
     UserMessagesModel.objects.get(pk=pk).delete()
     messages.success(request, 'Mesaj başarılı şekilde silindi')
     return HttpResponseRedirect(reverse('user_messages',
                                         kwargs={'pk': request.user.pk, 'username': request.user.username}))
 
 
-
-
+def user_messages_send(request):
+    form = UserMessagesForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.sender = request.user
+            form.save()
+            messages.success(request, 'Mesajınız gönderildi')
+            return HttpResponseRedirect(reverse('user_messages',
+                                                kwargs={'pk': request.user.pk, 'username': request.user.username}))
+        else:
+            form = UserMessagesForm()
+    return render(request, "accounts/user_messages_reply.html", {'form': form})
