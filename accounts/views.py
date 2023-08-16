@@ -253,7 +253,7 @@ def settings(request, pk, username):
 
     return render(request, 'accounts/settings.html',
                   {'profile_form': profile_form, 'user_form': user_form, 'password_form': password_form,
-                   'delete_account_form': delete_account_form})
+                   'delete_account_form': delete_account_form, 'bre':'Profil Ayarları'})
 
 
 class UserDeleteView(generic.DeleteView):
