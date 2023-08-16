@@ -253,7 +253,7 @@ def settings(request, pk, username):
 
     return render(request, 'accounts/settings.html',
                   {'profile_form': profile_form, 'user_form': user_form, 'password_form': password_form,
-                   'delete_account_form': delete_account_form, 'bre':'Profil Ayarları'})
+                   'delete_account_form': delete_account_form, 'bre': 'Profil Ayarları'})
 
 
 class UserDeleteView(generic.DeleteView):
@@ -418,18 +418,23 @@ def user_sent_message(request, pk, username):
     if request.method == "POST":
         if form.is_valid():
             title = form.cleaned_data['title']
-            mesaj = form.cleaned_data['message']
+            message = form.cleaned_data['message']
             sender = request.user
-            receiver = User.objects.get(pk=pk, username=username)
-            UserMessagesModel.objects.create(title=title, sender=sender, receiver=receiver, message=mesaj)
-            messages.success(request, 'Mesajnız gönderilmiştir...')
+            print(form.cleaned_data['receiver'])
+            receiver = User.objects.get(username=form.cleaned_data['receiver'])
+            print(receiver)
+            if str(request.user.username) == str(form.cleaned_data['receiver']):
+                messages.error(request, 'Kendinize mesaj gönderdiniz. Farklı bir kullanıcı seçiniz.')
+                return redirect(request.META['HTTP_REFERER'])
 
+            UserMessagesModel.objects.create(title=title, sender=sender, receiver=receiver, message=message)
+            messages.success(request, 'Mesajnız gönderilmiştir...')
             return HttpResponseRedirect(reverse('user_messages',
                                                 kwargs={'pk': request.user.pk, 'username': request.user.username}))
         else:
             form = UserMessagesForm()
 
-    return render(request, 'accounts/sent_message.html', {'form': form})
+    return render(request, 'accounts/sent_message.html', {'form': form, 'bre': 'Mesaj Gönder'})
 
 
 def user_reply_message(request, pk, username, user_pk):

@@ -143,6 +143,8 @@ STATIC_URL = 'static/'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
+CKEDITOR_RESTRICT_BY_USER = True
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
@@ -210,6 +212,8 @@ CKEDITOR_CONFIGS = {
         'width': 'auto',
     },
 }
+
+CKEDITOR_ALLOW_NONIMAGE_FILES = True
 
 FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.MemoryFileUploadHandler",
                         "django.core.files.uploadhandler.TemporaryFileUploadHandler"]

@@ -37,7 +37,7 @@
 
                     <li class="nav-item d-flex align-items-center" style="margin-right: 10px">
                         <a href="{% url 'logout' %}" class="nav-link text-body font-weight-bold px-0">
-                            <i class="fa fa-user me-sm-1"></i>
+                            <i class="ni ni-user-run me-sm-1"></i>
                             <span class="d-sm-inline d-none">Çıkış</span>
                         </a>
                     </li>
@@ -69,7 +69,6 @@
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {% if messagess %}
                                 <i class="fa fa-bell cursor-pointer text-danger mb-1"></i>
-
                             {% else %}
                                 {% if request.user.is_superuser or request.user.is_staff %}
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -121,7 +120,7 @@
                         </ul>
                     </li>
                 {% endif %}
-                <li class="nav-item pe-2 d-flex align-items-center" style="margin-left: 8px">
+                <li class="nav-item pe-2 d-flex align-items-center">
                     <label for="theme-switch" class="nav-link text-body p-0 m-0">
                         <i class="fa fa-sun fixed-plugin-button-nav cursor-pointer" id="theme-indicator"></i>
                     </label>

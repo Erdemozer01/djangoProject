@@ -40,5 +40,5 @@ urlpatterns = [
          name="user_messages_delete"),
     path('delete_readed/messages/<username>/', user_mesaasges_delete_all_read, name="user_mesaasges_delete_all_read"),
     path('sent-messages/<int:pk>/<username>/', user_sent_message, name="user_sent_message"),
-    path('user_reply_message/<int:pk>/<username>/<int:user_pk>/', user_reply_message, name="user_reply_message"),
+    path('user-reply-message/<int:pk>/<username>/<int:user_pk>/', user_reply_message, name="user_reply_message"),
 ]
