@@ -5,8 +5,7 @@ from django.shortcuts import render, reverse, redirect
 from post.models import Posts
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, UserProfileEditForm, DeleteAccountForm, \
-    UserMessagesForm
+from .forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Profile, UserMessagesModel
 from django.contrib.auth.decorators import login_required
@@ -14,6 +13,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.views.generic import *
 from django.http import HttpResponseRedirect
+
 
 def blog_dashboard(request):
     return render(request, 'dashboard/blog.html', context={
@@ -209,11 +209,11 @@ class MessageDeleteView(generic.DeleteView):
 def dash_user_delete(request, pk):
     if request.user.is_superuser:
         User.objects.get(pk=pk).delete()
-        messages.success(request, f'{User.objects.get(pk=pk)} kullanıcı profili silinmiştir')
+        messages.success(request, 'Kullanıcı başarılı bir şekilde silindi')
         return redirect(request.META['HTTP_REFERER'])
     else:
         from django.conf import settings
-        messages.error(request, "Lütfen Giriş Yapınız")
+        messages.error(request, "Lütfen yetkili girişi yapınız.")
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
 
@@ -292,6 +292,13 @@ class ProfileView(generic.DetailView):
     model = User
     context_object_name = "user"
 
+    def get(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            from django.conf import settings
+            messages.error(request, "Lütfen Giriş Yapınız")
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+        return super(ProfileView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
         context['posts'] = Posts.objects.all().filter(author=self.request.user.id)
@@ -365,7 +372,7 @@ class UserMessagesListView(ListView):
     model = UserMessagesModel
 
     def get_queryset(self):
-        return UserMessagesModel.objects.filter(receiver=self.request.user)
+        return UserMessagesModel.objects.filter(receiver=self.request.user).order_by('-created')
 
 
 class UserMessagesDetailView(DetailView):
@@ -393,22 +400,51 @@ class UserMessagesDeleteView(DeleteView):
 
 
 def user_messages_delete(request, pk):
-
     UserMessagesModel.objects.get(pk=pk).delete()
     messages.success(request, 'Mesaj başarılı şekilde silindi')
     return HttpResponseRedirect(reverse('user_messages',
                                         kwargs={'pk': request.user.pk, 'username': request.user.username}))
 
 
-def user_messages_send(request):
+def user_mesaasges_delete_all_read(request, username):
+    UserMessagesModel.objects.filter(receiver=request.user, status="Okundu").delete()
+    messages.success(request, 'Okunmuş tüm mesajlarınız silindi')
+    return HttpResponseRedirect(reverse('user_messages',
+                                        kwargs={'pk': request.user.pk, 'username': request.user.username}))
+
+
+def user_sent_message(request, pk, username):
     form = UserMessagesForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
-            form.sender = request.user
-            form.save()
-            messages.success(request, 'Mesajınız gönderildi')
+            title = form.cleaned_data['title']
+            mesaj = form.cleaned_data['message']
+            sender = request.user
+            receiver = User.objects.get(pk=pk, username=username)
+            UserMessagesModel.objects.create(title=title, sender=sender, receiver=receiver, message=mesaj)
+            messages.success(request, 'Mesajnız gönderilmiştir...')
+
             return HttpResponseRedirect(reverse('user_messages',
                                                 kwargs={'pk': request.user.pk, 'username': request.user.username}))
         else:
             form = UserMessagesForm()
-    return render(request, "accounts/user_messages_reply.html", {'form': form})
+
+    return render(request, 'accounts/sent_message.html', {'form': form})
+
+
+def user_reply_message(request, pk, username, user_pk):
+    form = UserMessagesReplyForm(request.POST or None)
+    object = UserMessagesModel.objects.get(pk=pk)
+    receiver = User.objects.get(pk=user_pk)
+    if request.method == "POST":
+        if form.is_valid():
+            sender = request.user
+            message = form.cleaned_data['message']
+            UserMessagesModel.objects.create(sender=sender, receiver=receiver, title=object.title, message=message)
+            messages.success(request, 'Mesajnız gönderilmiştir...')
+            return HttpResponseRedirect(reverse('user_messages',
+                                                kwargs={'pk': request.user.pk, 'username': request.user.username}))
+        else:
+            form = UserMessagesForm()
+
+    return render(request, 'accounts/reply_message.html', {'form': form, 'object': object})

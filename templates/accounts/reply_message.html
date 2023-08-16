@@ -1,6 +1,7 @@
 {% extends 'layouts/base.html' %}
+{% load static %}
 {% load bootstrap5 %}
-{% block title %} User Delete {% endblock title %}
+{% block title %} Gönderiler {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock %}
@@ -10,32 +11,22 @@
         <div class="container-fluid py-4">
             <div class="row">
                 <div class="col-12">
-                    {% if messages %}
-                        <div class="alert alert-success">
-                            {% for message in messages %}
-                                {% if message.tags %}
-                                    {{ message }} Giriş yapmak için <a href="{% url 'login' %}">Tıklayın.</a>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                     <div class="card">
                         <!-- Card header -->
                         <div class="card-header pb-0">
                             <div class="d-lg-flex">
                                 <div>
-                                    <h5 class="mb-0">Kullanıcı adını değiştir</h5>
+                                    <h5 class="mb-0">Mesajı Yanıtla</h5>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body px-0 pb-0 mx-auto">
-                            <form action="" method="post">
+                        <div class="card-body px-0 pb-0">
+                            <form action="" method="post" class="col-10 mx-auto">
+                                <p>Gönderen: {{ object.sender }}</p>
+                                <p>Konu: {{ object.title }}</p>
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
-                                <button type="submit" class="btn btn-dark float-end">Kaydet</button>
-                                <button type="submit" class="btn btn-dark float-start">
-                                    <a href="{% url "users_dashboard" %}" class="text-white">Vazgeç</a>
-                                </button>
+                                <button type="submit" class="btn btn-dark float-end">Gönder</button>
                             </form>
                         </div>
                     </div>
@@ -43,15 +34,14 @@
             </div>
         </div>
     {% else %}
-        <section class="my-10">
+        <section class="my-5">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 my-auto">
-                        <h1 class="display-1 text-bolder text-gradient text-danger">Error 404</h1>
+                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız Gerekmekte</h1>
                         <a href="{% url "blog:home" %}">
                             <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
                         </a>
-
                     </div>
                     <div class="col-lg-6 my-auto position-relative">
                         <img class="w-100 position-relative"

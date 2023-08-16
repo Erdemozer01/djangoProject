@@ -23,6 +23,6 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(UserMessagesModel)
 class UserMessageAdmin(admin.ModelAdmin):
-    list_display = ['sender', 'receiver', 'title', 'created']
+    list_display = ['sender', 'receiver', 'title', 'status', 'created']
     list_filter = ['sender']
     search_fields = ['sender']

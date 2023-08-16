@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-
+{% load static %}
 {% block title %} Dashboard {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
@@ -10,56 +10,111 @@
         <div class="container-fluid py-4">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
-                        <!-- Card header -->
-                        <div class="card-header pb-0">
-                            <div class="d-lg-flex">
-                                <div>
-                                    <h5 class="mb-0">Kullanıcılar</h5>
-                                </div>
-
-                            </div>
+                    {% if messages %}
+                        <div class="alert alert-success">
+                            {% for message in messages %}
+                                {% if message.tags %}
+                                    {{ message }}
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <div class="card-body px-0 pb-0">
-                            <div class="table-responsive">
-                                <table class="table table-flush" id="products-list">
-                                    <thead class="thead-light">
+                    {% endif %}
+                    <div class="card mb-4">
+                        <div class="card-header pb-0">
+                            <h6>Kullanıcılar</h6>
+                        </div>
+                        <div class="card-body px-0 pt-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
                                     <tr>
-                                        <th>İD</th>
-                                        <th>Kullanıcı Adı</th>
-                                        <th>Adı</th>
-                                        <th>Soyadı</th>
-                                        <th>Email</th>
-                                        <th>Son Görülme</th>
-                                        <th>Katılma Tarihi</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Kullanıcı
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Kullanıcı ad-soyad
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Katılma Tarihi
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Son oturum açma
+                                        </th>
+                                        <th class="text-secondary opacity-7"></th>
                                     </tr>
                                     </thead>
-
                                     <tbody>
-                                    {% for user in users %}
-                                        <tr>
-                                            <td class="text-sm mx-auto">{{ user.id }}</td>
-                                            <td class="text-sm mx-auto">@{{ user.username }}</td>
-                                            <td class="text-sm">{{ user.first_name }}</td>
-                                            <td class="text-sm">{{ user.last_name }}</td>
-                                            <td class="text-sm">{{ user.email }}</td>
-                                            <td class="text-sm">{{ user.last_login }}</td>
-                                            <td class="text-sm">{{ user.date_joined }}</td>
-                                            <td class="text-sm">
-                                                <a href="/admin/auth/user/{{ user.pk }}/change/"
-                                                   class="mx-3"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Düzenle">
-                                                    <i class="fas fa-user-edit text-secondary"></i>
-                                                </a>
-                                                <a href="{% url "dash_user_delete" user.pk %}"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Sil">
-                                                    <i class="fas fa-trash text-danger"></i>
-                                                </a>
+                                    <tr>
+                                        {% for user in users %}
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    {% if user.profile.avatar %}
+                                                        <a href="{% url 'profile' user.pk user.username %}">
+                                                            <div>
+                                                                <img src="{{ user.profile.avatar.url }}"
+                                                                     class="avatar avatar-sm me-3"
+                                                                     alt="{{ user.username }}">
+                                                            </div>
+                                                        </a>
+
+                                                    {% else %}
+                                                        <a href="{% url 'profile' user.pk user.username %}">
+                                                            <div>
+                                                                <img src="{% static 'assets/img/curved-images/curved-6.jpg' %}"
+                                                                     class="avatar avatar-sm me-3"
+                                                                     alt="{{ user.username }}">
+                                                            </div>
+                                                        </a>
+                                                    {% endif %}
+
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">{{ user.profile.user.username }}</h6>
+                                                        <p class="text-xs text-secondary mb-0">
+                                                            <a class="__cf_email__">{{ user.profile.email }}</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </td>
-                                        </tr>
-                                    {% endfor %}
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">{{ user.profile.first_name }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ user.profile.last_name }}</p>
+                                            </td>
+
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">{{ user.date_joined }}</span>
+                                            </td>
+
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">{{ user.last_login }}</span>
+                                            </td>
+
+                                            <td class="align-middle">
+                                                <button class="btn btn-link text-secondary mb-0" id="dropdownTable"
+                                                        data-bs-toggle="dropdown">
+                                                    <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
+                                                </button>
+                                                <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5"
+                                                    aria-labelledby="dropdownTable">
+                                                    <li><a class="dropdown-item border-radius-md"
+                                                           href="{% url 'profile' user.profile.pk user.username %}">Profil</a>
+                                                    </li>
+                                                    {% if user.is_superuser %}
+
+                                                    {% else %}
+
+                                                        <li><a class="dropdown-item border-radius-md"
+                                                               href="{% url 'dash_user_delete' user.pk %}">Kullanıcıyı
+                                                            sil
+                                                        </a></li>
+
+                                                    {% endif %}
+
+                                                    <li><a class="dropdown-item border-radius-md" href="{% url 'user_sent_message' user.pk user.username %}">Mesaj gönder</a></li>
+                                                </ul>
+                                            </td>
+                                            </tr>
+                                        {% endfor %}
+
                                     </tbody>
                                 </table>
                             </div>
@@ -73,7 +128,8 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 my-auto">
-                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız Gerekmekte</h1>
+                        <h1 class="display-5 text-bolder text-gradient text-danger">Yetkili Girişi Yapmanız
+                            Gerekmekte</h1>
                         <a href="{% url "blog:home" %}">
                             <button type="button" class="btn bg-gradient-dark mt-4 text-white">Anasayfa</button>
                         </a>

@@ -15,56 +15,102 @@
                         <div class="alert alert-success">
                             {% for message in messages %}
                                 {% if message.tags %}
-                                    {{ message }}.
+                                    {{ message }}
                                 {% endif %}
                             {% endfor %}
                         </div>
                     {% endif %}
-                    <div class="card">
-                        <!-- Card header -->
+                    <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <div class="d-lg-flex">
-                                <div>
-                                    <h5 class="mb-0">Gelen Mesajlar</h5>
-                                </div>
-                            </div>
+                            <h6>Mesajlar</h6>
                         </div>
 
-                        <div class="card-body px-0 pb-0">
-                            <div class="table-responsive">
-                                <table class="table table-flush" id="products-list">
-                                    <thead class="thead-light">
+                        <div class="card-body px-0 pt-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
                                     <tr>
-                                        <th>Tarih</th>
-                                        <th>Gönderen</th>
-                                        <th>Başlık</th>
-                                        <th>Okunma Durumu</th>
-                                        <th>Eylem</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Gönderen
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Konu
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Durum
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Tarih
+                                        </th>
+                                        <th class="text-secondary opacity-7"></th>
                                     </tr>
                                     </thead>
-                                    <tbody class="mx-auto">
 
-                                    {% for object in object_list %}
-                                        <tr class="mx-auto">
-                                            <td class="text-sm">{{ object.created }}</td>
-                                            <td class="text-sm"><a href="{% url 'profile' object.sender.pk object.sender.username %}">{{ object.sender }}</a></td>
-                                            <td class="text-sm">{{ object.title|truncatechars:50 }}</td>
-                                            <td class="text-sm">{{ object.status }}</td>
-                                            <td class="text-sm">
-                                                <a href="{% url "user_messages_detail" object.pk object.title|slugify %}"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Ayrıntılar" title="Görüntüle">
-                                                    <i class="fas fa-eye text-success mx-3"></i>
-                                                </a>
+                                    <tbody>
+                                    <tr>
+                                        {% for object in object_list %}
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    {% if object.sender.profile.avatar %}
+                                                        <div>
+                                                            <img src="{{ object.sender.profile.avatar.url }}"
+                                                                 class="avatar avatar-sm me-3"
+                                                                 alt="user1">
+                                                        </div>
+                                                    {% else %}
+                                                        <div>
+                                                            <img src="{% static 'assets/img/curved-images/curved-6.jpg' %}"
+                                                                 class="avatar avatar-sm me-3"
+                                                                 alt="user1">
+                                                        </div>
+                                                    {% endif %}
 
-                                                <a href="{% url "user_messages_delete" object.pk %}"
-                                                   data-bs-toggle="tooltip"
-                                                   data-bs-original-title="Sil" title="SİL">
-                                                    <i class="fas fa-trash text-danger mx-1"></i>
-                                                </a>
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">{{ object.sender.profile.user.username }}</h6>
+                                                        <p class="text-xs text-secondary mb-0">
+                                                            <a class="__cf_email__">{{ object.sender.profile.email }}</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </td>
-                                        </tr>
-                                    {% endfor %}
+                                            <td>
+                                                <a class="dropdown-item border-radius-md"
+                                                   href="{% url 'user_messages_detail' object.sender|slugify object.pk object.title|slugify %}">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ object.title|truncatechars:20 }}</p>
+                                                </a>
+
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                {% if object.status == "Okunmadı" %}
+                                                    <span class="badge badge-sm bg-gradient-success">Okunmadı</span>
+                                                {% else %}
+                                                    <span class="badge badge-sm bg-gradient-secondary">Okundu</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">{{ object.created }}</span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <button class="btn btn-link text-secondary mb-0" id="dropdownTable"
+                                                        data-bs-toggle="dropdown">
+                                                    <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
+                                                </button>
+                                                <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5"
+                                                    aria-labelledby="dropdownTable">
+                                                    <li><a class="dropdown-item border-radius-md"
+                                                           href="{% url 'user_messages_detail' object.sender|slugify object.pk object.title|slugify %}">Görüntüle</a>
+                                                    </li>
+                                                    <li><a class="dropdown-item border-radius-md"
+                                                           href="{% url 'user_messages_delete' object.pk %}">Sil
+                                                    </a></li>
+                                                    <li><a class="dropdown-item border-radius-md"
+                                                           href="{% url 'user_mesaasges_delete_all_read' request.user.username %}">Tüm
+                                                        okunmuş mesajları sil</a></li>
+                                                </ul>
+                                            </td>
+                                            </tr>
+                                        {% endfor %}
+
                                     </tbody>
                                 </table>
                             </div>

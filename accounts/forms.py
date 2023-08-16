@@ -56,4 +56,10 @@ class DeleteAccountForm(forms.Form):
 class UserMessagesForm(forms.ModelForm):
     class Meta:
         model = UserMessagesModel
-        fields = ['receiver', 'title', 'message']
+        fields = ['title', 'message']
+
+
+class UserMessagesReplyForm(forms.ModelForm):
+    class Meta:
+        model = UserMessagesModel
+        fields = ['message']

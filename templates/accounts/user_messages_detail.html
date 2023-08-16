@@ -29,17 +29,29 @@
                                     <h5 class="mb-2">Gönderen: {{ object.sender }}</h5>
                                     <h5 class="mb-2">Konu: {{ object.title }}</h5>
                                     <h5 class="mb-2">Mesaj:</h5>
-                                    <h5 class="mb-2 text-bolder justify-content-around">{{ object.message|safe }}</h5>
+                                    <h5 class="mb-2 text-bolder justify-content-around"
+                                        style="text-align: justify">{{ object.message|safe }}</h5>
 
                                     <a href="{% url 'user_messages_delete' object.pk %}">
                                         <h5 class="btn btn-danger mb-2 text-bolder justify-content-around float-start m-2 mb-5">
                                             SİL</h5>
                                     </a>
+                                    <a href="{% url 'user_reply_message' object.pk object.sender object.sender.pk %}">
+                                        <button class="btn btn-dark mb-2 text-bolder justify-content-around float-start m-2 mb-5"
+                                                type="button">
+                                            <i class="ni ni-curved-next"></i><span
+                                                style="margin-left: 10px">Yanıtla</span>
+                                        </button>
+                                    </a>
 
-                                    <button class="btn btn-dark mb-2 text-bolder justify-content-around float-start m-2 mb-5" type="button">
-                                        <i class="ni ni-curved-next" ></i><span style="margin-left: 10px">Yanıtla</span>
-                                    </button>
+
+                                    <a href="{% url "user_messages" request.user.pk request.user.username %}">
+                                        <button class="btn btn-dark justify-content-around float-end m-3 mb-5"
+                                                type="button">Geri
+                                        </button>
+                                    </a>
                                 </form>
+
                             </div>
                         </div>
                     </div>

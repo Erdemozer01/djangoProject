@@ -1,10 +1,5 @@
 from django.urls import path, include
-from .views import UsersView, MessageDetail, MessageDeleteView, UserEditView, UserDeleteView, \
-    ProfileView, UserUpdateView, ProfileUpdateView, PasswordChance, blog_dashboard, ProfileDetailView, AddBottomView, \
-    delete_bottom, AddAboutView, delete_about, AddTermsView, delete_terms, AddTitlesView, delete_titles, \
-    PostsDashBoardView, \
-    AddSocialView, delete_social, AddCoverView, delete_cover, AddContactView, delete_contact, dash_user_delete, \
-    settings, UserMessagesListView, UserMessagesDetailView, user_messages_delete, UserMessagesDeleteView
+from .views import *
 from accounts.views import UserRegister
 
 urlpatterns = [
@@ -39,8 +34,11 @@ urlpatterns = [
     path('password/<pk>/<username>/', PasswordChance.as_view(), name="password_change"),
     path('settings/<pk>/<username>/', settings, name="settings"),
     path('kullanıcı/messages/<int:pk>/<username>/', UserMessagesListView.as_view(), name="user_messages"),
-    path('kullanıcı/messages/detay/<int:pk>/<slug:title>/', UserMessagesDetailView.as_view(),
+    path('kullanıcı/messages/detay/<slug:sender>/<int:pk>/<slug:title>/', UserMessagesDetailView.as_view(),
          name="user_messages_detail"),
     path('kullanıcı/messages/sil/<int:pk>/', user_messages_delete,
          name="user_messages_delete"),
+    path('delete_readed/messages/<username>/', user_mesaasges_delete_all_read, name="user_mesaasges_delete_all_read"),
+    path('sent-messages/<int:pk>/<username>/', user_sent_message, name="user_sent_message"),
+    path('user_reply_message/<int:pk>/<username>/<int:user_pk>/', user_reply_message, name="user_reply_message"),
 ]
