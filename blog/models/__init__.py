@@ -6,3 +6,4 @@ from .about import About
 from .social import Social
 from .terms import Terms
 from .bottom import Bottom
+from .author_message import AuthorMessagesModel

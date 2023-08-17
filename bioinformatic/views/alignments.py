@@ -113,7 +113,7 @@ def local_alignment(request):
 def MultipleSequenceAlignmentView(request):
     if request.user.is_anonymous:
         from django.conf import settings
-        messages.error(request, "Lütfen Giriş Yapınız")
+        messages.error(request, "Lütfen giriş yapınız")
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     obj = MultipleSequenceAlignment()

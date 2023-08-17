@@ -1,5 +1,5 @@
 from django import forms
-from blog.models import Inbox
+from blog.models import Inbox, AuthorMessagesModel
 
 
 class ContactForm(forms.ModelForm):
@@ -14,4 +14,13 @@ class ContactForm(forms.ModelForm):
             'topic': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Konu'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefon'}),
             'message': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Mesajınız'}),
+        }
+
+
+class AuthorMessageForm(forms.ModelForm):
+    class Meta:
+        model = AuthorMessagesModel
+        fields = "__all__"
+        widgets = {
+            'message': forms.TextInput()
         }

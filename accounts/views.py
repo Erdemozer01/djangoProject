@@ -1,9 +1,8 @@
-from blog.models import Inbox, Terms, Contact, Bottom, About, Cover, Social, Titles
+from blog.models import *
 from django.views import generic
 from django.urls import reverse_lazy
 from django.shortcuts import render, reverse, redirect
 from post.models import Posts
-from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -410,9 +409,7 @@ def user_sent_message(request, pk, username):
             title = form.cleaned_data['title']
             message = form.cleaned_data['message']
             sender = request.user
-            print(form.cleaned_data['receiver'])
             receiver = User.objects.get(username=form.cleaned_data['receiver'])
-            print(receiver)
             if str(request.user.username) == str(form.cleaned_data['receiver']):
                 messages.error(request, 'Kendinize mesaj gönderdiniz. Farklı bir kullanıcı seçiniz.')
                 return redirect(request.META['HTTP_REFERER'])

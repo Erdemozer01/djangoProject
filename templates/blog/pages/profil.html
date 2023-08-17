@@ -1,0 +1,189 @@
+{% extends "blog/index.html" %}
+{% load static %}
+{% load bootstrap5 %}
+{% block title %}
+    {% if request.user.username %}
+        {{ profile.user.username }}
+    {% else %}
+        Ziyaretci
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <!-- START Testimonials w/ user image & text & info -->
+    <section class="py-sm-7 py-5 position-relative">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 mx-auto">
+                    <div class="row py-lg-7 py-5">
+                        <div class="col-lg-3 col-md-5 position-relative my-auto">
+                            {% if profile.avatar %}
+                                <img class="img border-radius-lg max-width-200 w-100 position-relative z-index-2"
+                                     src="{{ profile.avatar.url }}"
+                                     alt="bruce">
+                            {% else %}
+                                <img class="img border-radius-lg max-width-200 w-100 position-relative z-index-2"
+                                     src="{% static "assets/img/curved-images/curved1.jpg" %}"
+                                     alt="bruce">
+                            {% endif %}
+
+                        </div>
+                        <div class="col-lg-7 col-md-7 z-index-2 position-relative px-md-2 px-sm-5 mt-sm-0 mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="mb-0">{{ profile.user.username }}</h4>
+
+                                <div class="d-block">
+                                    <button type="button" class="btn btn-sm btn-outline-info text-nowrap mb-0">Takip
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-auto">
+                                    <span>Gönderi Sayısı</span>
+                                    <span class="h6">{{ posts.count }}</span>
+
+                                </div>
+                                <div class="col-auto">
+                                    <span>Takipçi Sayısı</span>
+                                    <span class="h6"></span>
+
+                                </div>
+                            </div>
+                            <p class="text-lg mb-0">
+                                {{ profile.about }} <br>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END Testimonials w/ user image & text & info -->
+
+    <!-- START Blogs w/ 4 cards w/ image & text & link -->
+    <section class="py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3 class="mb-5">Yazılarım</h3>
+                </div>
+            </div>
+            <div class="row">
+                {% if posts %}
+                    {% for post in posts %}
+                        <div class="col-lg-3 col-sm-6">
+                            <div class="card card-plain card-blog">
+                                <div class="card-image border-radius-lg position-relative cursor-pointer">
+                                    <div class="blur-shadow-image">
+                                        <img class="img border-radius-lg move-on-hover"
+                                             src="{{ post.cover.url }}"
+                                             alt="bags">
+                                    </div>
+                                </div>
+                                <div class="card-body px-0">
+                                    <p>{{ post.created.date }}</p>
+                                    <h5>
+                                        <a href="{% url "post:post_detail" post.category.title|slugify post.title|slugify post.pk %}"
+                                           class="text-dark font-weight-bold">{{ post.title }}</a>
+                                    </h5>
+                                    <p>
+                                        {{ post.text|safe|truncatechars_html:100 }}
+                                    </p>
+                                    <a href="{% url "post:post_detail" post.category.title|slugify post.title|slugify post.pk %}"
+                                       class="text-info icon-move-right">Ayrntılar
+                                        <i class="fas fa-arrow-right text-sm ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Gönderi Bulunamadı</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <!-- END Blogs w/ 4 cards w/ image & text & link -->
+
+    <section class="py-lg-7">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="card overflow-hidden mb-5">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <form class="p-3" id="contact-form" method="post">
+                                    <div class="card-header px-4 py-sm-5 py-3">
+                                        <h2>Yazara mesaj gönder</h2>
+                                    </div>
+                                    <form action="" method="post">
+                                        <div class="card-body pt-1">
+                                            {% csrf_token %}
+                                            {% bootstrap_fo %}
+                                            <div class="row">
+                                                <div class="col-md-6 text-end ms-auto">
+                                                    <button type="submit" class="btn btn-round bg-gradient-info mb-0">
+                                                        Gönder
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                            </div>
+                            <div class="col-lg-5 position-relative bg-cover px-0"
+                                 style="background-image: url('https://appsrv1-147a1.kxcdn.com/soft-ui-design-pro/img/curved-images/curved5.jpg')">
+                                <div class="position-absolute z-index-2 w-100 h-100 top-0 start-0 d-lg-block d-none">
+                                    <img src="https://appsrv1-147a1.kxcdn.com/soft-ui-design-pro/img/wave-1.svg"
+                                         class="h-100 ms-n2" alt="vertical-wave">
+                                </div>
+                                <div class="z-index-2 text-center d-flex h-100 w-100 d-flex m-auto justify-content-center">
+                                    <div class="mask bg-gradient-info opacity-9"></div>
+                                    <div class="p-5 ps-sm-8 position-relative text-start my-auto z-index-2">
+                                        <h3 class="text-white">İletişim Bilgilerim</h3>
+
+                                        <div class="d-flex p-2 text-white">
+                                            <div>
+                                                <i class="fas fa-envelope text-sm"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <span class="text-sm opacity-8">{{ profile.email }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <button type="button"
+                                                    class="btn btn-icon-only btn-link text-white btn-lg mb-0"
+                                                    data-toggle="tooltip" data-placement="bottom"
+                                                    data-original-title="Log in with Facebook">
+                                                <a href="{{ profile.facebook }}" class="text-white">
+                                                    <i class="fab fa-facebook"></i>
+                                                </a>
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-icon-only btn-link text-white btn-lg mb-0"
+                                                    data-toggle="tooltip" data-placement="bottom"
+                                                    data-original-title="Log in with Twitter">
+                                                <a href="{{ profile.twitter }}" class="text-white">
+                                                    <i class="fab fa-twitter"></i>
+                                                </a>
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-icon-only btn-link text-white btn-lg mb-0"
+                                                    data-toggle="tooltip" data-placement="bottom"
+                                                    data-original-title="Log in with Dribbble">
+                                                <a href="{{ profile.instagram }}" class="text-white">
+                                                    <i class="fab fa-instagram"></i>
+                                                </a>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -12,7 +12,7 @@
             <a class="navbar-brand m-0" href="{% url "profile" request.user.pk request.user.username|slugify %}">
                 <img src="{% static "assets/img/logo-ct-dark.png" %}"
                      class="navbar-brand-img h-100" alt="main_logo">
-                <span class="ms-1 font-weight-bold">{{ request.user.username }}</span>
+                <span class="ms-1 font-weight-bold">Hoşgeldiniz, {{ request.user.username|upper }}</span>
             </a>
         {% elif "/laboratory/" in request.build_absolute_uri %}
             <a class="navbar-brand m-0" href="{% url "bioinformatic:home" %}">
@@ -27,6 +27,15 @@
 
     <div class="collapse navbar-collapse  w-auto h-auto" id="sidenav-collapse-main">
         <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url "blog:home" %}"
+                   target="_blank">
+                    <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
+                        <i class="ni ni-book-bookmark text-dark"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Blog Anasayfa</span>
+                </a>
+            </li>
             {% if request.user.is_superuser %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url "admin:index" %}"
@@ -87,6 +96,7 @@
                 </li>
             {% endif %}
             {% if request.user.is_staff %}
+
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#applicationsExamples"
                        class="nav-link "
@@ -152,7 +162,7 @@
                     <a class="nav-link" href="{% url "user_sent_message" request.user.pk request.user.username %}"
                        target="_blank">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
-                            <i class="ni ni-email-83 text-dark"></i>
+                            <i class="ni ni-chat-round text-dark"></i>
                         </div>
                         <span class="nav-link-text ms-1">Mesaj Gönder</span>
                     </a>
@@ -534,7 +544,7 @@
                                     <span class="sidenav-normal"> {{ foo.name }} </span>
                                 </a>
                             </li>
-                        {% empty %}
+                            {% empty %}
                             <li class="nav-item ">
                                 <a class="nav-link " href="#">
                                     <span class="sidenav-mini-icon"> BLN </span>

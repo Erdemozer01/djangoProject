@@ -3,17 +3,18 @@ from django.views.generic import *
 from pip._internal.locations import user_site
 from post.models import Posts
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import *
 from .models import *
 from django.contrib.messages.views import SuccessMessageMixin
-from .forms import ContactForm
+from .forms import ContactForm, AuthorMessageForm
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .models.profile import Profile
+from .models import AuthorMessagesModel
 
 
 class ProfileDetailView(DetailView, LoginRequiredMixin):
-    template_name = 'dashboard/profil.html'
+    template_name = 'blog/pages/profil.html'
     model = Profile
 
     def get_queryset(self):
@@ -58,3 +59,27 @@ class ContactView(CreateView, SuccessMessageMixin, ListView):
         form.save()
         messages.success(self.request, self.success_message)
         return super(ContactView, self).form_valid(form)
+
+
+def author_message_send(request, pk, username):
+    if request.user.is_anonymous:
+        from django.conf import settings
+        messages.error(request, "Lütfen giriş yapınız")
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    form = AuthorMessageForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            message = form.cleaned_data['message']
+            sender = request.user
+            receiver = User.objects.get(username=form.cleaned_data['receiver'])
+
+            if str(request.user.username) == str(form.cleaned_data['receiver']):
+                messages.error(request, 'Kendinize mesaj gönderdiniz. Farklı bir kullanıcı seçiniz.')
+                return redirect(request.META['HTTP_REFERER'])
+
+        else:
+            form = AuthorMessageForm()
+
+    return render(request, "blog/pages/profil.html", {'form': form})
