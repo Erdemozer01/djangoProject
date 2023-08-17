@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Profile, UserMessagesModel
+from blog.models.profile import Profile
+from .models import UserMessagesModel
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -167,17 +168,6 @@ class UsersView(ListView, LoginRequiredMixin):
         context = super(UsersView, self).get_context_data(**kwargs)
         context['users'] = User.objects.all()
         context['messages'] = Inbox.objects.all()
-        return context
-
-
-class ProfileDetailView(DetailView, LoginRequiredMixin):
-    template_name = 'dashboard/profil.html'
-    model = Profile
-    queryset = Profile.objects.all()
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(ProfileDetailView, self).get_context_data(**kwargs)
-        context['posts'] = Posts.objects.filter(author_id=self.request.path.split('/')[4])
         return context
 
 

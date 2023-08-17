@@ -1,14 +1,28 @@
-from django.views.generic import ListView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import *
 from pip._internal.locations import user_site
-
 from post.models import Posts
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from .models import About, Terms, Contact
+from .models import *
 from django.contrib.messages.views import SuccessMessageMixin
 from .forms import ContactForm
 from django.urls import reverse_lazy
 from django.contrib import messages
+from .models.profile import Profile
+
+
+class ProfileDetailView(DetailView, LoginRequiredMixin):
+    template_name = 'dashboard/profil.html'
+    model = Profile
+
+    def get_queryset(self):
+        return Profile.objects.filter(user=self.request.user)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ProfileDetailView, self).get_context_data(**kwargs)
+        context['posts'] = Posts.objects.filter(author_id=self.request.user.id)
+        return context
 
 
 class HomeView(ListView):

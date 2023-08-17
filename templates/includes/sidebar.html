@@ -29,6 +29,15 @@
         <ul class="navbar-nav">
             {% if request.user.is_superuser %}
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url "admin:index" %}"
+                       target="_blank">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
+                            <i class="ni ni-circle-08 text-dark"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Yönetici Paneli</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#dashboardsExamples" class="nav-link " aria-expanded="false"
                        aria-controls="dashboardsExamples" role="button">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
@@ -83,7 +92,7 @@
                        class="nav-link "
                        aria-expanded=" false " aria-controls="applicationsExamples" role="button">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
-                            <i class="ni ni-circle-08 text-dark"></i>
+                            <i class="ni ni-single-02 text-dark"></i>
                         </div>
                         <span class="nav-link-text ms-1">Profil</span>
                     </a>

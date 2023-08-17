@@ -36,7 +36,7 @@
                         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
                             {% if request.user.is_superuser %}
                                 <li><a class="dropdown-item"
-                                       href="{% url 'users_dashboard' %}">{{ request.user|title }}</a>
+                                       href="{% url "blog:blog_profile_detail" request.user.pk request.user.username %}">Profil Sayfası</a>
                                 </li>
                                 <li><a class="dropdown-item" href="{% url 'admin:index' %}">Yönetici Paneli</a></li>
 
@@ -55,7 +55,7 @@
                             {% elif request.user.is_staff %}
 
                                 <li><a class="dropdown-item"
-                                       href="{% url "profile" request.user.pk request.user.username %}">{{ request.user|title }}</a>
+                                       href="{% url "blog:blog_profile_detail" request.user.pk request.user %}">Profil Sayfası</a>
                                 </li>
                                 <li><a class="dropdown-item" href="{% url 'post:add_post' %}">Gönderi Ekle</a></li>
                                 <li><a class="dropdown-item" href="{% url 'post:add_category' %}">Kategori Ekle</a></li>
@@ -318,7 +318,6 @@
                                      aria-labelledby="dropdownMenuDocs">
                                     <div class="d-none d-lg-block">
                                         <ul class="list-group">
-
                                             <li class="nav-item list-group-item border-0 p-0">
                                                 <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank"
                                                    href="{% url "bioinformatic:home" %}">
@@ -361,8 +360,6 @@
                                                     </div>
                                                 </a>
                                             </li>
-
-
                                         </ul>
                                     </div>
                                     <!-- Lab Küçük -->
@@ -407,8 +404,6 @@
                                                     </div>
                                                 </div>
                                             </a>
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -435,7 +430,9 @@
 
                                     {% if request.user.is_superuser %}
                                         <li><a class="dropdown-item"
-                                               href="{% url "users_dashboard" %}">{{ request.user|title }}</a></li>
+                                               href="{% url "blog:blog_profile_detail" request.user.pk request.user.username %}">Profil Sayfası</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'profile' request.user.pk request.user.username %}">
+                                            DashBoard</a>
                                         <li><a class="dropdown-item" href="{% url 'admin:index' %}">Yönetici Paneli</a>
                                         <li><a class="dropdown-item" href="{% url 'post:add_post' %}">Gönderi Ekle</a>
                                         </li>
@@ -454,7 +451,7 @@
                                         <li><a class="dropdown-item" href="{% url "register" %}">Üye Ol</a></li>
                                     {% elif request.user.is_staff %}
                                         <li><a class="dropdown-item"
-                                               href="{% url "profile" request.user.pk request.user.username %}">{{ request.user|title }}</a>
+                                               href="{{% url "blog:blog_profile_detail" request.user.pk request.user.username %}">Profil Sayfası</a>
                                         </li>
 
                                         <li><a class="dropdown-item" href="{% url 'post:add_post' %}">Gönderi Ekle</a>

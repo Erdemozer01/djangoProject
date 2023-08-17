@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Profile, UserMessagesModel
+from .models import UserMessagesModel
+from blog.models.profile import Profile
 
 
 @admin.register(Profile)
