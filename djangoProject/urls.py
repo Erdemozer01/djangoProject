@@ -16,4 +16,4 @@ urlpatterns = [
                   path('django_plotly_dash/', include('django_plotly_dash.urls', namespace="plotly")),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
