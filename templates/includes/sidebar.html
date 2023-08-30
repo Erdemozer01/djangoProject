@@ -168,7 +168,7 @@
                     </a>
                 </li>
             {% endif %}
-
+            <hr class="horizontal dark mt-0">
             <li class="nav-item">
                 {% if request.user.is_staff %}
                     <hr class="horizontal dark mt-0">
@@ -544,7 +544,7 @@
                                     <span class="sidenav-normal"> {{ foo.name }} </span>
                                 </a>
                             </li>
-                            {% empty %}
+                        {% empty %}
                             <li class="nav-item ">
                                 <a class="nav-link " href="#">
                                     <span class="sidenav-mini-icon"> BLN </span>

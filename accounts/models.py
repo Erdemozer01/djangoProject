@@ -15,6 +15,7 @@ class UserMessagesModel(models.Model):
         NOT_SEEN = 'Okunmadı', 'Okunmadı'
 
     title = models.CharField(max_length=150, verbose_name="Konu:", blank=True)
+
     sender = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Gönderen: ',
                                   related_name='messages_sender')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Alıcı: ',

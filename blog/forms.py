@@ -17,10 +17,10 @@ class ContactForm(forms.ModelForm):
         }
 
 
-class AuthorMessageForm(forms.ModelForm):
+class AuthorMessagesForm(forms.ModelForm):
     class Meta:
         model = AuthorMessagesModel
-        fields = "__all__"
+        fields = ['title', 'email', 'message']
         widgets = {
-            'message': forms.TextInput()
+            'message': forms.Textarea()
         }

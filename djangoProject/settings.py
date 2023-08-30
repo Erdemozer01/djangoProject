@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'bioinformatic',
     'django_cleanup',
     'bootstrap5',
+    'bootstrap4',
     'ckeditor',
     'ckeditor_uploader',
     'dash',

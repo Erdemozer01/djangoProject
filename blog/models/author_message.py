@@ -13,14 +13,16 @@ class AuthorMessagesModel(models.Model):
         SEEN = 'Okundu', 'Okundu'
         NOT_SEEN = 'Okunmadı', 'Okunmadı'
 
-    name = models.CharField(verbose_name="Ad-Soyad", max_length=100)
+    title = models.CharField(max_length=150, verbose_name="Konu:", blank=True)
 
-    email = models.EmailField(verbose_name="Email")
+    email = models.EmailField(verbose_name="Email adresiniz", help_text="Cevap email adresinize gönderilecektir.")
 
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Gönderen: ',
+                               related_name='author_messages_sender')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Alıcı: ',
                                  related_name='author_messages_receiver')
 
-    message = models.TextField(verbose_name='Mesaj', blank=False)
+    message = models.TextField(verbose_name='Mesaj')
 
     status = models.CharField(max_length=50, choices=Status.choices,
                               default=Status.NOT_SEEN, verbose_name='Görülme Durumu')

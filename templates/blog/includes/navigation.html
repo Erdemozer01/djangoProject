@@ -454,6 +454,9 @@
                                                href="{{% url "blog:blog_profile_detail" request.user.pk request.user.username %}">Profil Sayfası</a>
                                         </li>
 
+                                        <li><a class="dropdown-item" href="{% url 'profile' request.user.pk request.user.username %}">
+                                            DashBoard</a>
+
                                         <li><a class="dropdown-item" href="{% url 'post:add_post' %}">Gönderi Ekle</a>
                                         </li>
                                         <li><a class="dropdown-item" href="{% url 'post:add_category' %}">Kategori

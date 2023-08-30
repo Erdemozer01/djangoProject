@@ -70,7 +70,7 @@
                                                          alt="..." class="avatar shadow">
                                                 {% endif %}
                                                 <div class="name ps-3">
-                                                    <a href="{% url "profile_detay" post.author.pk post.author|slugify %}">
+                                                    <a href="{% url "blog:blog_profile_detail" post.author.pk post.author|slugify %}">
                                                         <span>{{ post.author|title }}</span>
                                                     </a>
                                                     <div class="stats">
